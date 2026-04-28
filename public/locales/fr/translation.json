@@ -1,0 +1,246 @@
+{
+  "hero": {
+    "title": "Nous construisons <1/> <2/> <4/> pour chaque organisation.",
+    "scramble_text": "Agents IA Multilingues",
+    "intro": "Des ministères gouvernementaux aux grandes entreprises en passant par les PME, nos agents IA prennent en charge les tâches opérationnelles quotidiennes afin que vos employés puissent innover, collaborer et se concentrer sur la créativité et la croissance stratégique. Économisez plus de 40 heures par semaine et réduisez les coûts opérationnels de 65 %",
+    "cta": {
+      "book": "Réserver un appel gratuit de 15 min",
+      "contact": "Contactez-nous @ QG"
+    },
+    "badge": "Transformez chaque membre de l'équipe en un contributeur à fort impact"
+  },
+  "offices": {
+    "title": "Présence mondiale",
+    "subtitle": "NOS BASES",
+    "locations": {
+      "london": {
+        "city": "Londres",
+        "region": "Royaume-Uni"
+      },
+      "muscat": {
+        "city": "Mascate",
+        "region": "Oman"
+      },
+      "colombo": {
+        "city": "Colombo",
+        "region": "Sri Lanka"
+      }
+    },
+    "stats": {
+      "automating": "Tâches Automatisées",
+      "accuracy": "Précision du Système"
+    },
+    "team_intro": "TaskForce AI is a strategic AI automation company operating across Europe, Middle East and South Asia, specializing in custom AI agent deployment for modern businesses. Led by a team of seasoned technology commanders and operations specialists, we orchestrate and deploy intelligent automation systems that handle everything from customer communications to complex workflow management in both Arabic and English. With operational bases in London, Muscat and Sri Lanka, our elite squad of AI engineers, technology strategists, and process specialists work at the intersection of cutting-edge artificial intelligence and practical business solutions. We don't just automate tasks – we deploy intelligent agents that transform how your business operates, 24 hours a day, 7 days a week.",
+    "who_we_are": "Qui nous sommes"
+  },
+  "process": {
+    "subtitle": "Protocole d'exécution",
+    "title": "Transformation <1/> <2/>",
+    "scramble_text": "Systématique",
+    "description": "Nous remplaçons le chaos par une efficacité technique. De la découverte initiale à la surveillance active, notre processus est conçu pour un déploiement sans friction.",
+    "steps": [
+      {
+        "title": "Découverte et Cartographie",
+        "desc": "Nous commençons par un briefing approfondi pour comprendre vos opérations quotidiennes. Nous cartographions vos processus actuels et identifions le travail répétitif idéal pour l'automatisation.",
+        "highlight": "Audit Stratégique"
+      },
+      {
+        "title": "Conception de Workflow Personnalisé",
+        "desc": "Notre équipe conçoit des workflows intelligents adaptés à votre entreprise. Qu'il s'agisse d'automatiser les réponses par e-mail ou de synchroniser les données, nous le construisons pour répondre exactement à vos besoins.",
+        "highlight": "Architecture Sur Mesure"
+      },
+      {
+        "title": "Intégration et Tests",
+        "desc": "Nous connectons vos outils existants (CRM, e-mail, feuilles de calcul, bases de données) dans un système d'automatisation transparent. Testé minutieusement pour garantir la précision avant la mise en ligne.",
+        "highlight": "Synchronisation Transparente"
+      },
+      {
+        "title": "Déploiement et Formation",
+        "desc": "Une fois en ligne, nous formons votre équipe sur le fonctionnement de l'automatisation. Vous constaterez un gain de temps immédiat car l'IA prend en charge le gros du travail.",
+        "highlight": "Autonomisation de l'Équipe"
+      },
+      {
+        "title": "Surveillance et Optimisation",
+        "desc": "Nous surveillons en permanence les performances, recueillons des commentaires et affinons les workflows pour fournir des résultats encore meilleurs au fil du temps.",
+        "highlight": "Croissance Continue"
+      }
+    ],
+    "final": {
+      "status": "SYSTÈME ACTIF",
+      "title": "Évolution Continue",
+      "desc": "Notre équipe de support à distance fournit des mises à jour mensuelles pour améliorer vos workflows, ajouter de nouvelles capacités d'automatisation et garantir que tout fonctionne correctement."
+    }
+  },
+  "services": {
+    "subtitle": "Unités Actives",
+    "title": "Déployé",
+    "scramble_text": "Agents",
+    "status_label": "État du Système",
+    "status_value": "OPÉRATIONNEL"
+  },
+  "stats": {
+    "items": [
+      {
+        "value": "40+",
+        "label": "Heures Économisées",
+        "sub": "Hebdomadaire"
+      },
+      {
+        "value": "65%",
+        "label": "Réduction des Coûts",
+        "sub": "Frais opérationnels"
+      },
+      {
+        "value": "24/7",
+        "label": "Disponibilité",
+        "sub": "Opération continue"
+      },
+      {
+        "value": "80%",
+        "label": "Moins de Travail Manuel",
+        "sub": "Saisie manuelle réduite"
+      }
+    ]
+  },
+  "problem": {
+    "badge": "Diagnostics Système",
+    "title": "Les Opérations Héritées <1/> <2/>",
+    "title_highlight": "Vous Font Échouer.",
+    "description": "La réalité écrasante des entreprises modernes est que les équipes uniquement humaines ne peuvent pas évoluer linéairement avec la complexité. Le modèle traditionnel de main-d'œuvre atteint un plafond.",
+    "challenges": [
+      {
+        "title": "Hémorragie de Temps",
+        "desc": "Les équipes perdent 40% des heures productives en saisie de données et routage répétitifs."
+      },
+      {
+        "title": "Architecture Siloé",
+        "desc": "Les systèmes déconnectés créent une fragmentation des données et une friction opérationnelle."
+      },
+      {
+        "title": "Goulots d'étranglement Humains",
+        "desc": "Les chaînes d'approbation manuelles ralentissent la vitesse d'exécution."
+      },
+      {
+        "title": "Dérive de Conformité",
+        "desc": "Les processus manuels introduisent un taux d'erreur de 3 à 5% dans la documentation critique."
+      }
+    ]
+  },
+  "cta": {
+    "badge": "Accepte de Nouveaux Partenaires",
+    "title": "Prêt à déployer votre <1/> <2/>",
+    "title_highlight": "Main-d'œuvre IA ?",
+    "description": "Arrêtez de perdre du temps avec des processus manuels. Planifiez une consultation pour voir comment nos agents autonomes peuvent s'intégrer à votre stack aujourd'hui.",
+    "button": "Réserver un appel de découverte gratuit de 30 min",
+    "subtext": "Aucun engagement requis • Session stratégique de 30 minutes",
+    "trust_indicators": [
+      "Conforme SOC-2",
+      "Déploiement Personnalisé",
+      "Support 24/7"
+    ]
+  },
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "solutions": "Solutions",
+    "results": "Résultats",
+    "contact": "Contact",
+    "book": "Réserver une démo"
+  },
+  "common": {
+    "language": "Langue",
+    "select_language": "Choisir la langue"
+  },
+  "footer": {
+    "description": "Orchestrer l'avenir du travail depuis Colombo, Sri Lanka. Conçu pour l'échelle de l'entreprise, sécurisé par conception.",
+    "ai_agents": "Agents IA",
+    "company": "Entreprise",
+    "stay_updated": "Restez informé",
+    "stay_updated_desc": "Recevez les dernières tendances en matière d'automatisation de l'IA et les mises à jour de la plateforme.",
+    "email_placeholder": "travail@email.com",
+    "subscribe": "S'abonner",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "top": "Haut",
+    "all_systems_nominal": "Tous les systèmes nominaux.",
+    "links": {
+      "about": "À propos de nous",
+      "blog": "Blog",
+      "careers": "Carrières",
+      "contact": "Contactez le QG"
+    }
+  },
+  "contact": {
+    "return": "Return",
+    "uplink_established": "HQ_UPLINK_ESTABLISHED",
+    "comm_channel": "COMMUNICATION CHANNEL",
+    "title_prefix": "Contact",
+    "title_suffix": "Headquarters.",
+    "subtitle_default": "Direct line to our AI Architects. Whether you have questions about deployment or custom integration, we are ready to assist.",
+    "subtitle_agent": "You are initiating a specific inquiry regarding the {{agent}} protocol. Our automated systems are standing by.",
+    "automated_protocol": "Automated Response Protocol",
+    "protocol_desc": "Submitting this form triggers unique identifier sequence <1>{{id}}</1>. Expect an immediate briefing document in your inbox.",
+    "form": {
+      "identity": "Your Identity",
+      "name_placeholder": "Full Name",
+      "uplink": "Digital Uplink",
+      "email_placeholder": "Work Email Address",
+      "content": "Transmission Content",
+      "message_placeholder": "How can we accelerate your operations?",
+      "submit": "Transmit to HQ",
+      "secure_id": "* Secure Form ID:"
+    },
+    "success": {
+      "title": "Transmission Received",
+      "desc": "Our systems have logged your inquiry. An automated briefing document regarding <1>{{agent}}</1> has been dispatched to {{email}}.",
+      "ref_id": "REF_ID:",
+      "return": "Return to Base"
+    }
+  },
+  "book_demo": {
+    "abort": "Abort Mission",
+    "secure_connection": "SECURE_CONNECTION_ESTABLISHED",
+    "title_prefix": "Initialize",
+    "title_suffix": "Deployment.",
+    "subtitle": "Schedule a high-velocity strategy session. Our AI Architects will map your infrastructure and identify automation vectors.",
+    "features": {
+      "duration": "30 Minutes",
+      "duration_desc": "Rapid assessment protocol",
+      "location": "Remote Uplink",
+      "location_desc": "Secure Google Meet environment",
+      "confidential": "Confidential",
+      "confidential_desc": "NDAs available upon request"
+    },
+    "scheduler": {
+      "system_protocol": "System Protocol",
+      "steps": {
+        "temporal": "Temporal Selection",
+        "slot": "Slot Allocation",
+        "identity": "Identity Verification",
+        "deployment": "Deployment Active"
+      },
+      "calendar": {
+        "available_slots": "Available slots for"
+      },
+      "timezone_note": "* All times are in your local timezone ({{timezone}})"
+    },
+    "form": {
+      "mission_parameters": "Mission Parameters",
+      "identity": "Your Identity",
+      "name_placeholder": "Full Name",
+      "uplink": "Digital Uplink",
+      "email_placeholder": "Work Email Address",
+      "org": "Organization",
+      "company_placeholder": "Company Name",
+      "intel": "Mission Intelligence",
+      "context_placeholder": "Current operational bottlenecks...",
+      "submit": "Initialize Deployment"
+    },
+    "success": {
+      "title": "Deployment Initialized",
+      "desc": "Strategy session confirmed. Calendar invite and preliminary briefing materials have been transmitted to {{email}}.",
+      "ref_id": "OPERATION_ID:",
+      "return": "Return to Base"
+    }
+  }
+}

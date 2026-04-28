@@ -1,0 +1,534 @@
+import React from 'react';
+
+import { Bot, AppWindow, FileText, BarChart3, Code2, Headphones } from 'lucide-react';
+
+export interface ServiceFeature {
+  title: string;
+  description: string;
+}
+
+export interface WorkflowStep {
+  title: string;
+  description: string;
+}
+
+export interface UseCaseItem {
+  title: string;
+  description: string;
+}
+
+export interface ServiceData {
+  id: string;
+  title: string;
+  icon: React.ElementType;
+  shortDesc: string;
+  fullDesc: string;
+  features: ServiceFeature[];
+  workflow: WorkflowStep[];
+  benefits: string[];
+  useCase: {
+    title: string;
+    description: string;
+  };
+  useCasesList: UseCaseItem[];
+
+  primaryButtonText?: string;
+  primaryButtonLink?: string;
+  secondaryButtonText?: string;
+  secondaryButtonLink?: string;
+}
+
+export const servicesData: ServiceData[] = [
+  {
+    id: "ai-workflows",
+    title: "AI Workflow Agents",
+    icon: Bot,
+    shortDesc: "Intelligent automation systems that handle repetitive tasks without human intervention.",
+    fullDesc: "AI Workflows are intelligent automation systems that handle repetitive tasks across your business operations without human intervention. These workflows connect your existing tools and systems, triggering actions automatically based on rules you define. Perfect for automating data entry between systems, triggering email sequences based on customer actions, syncing information across CRM and accounting platforms, generating reports automatically, processing form submissions, managing inventory updates, scheduling social media posts, and routing tasks to team members based on specific criteria.",
+    features: [
+      { title: "Zero Intervention", description: "Handles repetitive tasks across operations autonomously." },
+      { title: "Cross-System Sync", description: "Connects existing tools to trigger actions based on rules." },
+      { title: "24/7 Scalability", description: "Scale operations instantly without hiring additional staff." }
+    ],
+    workflow: [
+      { title: "Discovery & Mapping", description: "We start by taking a in-depth brief to understand your daily operations. Which tasks eat up the most time? Where do bottlenecks happen? We map out your current processes and identify the repetitive work that's perfect for automation." },
+      { title: "Custom Workflow Design", description: "Our team designs intelligent workflows tailored to your business. Whether it's automating email responses, syncing data between platforms, or triggering actions based on specific events—we build it to fit your exact needs." },
+      { title: "Integration & Testing", description: "We connect your existing tools (CRM, email, spreadsheets, databases) into a seamless automation system. Everything is tested thoroughly to ensure accuracy and reliability before going live." },
+      { title: "Deployment & Training", description: "Once live, we train your team on how the automation works and what to expect. You'll see immediate time savings as the AI handles the heavy lifting." },
+      { title: "Monitor & Optimize", description: "We don't just set it and forget it. We continuously monitor performance, gather feedback, and refine workflows to deliver even better results over time." },
+      { title: "Ongoing Support", description: "Our remote support team provides monthly updates to enhance your workflows, add new automation capabilities, and ensure everything runs smoothly. We also schedule quarterly strategy meetings to review performance metrics." }
+    ],
+    benefits: [
+      "Reduced manual data entry by up to 80%",
+      "Faster turnaround times on routine tasks",
+      "Fewer human errors and inconsistencies",
+      "More time for your team to focus on strategic work",
+      "Scalable automation that grows with your business",
+      "Monthly updates and quarterly optimization reviews"
+    ],
+    useCase: {
+      title: "Operational Efficiency",
+      description: "Eliminate hours of manual work each week, reduce human errors in data handling, ensure consistent processes every time, free your team to focus on high-value activities, scale operations without hiring additional staff, and get work done faster with 24/7 automation that never takes a break."
+    },
+    useCasesList: [
+      {
+        title: "Email Autoreply System",
+        description: "Intelligent agents analyze incoming emails, categorize urgency, and send personalized, context-aware responses instantly—handling inquiries 24/7 without human intervention."
+      },
+      {
+        title: "Automatic Lead generation and follow up",
+        description: "Your sales team manually assigns leads and forgets follow-ups, losing 30% of potential deals. AI workflows instantly route leads to the right salesperson, trigger personalized email sequences, and alert managers when leads go cold."
+      },
+      {
+        title: "Customer onboarding Automation",
+        description: "New customers wait 3-5 days for account setup because your team manually creates accounts, sends welcome emails, and sets up integrations. AI workflows trigger everything instantly: account creation, welcome sequences, document requests, and first appointment scheduling."
+      },
+      {
+        title: "Invoice Processing & Payment Approval Chain",
+        description: "Your finance team manually forwards invoices through 3-4 people for approval, taking 5-7 days. AI workflows automatically extract invoice data, route to appropriate approvers based on amount/department, and sync approved invoices to accounting—done in hours, not days."
+      },
+      {
+        title: "Social Media Content Distribution",
+        description: "Your marketing team manually posts the same content across 5+ platforms daily, wasting 2 hours. AI workflows distribute approved content across all channels simultaneously, schedule posts for optimal times, and track engagement metrics automatically."
+      },
+      {
+        title: "Inventory Reorder Alerts & Purchase Orders",
+        description: "You run out of stock because someone forgot to reorder, losing sales. AI workflows monitor inventory levels, automatically generate purchase orders when stock hits thresholds, send to suppliers, and notify your team—never run out again."
+      },
+      {
+        title: "HR Leave Request & Approval Process",
+        description: "Staff email leave requests, managers forget to respond, HR manually updates spreadsheets. AI workflows receive requests via form, check leave balances, route to managers for one-click approval, update systems automatically, and notify everyone involved."
+      },
+      {
+        title: "CRM to Accounting Data Sync",
+        description: "Your team manually enters the same customer data into CRM, accounting software, and email marketing platforms. AI workflows sync everything automatically—one entry updates all systems in real-time, eliminating duplicate work and data errors."
+      },
+      {
+        title: "Customer Complaint Escalation",
+        description: "Unhappy customer emails get lost in inboxes, escalating to social media disasters. AI workflows detect complaint keywords, create support tickets, alert senior staff for urgent issues, and trigger resolution workflows—respond in minutes, not days."
+      },
+      {
+        title: "Monthly Report Generation & Distribution",
+        description: "Your team spends 8+ hours monthly pulling data from multiple systems to create reports. AI workflows automatically gather data, generate formatted reports, and distribute to stakeholders on schedule—without lifting a finger."
+      },
+      {
+        title: "Event Registration & Communication Flow",
+        description: "Manual event registration means chasing payments, sending reminder emails individually, and updating attendee lists across platforms. AI workflows handle registration, payment confirmation, automated reminders, calendar invites, and attendance tracking completely hands-free."
+      }
+    ],
+    primaryButtonText: "Initialize Agent",
+    primaryButtonLink: "/book-demo",
+    secondaryButtonText: "Contact HQ",
+    secondaryButtonLink: "/contact"
+  },
+  {
+    id: "voice-agents",
+    title: "Voice Agents",
+    icon: Headphones,
+    shortDesc: "Conversational AI that handles phone interactions with natural, human-like voices.",
+    fullDesc: "AI Voice Agents are conversational AI systems that handle phone interactions with natural, human-like voices. They understand context, respond intelligently, and seamlessly integrate with your business systems to take action during conversations—both answering incoming calls and making outbound calls on your behalf. Never miss a call again with 24/7 availability, convert more leads with instant response times, reduce staffing costs while improving service quality.",
+    features: [
+      { title: "Context Aware", description: "Understands context and responds intelligently to inquiries." },
+      { title: "System Integration", description: "Seamlessly connects with business systems to take real-time action." },
+      { title: "Bi-Directional", description: "Capable of handling both incoming support and outbound sales." }
+    ],
+    workflow: [
+      { title: "Understanding Your Call Flow", description: "We learn how your business handles calls today. What questions do customers ask? What information do you need to qualify leads? This helps us design an AI agent that sounds natural and handles conversations like your best team member." },
+      { title: "Agent Training & Voice Customization", description: "We train your AI voice agent using your business knowledge, FAQs, and conversation scripts. You choose the voice, tone, and personality that matches your brand—professional, friendly, energetic, or calm." },
+      { title: "Multi-Language Setup", description: "Need to serve customers in different languages? We configure your voice agent to handle conversations in multiple languages seamlessly, expanding your reach without hiring multilingual staff." },
+      { title: "Integration with Your Systems", description: "Your voice agent connects directly to your calendar, CRM, and booking systems. When someone calls to book an appointment, the AI checks availability, schedules it, and sends confirmations—all in real-time." },
+      { title: "Warm Transfer Protocol", description: "For complex queries or when a human touch is needed, the AI smoothly transfers the call to your team with full context of the conversation. Your staff knows exactly what the customer needs before they even say hello." },
+      { title: "Continuous Learning", description: "Your voice agent learns from every conversation. We review call analytics, identify improvements, and update the AI to handle new scenarios and questions better." },
+      { title: "Ongoing Support", description: "Our remote support team provides monthly updates to keep your voice agents performing at their best. We also schedule quarterly strategy meetings to review performance and discuss optimization opportunities." }
+    ],
+    benefits: [
+      "24/7 phone coverage without extra staff costs",
+      "Both inbound reception and outbound outreach capabilities",
+      "Never miss a lead or booking opportunity",
+      "Instant response times that delight customers",
+      "Proactive follow-up that nurtures relationships",
+      "Qualified leads handed to your team with context",
+      "Multilingual support without language barriers",
+      "Detailed call analytics and insights",
+      "Monthly updates and quarterly optimization reviews"
+    ],
+    useCase: {
+      title: "Customer Communications",
+      description: "Ideal for answering customer service inquiries, qualifying sales leads, booking appointments and consultations, sending appointment reminders, following up with prospects, conducting customer satisfaction surveys, handling order status inquiries, providing product information, processing simple transactions, re-engaging dormant customers, confirming bookings, and routing complex issues to human team members."
+    },
+    useCasesList: [
+      {
+        title: "After-Hours Customer Service",
+        description: "Customers call outside business hours and hear voicemail, then call your competitor who answers. AI voice agents handle inquiries 24/7, answer FAQs, book appointments, and capture urgent requests for your team to address first thing in the morning."
+      },
+      {
+        title: "Appointment Booking & Confirmation",
+        description: "Your receptionist spends 60% of their day answering \"what times are available?\" calls. AI voice agents check your calendar in real-time, book appointments, send confirmations, and handle rescheduling—freeing your staff for higher-value work."
+      },
+      {
+        title: "Lead Qualification Calls",
+        description: "Your sales team wastes time calling unqualified leads. AI outbound voice agents call new leads, ask qualifying questions, gauge interest level, and only pass hot leads to your salespeople with complete conversation notes."
+      },
+      {
+        title: "Appointment Reminder Calls",
+        description: "No-shows cost you 20-30% of daily revenue because people forget appointments. AI voice agents call customers 24 hours before, confirm attendance, offer rescheduling options, and reduce no-shows by 70%."
+      },
+      {
+        title: "Customer Satisfaction Surveys",
+        description: "You need feedback but don't have time to call customers. AI voice agents conduct post-service calls, ask satisfaction questions, capture detailed feedback, flag unhappy customers for immediate follow-up, and compile insights automatically."
+      },
+      {
+        title: "Payment Reminder Calls",
+        description: "Overdue invoices pile up because your team avoids uncomfortable collection calls. AI voice agents make friendly payment reminder calls, offer payment plan options, process payments over the phone, and escalate only when necessary."
+      },
+      {
+        title: "Product Information & Pricing Inquiries",
+        description: "Customers call asking basic product questions that tie up your sales team. AI voice agents answer product specs, pricing, availability questions instantly, and transfer only serious buyers to sales staff with full context."
+      },
+      {
+        title: "Re-engagement of Dormant Customers",
+        description: "Past customers disappear and your team doesn't have time for outreach. AI outbound voice agents call dormant customers, offer special promotions, gauge interest in new services, and reactivate relationships automatically."
+      },
+      {
+        title: "Order Status & Tracking Inquiries",
+        description: "\"Where's my order?\" calls flood your customer service team daily. AI voice agents check order status in real-time, provide tracking information, answer delivery questions, and only escalate complex issues to humans."
+      },
+      {
+        title: "Multi-Location Call Routing",
+        description: "Customers call your main number unsure which location to contact. AI voice agents ask location preferences, check service availability, and either handle requests directly or transfer to the appropriate location with full conversation context."
+      }
+    ],
+    primaryButtonText: "Initialize Agent",
+    primaryButtonLink: "/book-demo",
+    secondaryButtonText: "Contact HQ",
+    secondaryButtonLink: "/contact"
+  },
+  {
+    id: "document-processing",
+    title: "Document Processing",
+    icon: FileText,
+    shortDesc: "Extract, validate, and input data from documents with perfect accuracy.",
+    fullDesc: "AI Document Processing Agents automatically extract, validate, and input data from your business documents directly into your systems. These agents read invoices, receipts, forms, and contracts like a human would—but with perfect accuracy and at lightning speed—while following your specific business policies and procedures. Eliminate manual data entry completely, achieve 99%+ accuracy, and process documents in seconds instead of hours.",
+    features: [
+      { title: "Perfect Accuracy", description: "Extracts and inputs data with human-like understanding but zero errors." },
+      { title: "Policy Alignment", description: "Follows specific business policies and validation procedures." },
+      { title: "Lightning Speed", description: "Processes complex documents in seconds instead of hours." }
+    ],
+    workflow: [
+      { title: "Document Assessment", description: "We identify the types of documents you handle regularly—invoices, receipts, purchase orders, contracts, forms. We analyze the data fields you need extracted and where that data needs to go." },
+      { title: "AI Model Configuration", description: "We configure advanced AI models to recognize and extract key information: vendor names, dates, amounts, line items. The AI is trained to follow your specific policies and procedures." },
+      { title: "Direct System Integration", description: "We connect the extraction system directly to your accounting software (Xero, MYOB, QuickBooks) or CRM. When a document arrives, the AI extracts the data and pushes it straight into the right place." },
+      { title: "Validation & Accuracy Checks", description: "The system includes built-in validation rules based on your internal policies. If something looks unusual (duplicate invoice, amount mismatch), the AI flags it for human review." },
+      { title: "Automated Workflows", description: "Beyond extraction, we can set up complete workflows that respect your procedures: send approval requests, trigger payment processing, or notify team members automatically." },
+      { title: "Audit Trail & Reporting", description: "Every document processed is logged with a complete audit trail that meets your compliance requirements. You get monthly reports showing processing volumes, time saved, and accuracy rates." },
+      { title: "Ongoing Support", description: "Our remote support team provides monthly updates to refine extraction accuracy and adapt to any changes in your document formats or procedures. We also schedule quarterly strategy meetings." }
+    ],
+    benefits: [
+      "Process invoices in seconds instead of minutes",
+      "99%+ accuracy in data extraction",
+      "Zero manual data entry for routine documents",
+      "Processing aligned with your internal policies and procedures",
+      "Instant visibility into financial data",
+      "Reduced processing costs by up to 70%",
+      "Scalable processing during busy periods",
+      "Complete audit trail for compliance",
+      "Monthly updates and quarterly optimization reviews"
+    ],
+    useCase: {
+      title: "Admin Automation",
+      description: "Perfect for processing vendor invoices into accounting systems, extracting receipt data for expense management, handling purchase orders, processing customer forms and applications, extracting contract terms and dates, managing insurance claims documents, processing shipping and logistics paperwork, handling HR onboarding documents, and managing compliance documentation."
+    },
+    useCasesList: [
+      {
+        title: "Shipping and Logistics Documentation",
+        description: "Bills of lading, packing slips, and customs forms require manual data entry into logistics systems. AI agents extract tracking numbers, weights, destinations, and customs codes automatically, updating shipment systems and triggering notifications to customers."
+      },
+      {
+        title: "HR Onboarding document processing",
+        description: "New employee forms—tax declarations, bank details, emergency contacts—require manual entry into HR systems. AI agents extract all data from onboarding documents, populate HRIS automatically, verify completeness, and flag missing information before the first day."
+      },
+      {
+        title: "Supplier Invoice processing to Xero/MYOB",
+        description: "Your accounts team manually types invoice data from PDFs into accounting software, taking 10+ minutes per invoice with frequent errors. AI agents extract all data—supplier, amounts, line items, GST—and push directly to Xero/MYOB in seconds with 99% accuracy."
+      },
+      {
+        title: "Employee Expense Receipt Processing",
+        description: "Staff submit expense receipts via email, someone manually enters data into spreadsheets, chases missing receipts, and processes reimbursements weeks later. AI agents extract receipt data instantly, validate against policy, flag violations, and sync approved expenses to payroll automatically."
+      },
+      {
+        title: "Purchase Order Data Extraction",
+        description: "Purchase orders arrive by email, someone manually creates POs in your system, enters line items, and updates inventory. AI agents read PO documents, create system entries automatically, update inventory forecasts, and alert relevant teams—eliminating data entry completely."
+      },
+      {
+        title: "Customer Application Forms",
+        description: "New customer applications arrive as PDFs, staff manually type data into CRM, make errors, and delay onboarding. AI agents extract all customer data, validate completeness, populate CRM automatically, trigger onboarding workflows, and flag missing information for follow-up."
+      },
+      {
+        title: "Insurance Claim Document Processing",
+        description: "Claims arrive with supporting documents requiring manual data extraction and policy checks. AI agents read claim forms, extract relevant data, cross-check against policy terms, calculate coverage amounts, and route to adjusters with pre-populated case files—reducing processing time by 80%."
+      },
+      {
+        title: "Contract Data Extraction & Tracking",
+        description: "Signed contracts sit in email without critical dates entered into systems. AI agents extract key terms—start dates, end dates, renewal clauses, payment terms—and create calendar reminders, populate contract databases, and alert teams before renewal deadlines."
+      },
+      {
+        title: "Bank Statement Reconciliation",
+        description: "Finance teams manually match bank statement transactions to accounting entries for reconciliation. AI agents extract transaction data from statements, match to invoices and receipts, flag discrepancies, and complete reconciliation reports automatically."
+      },
+      {
+        title: "Compliance Document Audit Trails",
+        description: "Regulatory documents require extraction of specific data points for compliance reporting. AI agents extract required information according to your compliance policies, maintain audit trails, generate compliance reports, and alert you to policy violations before audits."
+      }
+    ],
+    primaryButtonText: "Initialize Agent",
+    primaryButtonLink: "/book-demo",
+    secondaryButtonText: "Contact HQ",
+    secondaryButtonLink: "/contact"
+  },
+  {
+    id: "business-intelligence",
+    title: "Business Intelligence",
+    icon: BarChart3,
+    shortDesc: "Unify data into intelligent dashboards that tell you why things happen.",
+    fullDesc: "AI Business Intelligence Agents unify data from all your business systems into intelligent dashboards that don't just show you what happened—they tell you why it happened and what's likely to happen next. These agents continuously analyze your data, spot patterns, detect anomalies, and deliver actionable insights automatically. Make faster decisions with real-time data visibility, replace hours of manual reporting, and gain competitive advantage.",
+    features: [
+      { title: "Unified Data", description: "Consolidates data from all disparate business systems into one view." },
+      { title: "Predictive AI", description: "Analyzes patterns to tell you what is likely to happen next." },
+      { title: "Actionable Insights", description: "Delivers automated alerts and insights, not just raw charts." }
+    ],
+    workflow: [
+      { title: "Data Source Discovery", description: "We identify all your business data sources: sales systems, accounting software, marketing platforms, customer databases, spreadsheets. We assess what metrics matter most to your decision-making." },
+      { title: "Data Unification", description: "We connect all your disparate systems into one unified data warehouse. Sales data, financial data, customer data, operational data—everything in one place, updated in real-time." },
+      { title: "Custom Dashboard Design", description: "Working with you, we design dashboards tailored to different roles in your business. Sales leaders see pipeline metrics. Finance sees cash flow. Operations sees efficiency metrics." },
+      { title: "AI-Powered Analytics", description: "We layer in AI that doesn't just show you what happened—it tells you why it happened and what's likely to happen next. Spot trends, anomalies, and opportunities automatically." },
+      { title: "Automated Insights & Alerts", description: "Set up intelligent alerts that notify you when something important happens: revenue drops, inventory is low, a customer shows churn signals, or a sales opportunity is heating up." },
+      { title: "Mobile & Team Access", description: "Your dashboards work on desktop, tablet, and mobile. Give team members role-based access so everyone sees what they need without information overload." },
+      { title: "Ongoing Refinement", description: "As your business evolves, so do your dashboards. We regularly review what's working, add new metrics, and refine visualizations based on your feedback." },
+      { title: "Ongoing Support", description: "Our remote support team provides monthly updates to add new data sources, refine metrics, and keep your dashboards current. We also schedule quarterly strategy meetings." }
+    ],
+    benefits: [
+      "One source of truth for all business data",
+      "Real-time visibility into performance",
+      "Predictive insights that guide strategy",
+      "Faster decision-making with confidence",
+      "Automated reporting that saves hours weekly",
+      "Customized views for every team member",
+      "Spot problems before they become crises",
+      "Monthly updates and quarterly optimization reviews"
+    ],
+    useCase: {
+      title: "Strategic Oversight",
+      description: "Essential for tracking sales performance and pipeline health, monitoring financial metrics and cash flow, analyzing customer behavior and churn risk, measuring marketing campaign effectiveness, optimizing inventory and supply chain, tracking operational efficiency, forecasting revenue and demand, identifying cost-saving opportunities, and spotting emerging trends."
+    },
+    useCasesList: [
+      {
+        title: "Realtime Sales pipeline Visibility",
+        description: "Your sales manager builds weekly pipeline reports manually by asking each rep for updates. AI business intelligence unifies CRM data into live dashboards showing pipeline value, stage movement, close probability, and rep performance—updated every minute, not every Monday."
+      },
+      {
+        title: "Cashflow forecasting and early warning",
+        description: "You discover cash flow problems when it's too late to act. AI BI analyzes sales patterns, payment cycles, and upcoming expenses to forecast cash position 30-90 days ahead, alerting you to potential shortfalls before they become crises."
+      },
+      {
+        title: "Marketing ROI by Channel",
+        description: "You spend money across Google Ads, Facebook, email, and events but don't know what's actually working. AI BI unifies all marketing data, tracks customer journey from first touch to sale, and shows which channels deliver the best ROI—stop wasting budget on underperformers."
+      },
+      {
+        title: "Customer Churn Prediction",
+        description: "Customers quietly leave and you only realize when revenue drops. AI BI analyzes usage patterns, support tickets, payment delays, and engagement metrics to identify customers at risk of churning 60 days before they leave—giving you time to intervene."
+      },
+      {
+        title: "Inventory Optimization & Demand Forecasting",
+        description: "You overstock slow-moving items while running out of popular ones. AI BI analyzes sales trends, seasonality, and market signals to predict demand accurately, optimize stock levels, reduce carrying costs, and eliminate stockouts during peak periods."
+      },
+      {
+        title: "Operational Efficiency Metrics by Location",
+        description: "You manage multiple locations but can't easily compare performance. AI BI creates dashboards showing revenue, costs, customer satisfaction, and efficiency metrics for each location—instantly identify top performers and underperformers to replicate success."
+      },
+      {
+        title: "Employee Productivity & Resource Planning",
+        description: "You don't know if you need to hire or if current staff are underutilized. AI BI tracks project completion rates, billable hours, task turnaround times, and workload distribution to show exactly where you need resources and where you're overstaffed."
+      },
+      {
+        title: "Profit Margin Analysis by Product/Service",
+        description: "You think you know which products are most profitable, but you're guessing. AI BI calculates true profit margins accounting for all costs, shows which products subsidize others, and identifies opportunities to adjust pricing or discontinue losers."
+      },
+      {
+        title: "Customer Lifetime Value Segmentation",
+        description: "You treat all customers equally when some are worth 10x others. AI BI segments customers by lifetime value, identifies characteristics of high-value customers, and helps you focus acquisition and retention efforts where they'll deliver the biggest returns."
+      },
+      {
+        title: "Anomaly Detection & Performance Alerts",
+        description: "Problems brew for days before anyone notices unusual patterns. AI BI continuously monitors all metrics, detects anomalies automatically—sudden sales drops, cost spikes, quality issues—and alerts relevant team members the moment something's off."
+      }
+    ],
+    primaryButtonText: "Initialize Agent",
+    primaryButtonLink: "/book-demo",
+    secondaryButtonText: "Contact HQ",
+    secondaryButtonLink: "/contact"
+  },
+  {
+    id: "custom-software",
+    title: "Custom Software",
+    icon: Code2,
+    shortDesc: "Tailor-built applications designed specifically for your unique business needs.",
+    fullDesc: "Custom Software solutions are tailor-built applications designed specifically for your unique business needs—from simple automation tools to complete SaaS platforms. Using AI-assisted development, we build exactly what you need, how you need it, integrated seamlessly with your existing systems and workflows. Get software that fits your business perfectly, accelerate timelines, and own your solution completely with no ongoing licensing fees.",
+    features: [
+      { title: "Exact Fit", description: "Tailor-built applications designed specifically for your unique needs." },
+      { title: "AI Accelerated", description: "Faster development timelines and cleaner code using AI tools." },
+      { title: "Full Ownership", description: "Own the solution completely with no ongoing licensing fees." }
+    ],
+    workflow: [
+      { title: "Requirements Gathering", description: "We dive deep into understanding your challenge. What problem are you solving? Who will use the software? What features are must-haves versus nice-to-haves? We document everything." },
+      { title: "Solution Architecture", description: "Our developers design the technical architecture—how different components will work together, what technologies we'll use, how it integrates with your existing systems, and how it scales." },
+      { title: "AI-Assisted Development", description: "We use AI-powered development tools to write cleaner code faster. This means shorter development cycles and lower costs for you, without compromising quality. AI helps us spot bugs early." },
+      { title: "Iterative Building & Feedback", description: "We build in sprints, showing you working versions throughout the process. You provide feedback, we refine, and we keep iterating until it's perfect. No surprises at the end." },
+      { title: "Integration & Testing", description: "We integrate your new software with existing systems (APIs, databases, third-party tools) and conduct rigorous testing. Security, performance, user experience—we test it all." },
+      { title: "Deployment & Training", description: "We deploy your software to production and train your team on how to use it effectively. We provide documentation, video guides, and hands-on sessions." },
+      { title: "Support & Evolution", description: "Post-launch, we provide ongoing support, bug fixes, and feature enhancements. As your business needs change, your software evolves with you." },
+      { title: "Ongoing Support", description: "Our remote support team provides monthly updates with bug fixes, security patches, and minor feature enhancements. We also schedule quarterly strategy meetings." }
+    ],
+    benefits: [
+      "Software built specifically for your business needs",
+      "Faster development with AI-assisted coding",
+      "Seamless integration with existing tools",
+      "Scalable architecture that grows with you",
+      "Complete ownership of your custom solution",
+      "Ongoing support and updates",
+      "From simple webhooks to full SaaS platforms",
+      "Monthly updates and quarterly optimization reviews"
+    ],
+    useCase: {
+      title: "Bespoke Solutions",
+      description: "Ideal for building customer portals and self-service platforms, creating internal management systems, developing specialized calculators and quoting tools, building inventory and asset tracking systems, creating custom CRM or project management tools, developing integration middleware between incompatible systems, building e-commerce platforms with unique requirements, and developing industry-specific applications."
+    },
+    useCasesList: [
+      {
+        title: "Industry specific quoting tool",
+        description: "Your team uses spreadsheets with complex formulas to generate quotes, leading to errors and inconsistent pricing. Custom software creates a branded quoting tool with your pricing logic, product configurations, and approval workflows built in—quotes generated in 2 minutes, not 20."
+      },
+      {
+        title: "Field service Management System",
+        description: "Your technicians use paper forms, call the office for parts, and you manually schedule jobs. Custom field service software gives technicians mobile access to job details, inventory, customer history, and GPS routing while auto-scheduling optimizes daily routes and tracks completion."
+      },
+      {
+        title: "Multi location Management Platform",
+        description: "You manage 10+ locations but each uses different systems creating reporting chaos. Custom platform unifies operations, inventory, staffing, and reporting across all locations with role-based access, ensuring consistency while giving you real-time visibility into every location."
+      },
+      {
+        title: "Customer Self-Service Portal",
+        description: "Customers email asking for order status, invoices, and account updates, overwhelming your staff. Custom portal lets customers log in to view orders, download invoices, update details, and submit requests themselves—reducing support volume by 60%."
+      },
+      {
+        title: "Complex Commission Calculation System",
+        description: "Your sales commissions involve tiers, overrides, team bonuses, and clawbacks that Excel can't handle reliably. Custom software calculates commissions automatically based on your exact rules, provides reps with real-time earnings dashboards, and eliminates monthly disputes over payouts."
+      },
+      {
+        title: "Compliance Workflow Management",
+        description: "Your industry requires specific approval chains, documentation, and audit trails that generic tools can't enforce. Custom compliance software embeds your regulatory requirements into every workflow, maintains automatic audit trails, and prevents non-compliant actions before they happen."
+      },
+      {
+        title: "Asset Tracking & Maintenance System",
+        description: "You manage equipment, vehicles, or assets across locations without knowing service history or maintenance schedules. Custom asset management tracks every item, schedules preventive maintenance automatically, alerts you to service needs, and maintains complete service histories."
+      },
+      {
+        title: "Custom Integration Middleware",
+        description: "Your new CRM doesn't talk to your legacy ERP, forcing double data entry. Custom middleware sits between incompatible systems, translating data and keeping everything in sync automatically—no more manual entry, no more data mismatches."
+      },
+      {
+        title: "Specialized Booking & Scheduling System",
+        description: "Your business has unique booking rules (equipment combinations, staff certifications, location capacities) that standard schedulers can't handle. Custom booking software enforces all your rules automatically, prevents conflicts, optimizes utilization, and integrates with your existing systems."
+      },
+      {
+        title: "Proprietary SaaS Platform",
+        description: "You've built a successful service business and want to scale by licensing your methodology to others. Custom SaaS platform transforms your process into software your customers can use, creating a new recurring revenue stream and competitive advantage."
+      }
+    ],
+    primaryButtonText: "Initialize Agent",
+    primaryButtonLink: "/book-demo",
+    secondaryButtonText: "Contact HQ",
+    secondaryButtonLink: "/contact"
+  },
+  {
+    id: "ai-micro-apps",
+    title: "AI Micro Apps",
+    icon: AppWindow,
+    shortDesc: "User-friendly interfaces that put powerful automation in the hands of your team.",
+    fullDesc: "AI Micro Apps are user-friendly interfaces that put powerful automation in the hands of your entire team. These lightweight applications provide simple forms, dashboards, upload portals, and approval systems that trigger complex AI workflows behind the scenes—no technical knowledge required to use them. Empower non-technical staff to leverage powerful automation, eliminate email-based approval processes, and bridge the gap between complex automation and everyday users.",
+    features: [
+      { title: "User Friendly", description: "Simple interfaces that put automation in the hands of the entire team." },
+      { title: "Lightweight", description: "Fast forms, dashboards, and portals without bloat." },
+      { title: "Backend Power", description: "Triggers complex AI workflows behind a simple frontend." }
+    ],
+    workflow: [
+      { title: "Identify Use Cases", description: "We work with you to identify automation workflows that would benefit from a user interface. Maybe it's a form for staff to submit expense reports, a dashboard to approve invoices, or an upload portal for document processing." },
+      { title: "User Experience Design", description: "We design simple, intuitive interfaces that anyone can use—no technical knowledge required. Clean forms, drag-and-drop uploads, one-click approvals, clear dashboards. We focus on making complex automation feel effortless." },
+      { title: "Backend Automation Connection", description: "Behind your simple interface, we connect powerful automations. When someone submits a form, uploads a document, or clicks approve—AI agents spring into action processing, routing, and completing tasks." },
+      { title: "Access Control & Permissions", description: "We set up role-based access so team members only see what's relevant to them. Sales reps access the lead qualification app. Managers see approval dashboards. Admins control everything." },
+      { title: "Mobile-Friendly Deployment", description: "Your micro apps work beautifully on phones, tablets, and computers. Team members can submit requests, upload documents, or approve items from anywhere." },
+      { title: "Analytics & Tracking", description: "See who's using the apps, what actions they're taking, and how much time the automation is saving. Track performance and identify opportunities for improvement." },
+      { title: "Iteration Based on Usage", description: "As your team uses the apps, we gather feedback and usage data. We add features, streamline workflows, and make improvements based on real-world use." },
+      { title: "Ongoing Support", description: "Our remote support team provides monthly updates to improve user experience, add new features based on team feedback, and ensure your micro apps stay current with the latest technology." }
+    ],
+    benefits: [
+      "User-friendly interfaces for complex automations",
+      "Empower non-technical team members",
+      "Submit, upload, approve—all in seconds",
+      "Mobile access from anywhere",
+      "Reduce training time dramatically",
+      "Track usage and measure ROI",
+      "Turn automation into tools people actually enjoy using",
+      "Monthly updates and quarterly optimization reviews"
+    ],
+    useCase: {
+      title: "Team Enablement",
+      description: "Perfect for employee expense submission and approval, document upload and processing portals, leave request and approval systems, customer feedback collection forms, inventory check-in/check-out interfaces, maintenance request tracking, lead qualification forms for sales teams, invoice approval dashboards, onboarding workflow apps for HR, project status update interfaces, and any process where your team needs a simple way to trigger automated workflows."
+    },
+    useCasesList: [
+      {
+        title: "Employee Expense Submission App",
+        description: "Staff currently email receipts to managers who manually process expenses. Simple mobile app lets employees snap a photo of receipts, select category, and submit—AI extracts data, routes for approval, and syncs to accounting automatically."
+      },
+      {
+        title: "Leave Request & Approval Dashboard",
+        description: "Leave requests happen via email chains between staff, managers, and HR. Clean micro app shows available leave balance, lets staff request time off with one click, routes to managers for instant approval, and updates calendars automatically."
+      },
+      {
+        title: "Document Upload Processing Portal",
+        description: "Customers email documents that your team manually processes and enters into systems. Branded upload portal lets customers drag-and-drop documents (invoices, applications, contracts), AI processes everything automatically, and customers get instant confirmation."
+      },
+      {
+        title: "Inventory Check-In/Check-Out Interface",
+        description: "Warehouse staff uses clipboards and manually updates spreadsheets for inventory movements. Mobile app lets them scan barcodes to check items in/out, updates inventory in real-time, and triggers reorder workflows when stock is low."
+      },
+      {
+        title: "Customer Feedback Collection Form",
+        description: "You want customer feedback but surveys via email get ignored. Simple post-service app sends a push notification, customers rate experience with emoji buttons, add comments if desired, and AI routes negative feedback to management immediately."
+      },
+      {
+        title: "Invoice Approval Manager Dashboard",
+        description: "Managers receive invoice approval requests via email and lose track. Dashboard shows all pending invoices, relevant details, and approval history—managers approve or reject with one click from phone or desktop, triggering payment or follow-up automatically."
+      },
+      {
+        title: "Maintenance Request Tracking App",
+        description: "Staff email maintenance requests that get lost in inboxes. Micro app lets anyone submit requests with photos, AI categorizes urgency, routes to appropriate team, tracks status, and notifies requesters when complete—full visibility, zero emails."
+      },
+      {
+        title: "Lead Qualification Form for Sales",
+        description: "Sales reps manually enter lead details into CRM after meetings. Mobile app provides a quick lead qualification form with essential fields—reps complete in 60 seconds after meetings, AI enriches data with company information, and creates CRM records automatically."
+      },
+      {
+        title: "Project Status Update Interface",
+        description: "Project managers chase team members for status updates via email and meetings. Simple app sends scheduled prompts, team members update progress with sliders and quick notes, AI compiles updates into reports for stakeholders automatically."
+      },
+      {
+        title: "Onboarding Workflow App for HR",
+        description: "New hire onboarding involves chasing paperwork across multiple people. App provides new employees with a checklist interface showing required documents, tasks, and training—they upload documents and complete items, HR sees real-time progress, and AI triggers next steps automatically."
+      }
+    ],
+    primaryButtonText: "Initialize Agent",
+    primaryButtonLink: "/book-demo",
+    secondaryButtonText: "Contact HQ",
+    secondaryButtonLink: "/contact"
+  }
+];
