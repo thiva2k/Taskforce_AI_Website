@@ -27,6 +27,7 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_WP_API: https://wp.taskforceai.tech/wp-json/wp/v2
 
       - name: Deploy to Hostinger via SCP
         uses: appleboy/scp-action@v0.1.7
