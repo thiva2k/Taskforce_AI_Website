@@ -1,6 +1,6 @@
 import express from "express";
 import serveStatic from "serve-static";
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer";
 import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
@@ -57,11 +57,15 @@ async function getEngineeringBlogRoutes() {
 const server = app.listen(4173, async () => {
   console.log("Server running: http://localhost:4173");
 
-  // Use system Edge to avoid AppLocker blocking the Puppeteer-managed Chrome DLL
-  const EDGE_PATH = "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe";
+  // Auto-detect browser: Edge on Windows (avoids AppLocker), bundled Chromium on Linux/CI
+  const isWindows = process.platform === "win32";
+  const executablePath = isWindows
+    ? "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
+    : puppeteer.executablePath();
+
   const browser = await puppeteer.launch({
     headless: true,
-    executablePath: EDGE_PATH,
+    executablePath,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
