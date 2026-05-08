@@ -117,7 +117,7 @@ export const ServiceInterface: React.FC<ServiceInterfaceProps> = ({ serviceId })
           {/* Content Area */}
           <div className="flex-1 relative bg-dark-bg overflow-hidden flex flex-col">
             {/* Ambient Noise Texture */}
-            <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
             
             <AnimatePresence mode="wait">
               {isCustomSoftware ? (

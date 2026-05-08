@@ -20,7 +20,7 @@ app.use((req, res) => {
 const WP_API = process.env.VITE_WP_API;
 
 // ONLY Engineering category = real blog
-const ENGINEERING_CATEGORY_ID = 5;
+const ENGINEERING_CATEGORY_ID = 7;
 
 async function getEngineeringBlogRoutes() {
   try {
@@ -85,11 +85,11 @@ const server = app.listen(4173, async () => {
 
     // MATCH YOUR ACTUAL service IDs
     "/service/ai-workflows",
-    "/service/voice-agents",
-    "/service/document-processing",
+    "/service/ai-voice-agents",
+    "/service/ai-document-processing",
     "/service/business-intelligence",
-    "/service/custom-software",
-    "/service/ai-micro-apps"
+    "/service/custom-ai-software",
+    "/service/ai-booking-agents"
   ];
 
   const blogRoutes = await getEngineeringBlogRoutes();

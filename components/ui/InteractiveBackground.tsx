@@ -62,7 +62,7 @@ export const InteractiveBackground: React.FC = () => {
 
       {/* Scanning Line */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/10 to-transparent h-[20vh] w-full pointer-events-none"
+        className="absolute inset-0 bg-gradient-to-b from-transparent via-green-400/10 to-transparent h-[20vh] w-full pointer-events-none"
         animate={{ top: ['-20%', '120%'] }}
         transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
       />
@@ -101,7 +101,7 @@ export const InteractiveBackground: React.FC = () => {
       />
       
       {/* Noise Texture */}
-      <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.04] mix-blend-overlay" />
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.04] mix-blend-overlay" />
       
       {/* Vignette to focus center content */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#0A0A0A_100%)] opacity-30" />

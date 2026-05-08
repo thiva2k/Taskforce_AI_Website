@@ -13,7 +13,7 @@ export const SEO: React.FC<SEOProps> = ({
   title = "AI TaskForce - Intelligent Automation Agents", 
   description = "Deploy autonomous AI agents to automate workflows, voice calls, document processing, and business intelligence. Scale your workforce instantly with AI TaskForce.", 
   keywords = "AI agents, automation, business intelligence, voice ai, document processing, workflow automation, enterprise AI",
-  image = '/logo-horizontal.png',
+  image = new URL('../../Logo_Files/Taskforce Ai logo - Master/Taskforce-Ai-logo---Master.png', import.meta.url).href,
   url
 }) => {
   const siteUrl = window.location.origin;

@@ -11,22 +11,22 @@ import { ServiceUseCases } from '../service-detail/ServiceUseCases';
 import { ServiceCTA } from '../service-detail/ServiceCTA';
 import { SEO } from '../seo/SEO';
 import { GlitchButton } from '../ui/GlitchButton';
+import { TechPanel } from '../ui/TechPanel';
 import {
   fetchServices,
   fetchServiceRepeatItems,
   cleanServiceItemTitle,
   decodeHtmlEntities,
   stripHtml,
-  WpYoastHeadJson,
 } from '../../lib/wordpress';
 
 const serviceIdAliasMap: Record<string, string> = {
   'ai-workflow-agents': 'ai-workflows',
-  'voice-agents': 'voice-agents',
-  'document-processing': 'document-processing',
+  'ai-voice-agents': 'ai-voice-agents',
+  'ai-document-processing': 'ai-document-processing',
   'business-intelligence': 'business-intelligence',
-  'custom-software': 'custom-software',
-  'ai-micro-apps': 'ai-micro-apps',
+  'custom-ai-software': 'custom-ai-software',
+  'ai-booking-agents': 'ai-booking-agents',
 };
 
 export const ServiceDetail: React.FC = () => {
@@ -34,8 +34,8 @@ export const ServiceDetail: React.FC = () => {
   const navigate = useNavigate();
 
   const [service, setService] = useState<ServiceData | null>(null);
+  const [seoCards, setSeoCards] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [yoast, setYoast] = useState<WpYoastHeadJson | null>(null);
 
   const routeSlug = id || '';
   const normalizedId = routeSlug ? (serviceIdAliasMap[routeSlug] || routeSlug) : '';
@@ -48,15 +48,22 @@ export const ServiceDetail: React.FC = () => {
     const loadServiceDetail = async () => {
       if (!routeSlug) {
         setService(null);
+        setSeoCards([]);
         setLoading(false);
         return;
       }
 
       try {
-        const staticFallback = servicesData.find((s) => s.id === normalizedId);
+        const staticFallback =
+          servicesData.find((s) => s.id === normalizedId) ||
+          servicesData.find((s) => s.id === routeSlug) ||
+          (routeSlug === 'ai-booking-agents'
+            ? servicesData.find((s) => s.id === 'ai-micro-apps')
+            : undefined);
 
         if (!staticFallback) {
           setService(null);
+          setSeoCards([]);
           setLoading(false);
           return;
         }
@@ -66,9 +73,24 @@ export const ServiceDetail: React.FC = () => {
           fetchServiceRepeatItems(routeSlug),
         ]);
 
-        const wpService = wpServices.find((s) => s.slug === routeSlug);
+        const wpService =
+          wpServices.find((s) => s.slug === routeSlug) ||
+          (routeSlug === 'ai-booking-agents'
+            ? wpServices.find((s) => s.slug === 'ai-micro-apps')
+            : undefined);
 
-        if (wpService?.yoast_head_json) setYoast(wpService.yoast_head_json);
+        const serviceAcf = wpService?.acf as any;
+
+        const cards = [
+          serviceAcf?.seo_card_1_content,
+          serviceAcf?.seo_card_2_content,
+          serviceAcf?.seo_card_3_content,
+          serviceAcf?.seo_card_4_content,
+          serviceAcf?.seo_card_5_content,
+          serviceAcf?.seo_card_6_content,
+        ].filter((card) => card && card.trim() !== '');
+
+        setSeoCards(cards);
 
         const workflow: WorkflowStep[] =
           repeatItems.howItWorks.length > 0
@@ -135,8 +157,15 @@ export const ServiceDetail: React.FC = () => {
       } catch (error) {
         console.error('Error loading service detail:', error);
 
-        const staticFallback = servicesData.find((s) => s.id === normalizedId);
-        setService(staticFallback || null);
+        const staticFallback =
+          servicesData.find((s) => s.id === normalizedId) ||
+          servicesData.find((s) => s.id === routeSlug) ||
+          (routeSlug === 'ai-booking-agents'
+            ? servicesData.find((s) => s.id === 'ai-micro-apps')
+            : undefined);
+
+        setService(staticFallback ? { ...staticFallback, id: routeSlug } : null);
+        setSeoCards([]);
       } finally {
         setLoading(false);
       }
@@ -170,12 +199,13 @@ export const ServiceDetail: React.FC = () => {
     );
   }
 
+  const isBookingAgents = service.id === 'ai-booking-agents';
+
   return (
     <div className="min-h-screen overflow-x-hidden relative selection:bg-primary-DEFAULT selection:text-white">
       <SEO
-        title={yoast?.title || `${service.title} - AI TaskForce Agents`}
-        description={yoast?.description || service.shortDesc}
-        image={yoast?.og_image?.[0]?.url || '/logo-horizontal.png'}
+        title={`${service.title} - AI TaskForce Agents`}
+        description={service.shortDesc}
         keywords={`AI ${service.title}, ${service.title} automation, AI agent, ${routeSlug}`}
         url={`/service/${routeSlug}`}
       />
@@ -183,11 +213,79 @@ export const ServiceDetail: React.FC = () => {
       <ServiceNavigation title={service.title} />
 
       <div className="relative z-10 pt-32 pb-20">
-        <ServiceHero service={service} />
-        <ServiceWorkflow workflow={service.workflow} />
+       <ServiceHero service={service} />
+
+        {/* Use cases FIRST */}
         <ServiceUseCases service={service} />
+
+        {/* Then how it works */}
+        <ServiceWorkflow workflow={service.workflow} />
         <ServiceInterface serviceId={service.id} />
-        <ServiceDossier service={service} />
+
+        {!isBookingAgents && <ServiceDossier service={service} />}
+
+        {seoCards.length > 0 && (
+          <section className="px-6 py-24 relative z-10">
+            <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-primary-DEFAULT/5 rounded-full blur-[100px] pointer-events-none -translate-y-1/2" />
+
+            <div className="container mx-auto max-w-7xl relative">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {seoCards.map((cardContent, index) => {
+                  const isLastOdd =
+                    seoCards.length % 2 === 1 && index === seoCards.length - 1;
+
+                  return (
+                    <div
+                      key={index}
+                      className={
+                        isLastOdd
+                          ? 'md:col-span-2 md:max-w-4xl md:mx-auto md:w-full'
+                          : ''
+                      }
+                    >
+                      <TechPanel
+                        className="p-8 border-white/5 hover:border-primary-DEFAULT/30 transition-colors duration-500 group h-full flex flex-col rounded-2xl"
+                        animateScan={true}
+                      >
+                    <div
+                      className="
+                        relative z-10 flex-1
+
+                        /* TITLE STYLES (GRADIENT BACK) */
+                        [&_h1]:text-3xl [&_h1]:md:text-4xl [&_h1]:font-bold [&_h1]:mb-5
+                        [&_h2]:text-2xl [&_h2]:md:text-3xl [&_h2]:font-bold [&_h2]:mb-5
+
+                        [&_h1]:text-transparent [&_h1]:bg-clip-text [&_h1]:bg-gradient-to-r [&_h1]:from-primary-light [&_h1]:to-accent
+                        [&_h2]:text-transparent [&_h2]:bg-clip-text [&_h2]:bg-gradient-to-r [&_h2]:from-primary-light [&_h2]:to-accent
+
+                        /* SUB HEADINGS */
+                        [&_h3]:text-xl [&_h3]:md:text-2xl [&_h3]:font-semibold [&_h3]:mb-4 [&_h3]:text-primary-light
+                        [&_h4]:text-lg [&_h4]:md:text-xl [&_h4]:font-semibold [&_h4]:mb-3 [&_h4]:text-primary-light
+
+                        /* TEXT */
+                        [&_p]:text-sm [&_p]:md:text-base [&_p]:text-gray-400 [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-justify
+
+                        /* LINKS */
+                        [&_a]:text-primary-light [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-white
+
+                        /* LISTS */
+                        [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_ul]:mb-4
+                        [&_li]:text-sm [&_li]:md:text-base [&_li]:text-gray-400
+
+                        /* STRONG */
+                        [&_strong]:text-white [&_strong]:block [&_strong]:mt-6 [&_strong]:mb-3
+                      "
+                      dangerouslySetInnerHTML={{ __html: cardContent }}
+                    />
+                      </TechPanel>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
         <ServiceCTA />
       </div>
 

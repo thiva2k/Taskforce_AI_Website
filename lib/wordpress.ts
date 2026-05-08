@@ -37,7 +37,10 @@ export interface WpPage {
   slug: string;
   title: WpTitle;
   acf?: Record<string, any>;
-  yoast_head_json?: WpYoastHeadJson;
+}
+
+export interface WpFeaturedMedia {
+  source_url?: string;
 }
 
 export interface WpOffice {
@@ -49,6 +52,9 @@ export interface WpOffice {
     country?: string;
     city?: string;
   };
+  _embedded?: {
+    'wp:featuredmedia'?: WpFeaturedMedia[];
+  };
 }
 
 export interface WpService {
@@ -56,7 +62,6 @@ export interface WpService {
   slug: string;
   title: WpTitle;
   menu_order: number;
-  yoast_head_json?: WpYoastHeadJson;
   acf?: {
     short_description?: string;
     top_use_cases?: string;
@@ -111,10 +116,6 @@ export interface WpTag {
   id: number;
   name: string;
   slug: string;
-}
-
-export interface WpFeaturedMedia {
-  source_url?: string;
 }
 
 export interface WpEmbeddedAuthor {
@@ -203,34 +204,18 @@ const PUBLIC_BLOG_CATEGORY_SLUGS = new Set([
 
 export async function fetchHomePageAcf() {
   const pages = await fetchWp<WpPage[]>(
-    `/pages?slug=home&_fields=id,slug,title,acf,yoast_head_json`
+    `/pages?slug=home&_fields=id,slug,title,acf`
   );
   return pages[0]?.acf ?? {};
 }
 
-export async function fetchHomePage() {
-  const pages = await fetchWp<WpPage[]>(
-    `/pages?slug=home&_fields=id,slug,title,acf,yoast_head_json`
-  );
-  return pages[0] ?? null;
-}
-
-export async function fetchAboutPage() {
-  const pages = await fetchWp<WpPage[]>(
-    `/pages?slug=about&_fields=id,slug,title,acf,yoast_head_json`
-  );
-  return pages[0] ?? null;
-}
-
 export async function fetchOffices() {
-  return fetchWp<WpOffice[]>(
-    `/office?_fields=id,slug,title,menu_order,acf`
-  );
+  return fetchWp<WpOffice[]>(`/office?_embed`);
 }
 
 export async function fetchServices() {
   return fetchWp<WpService[]>(
-    `/service?_fields=id,slug,title,menu_order,acf,yoast_head_json`
+    `/service?_fields=id,slug,title,menu_order,acf`
   );
 }
 

@@ -75,7 +75,7 @@ export const ServiceBackground: React.FC = () => {
       {/* Interactive Noise Layer */}
       <motion.div 
         style={{ x: noiseX, y: noiseY }}
-        className="absolute inset-[-50px] bg-[url('/noise.svg')] opacity-[0.15] mix-blend-overlay brightness-100 contrast-125" 
+        className="absolute inset-[-50px] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] mix-blend-overlay brightness-100 contrast-125" 
       />
       
       {/* Vignette Overlay for Focus */}

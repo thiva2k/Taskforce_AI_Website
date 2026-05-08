@@ -147,7 +147,7 @@ export const ServiceDossier: React.FC<ServiceDossierProps> = ({ service }) => {
                           ${isMetricCard ? 'lg:col-span-2 bg-gradient-to-br from-white/5 to-transparent' : 'lg:col-span-1'}
                         `}
                      >
-                        <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.02]" />
+                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02]" />
                         
                         {/* High-tech corners */}
                         <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />

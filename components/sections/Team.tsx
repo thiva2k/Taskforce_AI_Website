@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { TechPanel } from '../ui/TechPanel';
 import { User, Cpu, Activity, Zap, Eye, Share2, Workflow } from 'lucide-react';
-import { WP_API_BASE } from '../../lib/wordpress';
 
 interface TeamMember {
   name: string;
@@ -27,12 +26,6 @@ interface WpTeamMember {
     name?: string;
     role?: string;
     description?: string;
-  } | any[];
-  meta?: {
-    name?: string;
-    role?: string;
-    description?: string;
-    image_url?: string;
   };
   _embedded?: {
     'wp:featuredmedia'?: Array<{
@@ -57,13 +50,12 @@ const stripHtml = (html: string) => {
 
 export const Team: React.FC = () => {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
-  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
         const response = await fetch(
-          `${WP_API_BASE}/team?_embed`
+          'http://localhost/taskforce/wordpress-6.9.4/wordpress/wp-json/wp/v2/team?_embed'
         );
 
         if (!response.ok) {
@@ -76,35 +68,28 @@ export const Team: React.FC = () => {
           (a, b) => (a.menu_order ?? 0) - (b.menu_order ?? 0)
         );
 
-        const mappedTeam = sortedData.map((member, index) => {
-          // acf can be an object (fields set) or empty array (no ACF config)
-          const acf = Array.isArray(member.acf) ? {} : (member.acf ?? {});
-          const meta = member.meta ?? {};
-          return {
-            name: decodeHtml(
-              acf.name || meta.name ||
+        const mappedTeam = sortedData.map((member, index) => ({
+          name: decodeHtml(
+            member.acf?.name ||
               member.title?.rendered ||
               'Unnamed Member'
-            ),
-            role: decodeHtml(acf.role || meta.role || ''),
-            description: decodeHtml(
-              acf.description || meta.description ||
+          ),
+          role: decodeHtml(member.acf?.role || ''),
+          description: decodeHtml(
+            member.acf?.description ||
               stripHtml(member.content?.rendered || '')
-            ),
-            icon: teamIcons[index % teamIcons.length],
-            image:
-              member._embedded?.['wp:featuredmedia']?.[0]?.source_url ||
-              meta.image_url ||
-              '/images/team/default-member.png',
-            delay: index * 0.1,
-            order: member.menu_order ?? 0,
-          };
-        });
+          ),
+          icon: teamIcons[index % teamIcons.length],
+          image:
+            member._embedded?.['wp:featuredmedia']?.[0]?.source_url ||
+            '/images/team/default-member.png',
+          delay: index * 0.1,
+          order: member.menu_order ?? 0,
+        }));
 
         setTeamMembers(mappedTeam);
       } catch (error) {
         console.error('Error fetching team members:', error);
-        setError(true);
       }
     };
 
@@ -125,11 +110,6 @@ export const Team: React.FC = () => {
         </p>
       </div>
 
-      {teamMembers.length === 0 ? (
-        <div className="text-center py-16 text-gray-500 font-mono text-sm tracking-widest">
-          {error ? '[ TEAM DATA TEMPORARILY UNAVAILABLE ]' : '[ LOADING TEAM... ]'}
-        </div>
-      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {teamMembers.map((member, index) => (
           <motion.div
@@ -186,7 +166,6 @@ export const Team: React.FC = () => {
           </motion.div>
         ))}
       </div>
-      )}
     </section>
   );
 };

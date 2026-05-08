@@ -184,7 +184,7 @@
           }
         ]
       },
-      "voice-agents": {
+      "ai-voice-agents": {
         "title": "وكلاء الصوت",
         "shortDesc": "ذكاء اصطناعي للمحادثة يتعامل مع التفاعلات الهاتفية بأصوات طبيعية تشبه البشر.",
         "fullDesc": "وكلاء الصوت بالذكاء الاصطناعي هي أنظمة ذكاء اصطناعي للمحادثة تتعامل مع التفاعلات الهاتفية بأصوات طبيعية تشبه البشر. إنهم يفهمون السياق، ويستجيبون بذكاء، ويندمجون بسلاسة مع أنظمة عملك لاتخاذ إجراءات أثناء المحادثات - سواء الرد على المكالمات الواردة أو إجراء مكالمات صادرة نيابة عنك. لا تفوت مكالمة مرة أخرى مع توفر 24/7، وحوّل المزيد من العملاء المحتملين مع أوقات استجابة فورية، وخفض تكاليف التوظيف مع تحسين جودة الخدمة.",
@@ -847,8 +847,8 @@
   "book_demo": {
     "abort": "Abort Mission",
     "secure_connection": "SECURE_CONNECTION_ESTABLISHED",
-    "title_prefix": "Initialize",
-    "title_suffix": "Deployment.",
+    "title_prefix": "Schedule",
+    "title_suffix": "a Strategy Audit & Discovery",
     "subtitle": "Schedule a high-velocity strategy session. Our AI Architects will map your infrastructure and identify automation vectors.",
     "features": {
       "duration": "30 Minutes",

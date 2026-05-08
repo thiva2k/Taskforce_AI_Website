@@ -440,7 +440,7 @@ async function seedHomePage(t) {
   const heroTitle = 'We build Multi-language AI Agents for Every Organization.';
 
   // Process section title: "Systematic <1/> <2/>" + "Transformation." → "Systematic Transformation."
-  const processTitle = 'Systematic Transformation.';
+  const processTitle = "We Don't Just Build AI Automations - We Map, Design, Test, Deploy and Optimise Them.Here's How.";
 
   // CTA content
   const ctaTitle = stripTags(t.cta.title) + ' ' + t.cta.title_highlight;

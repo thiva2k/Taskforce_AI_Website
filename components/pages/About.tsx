@@ -9,7 +9,6 @@ import { TechPanel } from '../ui/TechPanel';
 import { GlitchButton } from '../ui/GlitchButton';
 import { useTranslation } from 'react-i18next';
 import { Team } from '../sections/Team';
-import { fetchAboutPage, WpYoastHeadJson } from '../../lib/wordpress';
 
 
 interface AboutAcfData {
@@ -45,6 +44,10 @@ interface AboutAcfData {
   cta_buttonlink2?: string;
 }
 
+interface WpPageResponse {
+  acf?: AboutAcfData;
+}
+
 const decodeHtml = (text: string) => {
   const txt = document.createElement('textarea');
   txt.innerHTML = text;
@@ -54,7 +57,6 @@ const decodeHtml = (text: string) => {
 export const About: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [yoast, setYoast] = useState<WpYoastHeadJson | null>(null);
 
   const [aboutData, setAboutData] = useState<AboutAcfData>({
     section_tagline: t('about.architects'),
@@ -95,14 +97,20 @@ export const About: React.FC = () => {
   });
 
   useEffect(() => {
-    const loadAboutPage = async () => {
+    const fetchAboutPage = async () => {
       try {
-        const page = await fetchAboutPage();
+        const response = await fetch(
+          'http://localhost/taskforce/wordpress-6.9.4/wordpress/wp-json/wp/v2/pages?slug=about'
+        );
 
-        if (page?.yoast_head_json) setYoast(page.yoast_head_json);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch about page: ${response.status}`);
+        }
 
-        if (page?.acf) {
-          const acf = page.acf as AboutAcfData;
+        const data: WpPageResponse[] = await response.json();
+
+        if (data.length > 0 && data[0].acf) {
+          const acf = data[0].acf;
 
           setAboutData({
             section_tagline: decodeHtml(acf.section_tagline || t('about.architects')),
@@ -142,7 +150,7 @@ export const About: React.FC = () => {
       }
     };
 
-    loadAboutPage();
+    fetchAboutPage();
   }, [t]);
 
   const augmentationParagraphs = aboutData.augmentation_description
@@ -217,9 +225,8 @@ export const About: React.FC = () => {
   return (
     <div className="min-h-screen overflow-x-hidden selection:bg-primary-DEFAULT selection:text-white relative">
       <SEO
-        title={yoast?.title || t('about.title')}
-        description={yoast?.description || t('about.desc')}
-        image={yoast?.og_image?.[0]?.url || '/logo-horizontal.png'}
+        title={t('about.title')}
+        description={t('about.desc')}
         url="/about"
       />
 
@@ -414,7 +421,7 @@ export const About: React.FC = () => {
 
         <section className="container mx-auto px-6 mb-32 relative">
           <TechPanel className="rounded-[2.5rem] bg-[#0F1115] overflow-hidden relative" animateScan={false}>
-            <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03]" />
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03]" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white/10">
               {stats.map((stat, i) => (
                 <div key={i} className="p-10 text-center hover:bg-white/[0.02] transition-colors group">

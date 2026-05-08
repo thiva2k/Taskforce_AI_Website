@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import { useTranslation } from 'react-i18next';
@@ -11,12 +11,26 @@ import { Contact } from './components/pages/Contact';
 import { About } from './components/pages/About';
 import { Blog } from './components/pages/Blog';
 import { BlogPost } from './components/pages/BlogPost';
+import { AdminLogin } from './components/admin/AdminLogin';
+import { AdminDashboard } from './components/admin/AdminDashboard';
+import { BlogEditor } from './components/admin/BlogEditor';
+import { ProtectedRoute } from './components/admin/ProtectedRoute';
 import { LoadingScreen } from './components/ui/LoadingScreen';
 import { GlobalSpotlight } from './components/ui/GlobalSpotlight';
 import { InteractiveBackground } from './components/ui/InteractiveBackground';
 import { TechScrollIndicator } from './components/ui/TechScrollIndicator';
 import { LanguagePopup } from './components/ui/LanguagePopup';
 import Chatbot from './components/ui/Chatbot';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -44,6 +58,8 @@ function App() {
   return (
     <HelmetProvider>
       <Router>
+        <ScrollToTop />
+
         <div className="text-white min-h-screen selection:bg-primary-DEFAULT selection:text-white relative">
           <InteractiveBackground />
           <GlobalSpotlight />
@@ -67,6 +83,32 @@ function App() {
                   <Route path="/about" element={<About />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
+
+                  <Route path="/admin/login" element={<AdminLogin />} />
+                  <Route
+                    path="/admin/dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <AdminDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/new"
+                    element={
+                      <ProtectedRoute>
+                        <BlogEditor />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/edit/:id"
+                    element={
+                      <ProtectedRoute>
+                        <BlogEditor />
+                      </ProtectedRoute>
+                    }
+                  />
                 </Routes>
               </main>
 

@@ -81,7 +81,7 @@ export const CTA: React.FC = () => {
           <div className="absolute -inset-[1px] bg-gradient-to-r from-transparent via-primary-DEFAULT/40 to-transparent rounded-[2rem] md:rounded-[3rem] opacity-70 blur-sm group-hover:opacity-100 transition-opacity duration-700" />
 
           <div className="relative rounded-[2rem] md:rounded-[3rem] bg-[#0A0A0A]/60 backdrop-blur-2xl border border-white/5 overflow-hidden p-8 md:p-24 text-center shadow-2xl">
-            <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03] mix-blend-overlay" />
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay" />
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] opacity-20 pointer-events-none" />
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-1/2 bg-gradient-to-b from-primary-DEFAULT/10 to-transparent blur-[80px] pointer-events-none" />
 

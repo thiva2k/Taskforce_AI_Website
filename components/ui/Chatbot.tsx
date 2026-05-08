@@ -32,14 +32,19 @@ const Chatbot = () => {
 
       ce.detail.config.clientTools = {
         contact_hq: ({ url }: { url?: string }) => {
-          setTimeout(() => {
-            window.location.href = url || CONTACT_URL;
-          }, 1200);
+          const link = url || CONTACT_URL;
+
+          return {
+            message: `You can contact our team here:\n\n[Contact TaskForce AI](${link})\n\nOur team can help with requirements, pricing, integrations, and custom AI solutions.`,
+          };
         },
+
         book_demo: ({ url }: { url?: string }) => {
-          setTimeout(() => {
-            window.location.href = url || BOOK_DEMO_URL;
-          }, 1200);
+          const link = url || BOOK_DEMO_URL;
+
+          return {
+            message: `You can book a live demo here:\n\n[Book a Deployment Session](${link})\n\nWe’ll walk you through how TaskForce AI can fit your workflow.`,
+          };
         },
       };
     };

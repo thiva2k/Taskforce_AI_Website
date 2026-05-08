@@ -245,7 +245,9 @@ export const BookDemo: React.FC = () => {
       throw new Error('Please select a date and time.');
     }
 
-    const selected_date = selectedDate.toISOString().split('T')[0];
+   const selected_date = selectedDate.getFullYear() + "-" +
+  String(selectedDate.getMonth() + 1).padStart(2, "0") + "-" +
+  String(selectedDate.getDate()).padStart(2, "0");
 
     const payload = {
       full_name: form.full_name.trim(),
@@ -360,15 +362,14 @@ export const BookDemo: React.FC = () => {
                 className="mb-10"
               >
                 <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 tracking-tighter leading-none">
-                  {t('book_demo.title_prefix', 'Initialize')} <br />
+                  {t('book_demo.title_prefix', 'Schedule ')} <br />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light to-accent">
                     <ScrambleText
-                      text={t('book_demo.title_suffix', 'Deployment.')}
+                      text={t('book_demo.title_suffix', 'a Strategy Audit & Discovery.')}
                       startDelay={500}
                     />
                   </span>
                 </h1>
-
                 <p className="text-gray-400 leading-relaxed mb-8 text-base md:text-lg">
                   {t(
                     'book_demo.subtitle',

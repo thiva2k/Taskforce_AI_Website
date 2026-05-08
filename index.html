@@ -2,16 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo-icon.png" />
-
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JXMR6RRSXK"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-JXMR6RRSXK');
-    </script>
+    <link rel="icon" type="image/png" href="/Logo_Files/Taskforce Ai logo - Favicon/Taskforce-Ai-logo---Favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
@@ -24,17 +15,17 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://taskforceai.tech/">
+    <meta property="og:url" content="https://aitaskforce.com/">
     <meta property="og:title" content="TaskForce AI - Intelligent Automation Agents">
     <meta property="og:description" content="Deploy autonomous AI agents to automate workflows, voice calls, document processing, and business intelligence. Scale your workforce instantly.">
-    <meta property="og:image" content="https://taskforceai.tech/og-image.jpg">
+    <meta property="og:image" content="https://aitaskforce.com/og-image.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://taskforceai.tech/">
+    <meta property="twitter:url" content="https://aitaskforce.com/">
     <meta property="twitter:title" content="TaskForce AI - Intelligent Automation Agents">
     <meta property="twitter:description" content="Deploy autonomous AI agents to automate workflows, voice calls, document processing, and business intelligence. Scale your workforce instantly.">
-    <meta property="twitter:image" content="https://taskforceai.tech/og-image.jpg">
+    <meta property="twitter:image" content="https://aitaskforce.com/og-image.jpg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,16 +46,16 @@
             },
             colors: {
               primary: {
-                DEFAULT: '#0066FF', // Electric Blue
+                DEFAULT: '#0066FF',
                 dark: '#0052CC',
                 light: '#3387FF'
               },
               secondary: {
-                DEFAULT: '#7C3AED', // Deep Purple
+                DEFAULT: '#7C3AED',
                 dark: '#6328BE'
               },
               accent: {
-                DEFAULT: '#06B6D4', // Cyber Cyan
+                DEFAULT: '#06B6D4',
               },
               dark: {
                 bg: '#0A0A0A',
@@ -101,16 +92,38 @@
         }
       }
     </script>
+
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react/jsx-runtime": "https://esm.sh/react@18.2.0/jsx-runtime",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client?deps=react@18.2.0",
+    "react-dom": "https://esm.sh/react-dom@18.2.0?deps=react@18.2.0",
+    "framer-motion": "https://esm.sh/framer-motion@10.16.4?deps=react@18.2.0,react-dom@18.2.0",
+    "lucide-react": "https://esm.sh/lucide-react@0.294.0?deps=react@18.2.0",
+    "react-router-dom": "https://esm.sh/react-router-dom@6.20.0?deps=react@18.2.0,react-dom@18.2.0",
+    "react-router": "https://esm.sh/react-router@6.20.0?deps=react@18.2.0",
+    "@remix-run/router": "https://esm.sh/@remix-run/router@1.13.0",
+    "lottie-react": "https://esm.sh/lottie-react@2.4.0?deps=react@18.2.0",
+    "react-helmet-async": "https://esm.sh/react-helmet-async@2.0.4?deps=react@18.2.0,react-dom@18.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+  }
+}
+</script>
+
     
-  <link rel="stylesheet" href="/index.css">
-</head>
+  </head>
   <body>
     <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
+
+    <script type="module" src="/src/index.tsx"></script>
+
     <script
       src="https://unpkg.com/@elevenlabs/convai-widget-embed"
       async
       type="text/javascript"
     ></script>
-</body>
+  </body>
 </html>

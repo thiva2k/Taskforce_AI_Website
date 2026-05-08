@@ -28,6 +28,7 @@ export const Header: React.FC = () => {
   const isServicePage = location.pathname.startsWith('/service/');
   const isBookingPage = location.pathname === '/book-demo';
   const isContactPage = location.pathname === '/contact';
+  const isAdminPage = location.pathname.startsWith('/admin');
 
   const navItems = [
     { label: t('nav.solutions'), id: 'solutions', path: '/' },
@@ -83,7 +84,7 @@ export const Header: React.FC = () => {
     i18n.changeLanguage(lng);
   };
 
-  if (isServicePage || isBookingPage || isContactPage) {
+  if (isServicePage || isBookingPage || isContactPage || isAdminPage) {
     return null;
   }
 
@@ -221,7 +222,7 @@ export const Header: React.FC = () => {
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute top-[-10%] right-[-10%] w-80 h-80 bg-primary-DEFAULT/20 rounded-full blur-[100px]" />
               <div className="absolute bottom-[-10%] left-[-10%] w-80 h-80 bg-secondary-DEFAULT/20 rounded-full blur-[100px]" />
-              <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05]" />
+              <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05]" />
             </div>
 
             <div className="container mx-auto px-6 h-full flex flex-col justify-center relative z-10 pt-20">

@@ -122,8 +122,8 @@ export const servicesData: ServiceData[] = [
     secondaryButtonLink: "/contact"
   },
   {
-    id: "voice-agents",
-    title: "Voice Agents",
+    id: "ai-voice-agents",
+    title: "AI Voice Agents",
     icon: Headphones,
     shortDesc: "Conversational AI that handles phone interactions with natural, human-like voices.",
     fullDesc: "AI Voice Agents are conversational AI systems that handle phone interactions with natural, human-like voices. They understand context, respond intelligently, and seamlessly integrate with your business systems to take action during conversations—both answering incoming calls and making outbound calls on your behalf. Never miss a call again with 24/7 availability, convert more leads with instant response times, reduce staffing costs while improving service quality.",
@@ -204,8 +204,8 @@ export const servicesData: ServiceData[] = [
     secondaryButtonLink: "/contact"
   },
   {
-    id: "document-processing",
-    title: "Document Processing",
+    id: "ai-document-processing",
+    title: "AI Document Processing",
     icon: FileText,
     shortDesc: "Extract, validate, and input data from documents with perfect accuracy.",
     fullDesc: "AI Document Processing Agents automatically extract, validate, and input data from your business documents directly into your systems. These agents read invoices, receipts, forms, and contracts like a human would—but with perfect accuracy and at lightning speed—while following your specific business policies and procedures. Eliminate manual data entry completely, achieve 99%+ accuracy, and process documents in seconds instead of hours.",
@@ -368,8 +368,8 @@ export const servicesData: ServiceData[] = [
     secondaryButtonLink: "/contact"
   },
   {
-    id: "custom-software",
-    title: "Custom Software",
+    id: "custom-ai-software",
+    title: "Custom AI Software",
     icon: Code2,
     shortDesc: "Tailor-built applications designed specifically for your unique business needs.",
     fullDesc: "Custom Software solutions are tailor-built applications designed specifically for your unique business needs—from simple automation tools to complete SaaS platforms. Using AI-assisted development, we build exactly what you need, how you need it, integrated seamlessly with your existing systems and workflows. Get software that fits your business perfectly, accelerate timelines, and own your solution completely with no ongoing licensing fees.",
@@ -450,11 +450,11 @@ export const servicesData: ServiceData[] = [
     secondaryButtonLink: "/contact"
   },
   {
-    id: "ai-micro-apps",
-    title: "AI Micro Apps",
+    id: "ai-booking-agents",
+    title: "AI Booking Agents",
     icon: AppWindow,
     shortDesc: "User-friendly interfaces that put powerful automation in the hands of your team.",
-    fullDesc: "AI Micro Apps are user-friendly interfaces that put powerful automation in the hands of your entire team. These lightweight applications provide simple forms, dashboards, upload portals, and approval systems that trigger complex AI workflows behind the scenes—no technical knowledge required to use them. Empower non-technical staff to leverage powerful automation, eliminate email-based approval processes, and bridge the gap between complex automation and everyday users.",
+    fullDesc: "AI Booking Agents are user-friendly interfaces that put powerful automation in the hands of your entire team. These lightweight applications provide simple forms, dashboards, upload portals, and approval systems that trigger complex AI workflows behind the scenes—no technical knowledge required to use them. Empower non-technical staff to leverage powerful automation, eliminate email-based approval processes, and bridge the gap between complex automation and everyday users.",
     features: [
       { title: "User Friendly", description: "Simple interfaces that put automation in the hands of the entire team." },
       { title: "Lightweight", description: "Fast forms, dashboards, and portals without bloat." },

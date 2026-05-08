@@ -44,9 +44,6 @@ export const Blog: React.FC = () => {
 
         const posts = await fetchBlogPosts();
 
-        console.log('BLOG POSTS FETCHED:', posts);
-        console.log('BLOG POSTS COUNT:', posts.length);
-
         if (mounted) {
           setAllPosts(Array.isArray(posts) ? posts : []);
         }
@@ -119,19 +116,25 @@ export const Blog: React.FC = () => {
               <span>{t('blog.transmission_log')}</span>
             </motion.div>
 
-            <motion.h1
+            {/* ✅ MODIFIED TITLE */}
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tighter"
+              className="mb-6"
             >
-              {t('blog.hero_title')} <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">
-                <ScrambleText text={t('blog.hero_scramble')} startDelay={500} />
-              </span>
-            </motion.h1>
+              <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter leading-tight">
+                AI Agents & Business Automation
+              </h2>
+
+              <h3 className="text-lg md:text-2xl font-semibold text-primary-light mt-2 leading-relaxed">
+                Insights, Guides & Case Studies
+              </h3>
+            </motion.div>
+
           </div>
         </section>
+
 
         <section className="container mx-auto px-6 mb-12">
           <div className="flex flex-wrap gap-2 md:gap-4 border-b border-white/10 pb-6">
@@ -227,7 +230,7 @@ export const Blog: React.FC = () => {
                             <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
                           )}
 
-                          <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none" />
+                          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none" />
 
                           <div className="absolute top-4 left-4 z-10 flex gap-2">
                             <span className="px-3 py-1 rounded-full bg-black/40 backdrop-blur-md text-[10px] font-mono text-white border border-white/10">
@@ -289,7 +292,7 @@ export const Blog: React.FC = () => {
             className="rounded-[2.5rem] bg-[#0F1115] overflow-hidden p-12 md:p-20 text-center"
             animateScan={false}
           >
-            <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03]" />
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03]" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary-DEFAULT/5 blur-[100px] rounded-full pointer-events-none" />
 
             <div className="relative z-10 max-w-2xl mx-auto">

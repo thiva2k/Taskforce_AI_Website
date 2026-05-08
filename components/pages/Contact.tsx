@@ -36,6 +36,8 @@ export const Contact: React.FC = () => {
     form_id: uniqueFormId,
   });
 
+  const [submittedEmail, setSubmittedEmail] = useState('');
+
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
@@ -46,6 +48,7 @@ export const Contact: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmittedEmail(formData.email.trim());
     setIsSending(true);
     setSubmitError('');
 
@@ -171,8 +174,51 @@ export const Contact: React.FC = () => {
                   </Trans>
                 </p>
               </TechPanel>
-            </div>
+          
 
+<div className="mt-6 rounded-2xl overflow-hidden border border-white/10 bg-dark-surface/60 backdrop-blur-xl">
+
+<div className="mt-6 relative rounded-2xl overflow-hidden border border-white/10">
+
+  {/* 🗺️ MAP */}
+<iframe
+  src="https://maps.google.com/maps?q=Taskforce+AI+Voice+Agents+Sri+Lanka&hl=en&z=16&t=k&output=embed"
+  width="100%"
+  height="420"
+  style={{ border: 0 }}
+  loading="lazy"
+  className="w-full"
+/>
+
+  {/* ⚪ WHITE CARD OVERLAY */}
+  <div className="absolute top-4 left-4 z-10 w-[300px] bg-white text-black rounded-xl shadow-lg p-4 border border-gray-200">
+    
+    <div className="flex justify-between items-start">
+      <div>
+        <h3 className="font-semibold text-sm">
+          Taskforce AI Voice Agents Sri Lanka
+        </h3>
+        <p className="text-xs text-gray-600 mt-1">
+          Business Automation | Whatsapp Chatbot
+        </p>
+      </div>
+    </div>
+
+    <p className="text-xs text-gray-700 mt-3">
+      72/1/1 Unit A Temple Rd,<br />
+      Sri Jayawardenepura Kotte 11222
+    </p>
+
+    <p className="text-xs text-gray-400 mt-2">
+      No reviews
+    </p>
+  </div>
+
+</div>
+
+</div>
+            </div>
+             
             <div className="lg:col-span-7 order-1 lg:order-2">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -297,20 +343,15 @@ export const Contact: React.FC = () => {
                           </h3>
 
                           <p className="text-gray-400 mb-8 max-w-md">
-                            <Trans
-                              i18nKey="contact.success.desc"
-                              values={{
-                                agent: targetAgent ? targetAgent.title : 'General Inquiry',
-                                email: formData.email,
-                              }}
-                            >
-                              Our systems have logged your inquiry. An automated briefing
-                              document regarding{' '}
-                              <span className="text-white">
-                                {targetAgent ? targetAgent.title : 'General Inquiry'}
-                              </span>{' '}
-                              has been dispatched to {formData.email}.
-                            </Trans>
+                            Our systems have logged your inquiry. An automated briefing
+                            document regarding{' '}
+                            <span className="text-white">
+                              {targetAgent ? targetAgent.title : 'General Inquiry'}
+                            </span>{' '}
+                            has been dispatched to{' '}
+                            <span className="text-primary-light font-medium">
+                              {submittedEmail}
+                            </span>.
                           </p>
 
                           <div className="text-xs font-mono text-gray-600 mb-6 bg-white/5 px-4 py-2 rounded-lg">
@@ -324,6 +365,9 @@ export const Contact: React.FC = () => {
                       )}
                     </AnimatePresence>
                   </div>
+                  
+
+                  
                 </TechPanel>
               </motion.div>
             </div>

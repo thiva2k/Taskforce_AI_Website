@@ -75,12 +75,6 @@ const iconMap: Record<string, LucideIcon> = {
   app: AppWindow,
 };
 
-const decodeHtmlEntities = (text: string) => {
-  const textarea = document.createElement('textarea');
-  textarea.innerHTML = text;
-  return textarea.value;
-};
-
 export const Services: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -94,18 +88,26 @@ export const Services: React.FC = () => {
 
         const mapped = services
           .sort((a, b) => (a.menu_order ?? 0) - (b.menu_order ?? 0))
-          .map((service: WpService, index) => ({
-            id: service.slug,
-            title: decode(service.title.rendered),
-            icon: iconMap[service.acf?.icon_name?.toLowerCase?.() || ''] || Bot,
-            shortDesc: service.acf?.short_description || '',
-            useCasesList: parseCommaList(service.acf?.top_use_cases).slice(0, 3),
-            buttonText: service.acf?.button_text || t('services.full_spec'),
-            buttonLink: service.acf?.button_link || `/service/${service.slug}`,
-            statusText: service.acf?.status_text || t('services.online'),
-            unitCode: service.acf?.unit_code || `UNIT-${String(index + 1).padStart(2, '0')}`,
-            order: service.menu_order ?? index + 1,
-          }));
+          .map((service: WpService, index) => {
+            const isBookingAgents =
+              service.slug === 'ai-booking-agents' ||
+              decode(service.title.rendered).toLowerCase().includes('booking agent');
+
+            return {
+              id: isBookingAgents ? 'ai-booking-agents' : service.slug,
+              title: decode(service.title.rendered),
+              icon: iconMap[service.acf?.icon_name?.toLowerCase?.() || ''] || Bot,
+              shortDesc: service.acf?.short_description || '',
+              useCasesList: parseCommaList(service.acf?.top_use_cases).slice(0, 3),
+              buttonText: service.acf?.button_text || t('services.full_spec'),
+              buttonLink: isBookingAgents
+                ? '/service/ai-booking-agents'
+                : service.acf?.button_link || `/service/${service.slug}`,
+              statusText: service.acf?.status_text || t('services.online'),
+              unitCode: service.acf?.unit_code || `UNIT-${String(index + 1).padStart(2, '0')}`,
+              order: service.menu_order ?? index + 1,
+            };
+          });
 
         setServicesData(mapped);
       } catch (error) {
@@ -311,9 +313,19 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, index, onNavigate })
               </div>
             </div>
 
-            <h3 className="text-xl md:text-2xl font-bold mb-4 text-white tracking-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-primary-light transition-all duration-300">
-              {service.title}
-            </h3>
+<h2 className="
+  text-3xl md:text-4xl
+  font-bold mb-4
+  text-white tracking-tight leading-tight
+  group-hover:text-transparent 
+  group-hover:bg-clip-text 
+  group-hover:bg-gradient-to-r 
+  group-hover:from-white 
+  group-hover:to-primary-light 
+  transition-all duration-300
+">
+  {service.title}
+</h2>
 
             <p className="text-gray-400 text-sm leading-relaxed mb-8 line-clamp-3 group-hover:text-gray-300 transition-colors font-light">
               {service.shortDesc}
@@ -333,12 +345,41 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, index, onNavigate })
             </div>
 
             <div className="pt-6 border-t border-white/5 flex items-center justify-between group/btn">
-              <div className="px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-primary-DEFAULT/10 border border-primary-DEFAULT/20 group-hover:bg-primary-DEFAULT group-hover:text-white transition-all duration-300">
-                <span className="text-xs md:text-sm font-bold text-primary-light group-hover:text-white flex items-center gap-2 transition-colors">
-                  {service.buttonText || t('services.full_spec')}
-                </span>
-              </div>
-              <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center bg-white/5 group-hover:bg-primary-DEFAULT group-hover:border-primary-DEFAULT group-hover:text-white transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(0,102,255,0.4)]">
+          <motion.div
+  whileHover={{ scale: 1.08 }}
+  whileTap={{ scale: 0.95 }}
+  className="
+    relative px-4 py-2 md:px-5 md:py-2.5
+    rounded-full
+    font-bold text-xs md:text-sm
+    flex items-center gap-2
+    cursor-pointer
+    overflow-hidden
+    transition-all duration-300
+    text-white
+
+    bg-gradient-to-r 
+    from-[#0066FF] 
+    via-[#3B82F6] 
+    to-[#60A5FA]
+
+    shadow-[0_0_12px_rgba(0,102,255,0.35)]
+    hover:shadow-[0_0_25px_rgba(0,102,255,0.7)]
+  "
+>
+  {/* 🔵 Soft inner glow */}
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15),transparent_70%)] opacity-0 hover:opacity-100 transition duration-500" />
+
+  {/* ✨ Moving shine */}
+  <div className="absolute inset-0 -skew-x-12 translate-x-[-150%] hover:translate-x-[150%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+
+  {/* TEXT */}
+  <span className="relative z-10 flex items-center gap-2 tracking-wide">
+    {service.buttonText || t('services.full_spec')}
+    <ArrowRight className="w-4 h-4" />
+  </span>
+</motion.div>
+                  <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center bg-white/5 group-hover:bg-primary-DEFAULT group-hover:border-primary-DEFAULT group-hover:text-white transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(0,102,255,0.4)]">
                 <ArrowRight className="w-5 h-5 -rotate-45 group-hover/btn:rotate-0 transition-transform duration-300" />
               </div>
             </div>

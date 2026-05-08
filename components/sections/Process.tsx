@@ -52,7 +52,7 @@ export const Process: React.FC = () => {
 
   const [header, setHeader] = useState({
     badge: t('process.subtitle'),
-    title: 'Systematic',
+    title: "We Don't Just Build AI Automations - We Map, Design, Test, Deploy and Optimise Them.Here's How. ",
     description: t('process.description'),
   });
 
@@ -68,7 +68,7 @@ export const Process: React.FC = () => {
 
         setHeader({
           badge: decode(homeAcf.process_section_badge || t('process.subtitle')),
-          title: decode(homeAcf.process_section_title || 'Systematic'),
+          title: decode(homeAcf.process_section_title || "We Don't Just Build AI Automations - We Map, Design, Test, Deploy and Optimise Them.Here's How."),
           description: decode(homeAcf.process_section_description || t('process.description')),
         });
 
@@ -118,9 +118,36 @@ export const Process: React.FC = () => {
               </span>
             </motion.div>
 
-            <h2 className="text-4xl md:text-6xl font-bold leading-tight tracking-tight text-white">
-              {header.title}
-            </h2>
+{(() => {
+  const splitIndex = header.title.indexOf("-");
+
+  if (splitIndex === -1) {
+    return (
+      <h2 className="text-4xl md:text-6xl font-bold leading-tight tracking-tight text-white">
+        {header.title}
+      </h2>
+    );
+  }
+
+  const main = header.title.substring(0, splitIndex).trim();
+  const sub = header.title.substring(splitIndex + 1).trim();
+
+  return (
+    <div className="flex flex-col gap-3">
+      
+      {/* BIG PART */}
+      <h2 className="text-4xl md:text-6xl font-bold leading-tight tracking-tight text-white">
+        {main}
+      </h2>
+
+      {/* SMALL PART (BLUE) */}
+      <h3 className="text-lg md:text-2xl font-semibold text-primary-light leading-relaxed">
+        {sub}
+      </h3>
+
+    </div>
+  );
+})()}
           </div>
 
           <div className="lg:w-1/2 pb-2">
@@ -168,7 +195,7 @@ export const Process: React.FC = () => {
 
               <div className="relative bg-white/5 rounded-[1.8rem] p-6 md:p-12 flex flex-col md:flex-row items-center gap-6 md:gap-10 overflow-hidden">
                 {/* Animated Background Mesh */}
-                <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03]" />
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03]" />
                 <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary-DEFAULT/10 rounded-full blur-[80px]" />
 
                 <div className="w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 flex items-center justify-center relative shadow-2xl group-hover:scale-105 transition-transform duration-500 shrink-0">

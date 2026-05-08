@@ -1,5 +1,7 @@
 html {
   scroll-behavior: smooth;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #2A2A2A #0A0A0A; /* Firefox */
 }
 
 body {
@@ -8,19 +10,22 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - Chrome, Edge, Safari */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 30px; /* Make the vertical scrollbar thicker */
 }
+
 ::-webkit-scrollbar-track {
-  background: #0A0A0A;
+  background: #0A0A0A; /* Track color */
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #2A2A2A;
-  border-radius: 4px;
+  background: #2A2A2A; /* Thumb color */
+  border-radius: 8px; /* Round the edges */
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #0066FF;
+  background: #0066FF; /* Hover effect color */
 }
 
 /* Selection Color */
