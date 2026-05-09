@@ -31,7 +31,7 @@ export const Header: React.FC = () => {
   const isAdminPage = location.pathname.startsWith('/admin');
 
   const navItems = [
-    { label: 'Home', href: '/' },
+    { label: 'Home', id: 'home', path: '/' },
     { label: t('nav.solutions'), id: 'solutions', path: '/' },
     { label: t('nav.about'), id: 'about', path: '/about' },
     { label: t('nav.contact'), id: 'contact', path: '/contact' }
