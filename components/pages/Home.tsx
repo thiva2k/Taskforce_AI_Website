@@ -109,7 +109,7 @@ export const Home: React.FC = () => {
         <Footer />
       </div>
 
-      <Tour />
+      
       <LanguagePopup />
     </div>
   );
