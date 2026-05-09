@@ -38,48 +38,70 @@ export const Header: React.FC = () => {
   ];
 
   const handleNavClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    item: (typeof navItems)[0]
-  ) => {
-    e.preventDefault();
+  e: React.MouseEvent<HTMLAnchorElement>,
+  item: (typeof navItems)[0]
+) => {
+  e.preventDefault();
 
-    if (item.path !== '/') {
-      navigate(item.path);
-      setMobileMenuOpen(false);
-      return;
+  // ABOUT / CONTACT pages
+  if (item.path !== '/') {
+    navigate(item.path);
+    setMobileMenuOpen(false);
+    return;
+  }
+
+  // HOME button
+  if (item.id === 'home') {
+    if (location.pathname !== '/') {
+      navigate('/');
     }
 
-    if (isHome) {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+
+    setMobileMenuOpen(false);
+    return;
+  }
+
+  // SOLUTIONS section
+  if (isHome) {
+    const element = document.getElementById(item.id);
+
+    if (element) {
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition =
+        elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  } else {
+    navigate('/');
+
+    setTimeout(() => {
       const element = document.getElementById(item.id);
+
       if (element) {
         const headerOffset = 80;
         const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        const offsetPosition =
+          elementPosition + window.pageYOffset - headerOffset;
 
         window.scrollTo({
           top: offsetPosition,
           behavior: 'smooth'
         });
       }
-    } else {
-      navigate('/');
-      setTimeout(() => {
-        const element = document.getElementById(item.id);
-        if (element) {
-          const headerOffset = 80;
-          const elementPosition = element.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    }, 500);
+  }
 
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
-      }, 100);
-    }
-
-    setMobileMenuOpen(false);
-  };
+  setMobileMenuOpen(false);
+};
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
