@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ScrambleText } from '../ui/ScrambleText';
 import { GlitchButton } from '../ui/GlitchButton';
-import { SystemLog } from '../ui/SystemLog';
+//import { SystemLog } from '../ui/SystemLog';
 import { Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -165,14 +165,14 @@ export const Hero: React.FC = () => {
             <Zap className="w-3 h-3 text-accent group-hover:text-white transition-colors shrink-0 relative z-10" />
           </motion.div>
 
-          <motion.div
+          {/*<motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5, duration: 1 }}
             className="absolute right-4 bottom-24 md:right-10 md:bottom-32 hidden lg:block"
           >
             <SystemLog />
-          </motion.div>
+          </motion.div> */}
 
           <motion.h1
             style={{
