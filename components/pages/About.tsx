@@ -99,9 +99,8 @@ export const About: React.FC = () => {
   useEffect(() => {
     const fetchAboutPage = async () => {
       try {
-        const response = await fetch(
-          'http://localhost/taskforce/wordpress-6.9.4/wordpress/wp-json/wp/v2/pages?slug=about'
-        );
+        const wpApi = import.meta.env.VITE_WP_API;
+        const response = await fetch(`${wpApi}/pages?slug=about`);
 
         if (!response.ok) {
           throw new Error(`Failed to fetch about page: ${response.status}`);

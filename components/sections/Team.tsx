@@ -54,9 +54,8 @@ export const Team: React.FC = () => {
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
-        const response = await fetch(
-          'http://localhost/taskforce/wordpress-6.9.4/wordpress/wp-json/wp/v2/team?_embed'
-        );
+        const wpApi = import.meta.env.VITE_WP_API;
+        const response = await fetch(`${wpApi}/team?_embed`);
 
         if (!response.ok) {
           throw new Error(`Failed to fetch team members: ${response.status}`);
