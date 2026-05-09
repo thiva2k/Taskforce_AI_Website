@@ -4,7 +4,6 @@ import { Offices } from '../sections/Offices';
 import { Process } from '../sections/Process';
 import { Services } from '../sections/Services';
 import { Stats } from '../sections/Stats';
-import { Team } from '../sections/Team';
 import { CTA } from '../sections/CTA';
 import { Tour } from '../ui/Tour';
 import { Footer } from '../layout/Footer';
@@ -67,9 +66,6 @@ export const Home: React.FC = () => {
 
         {/* Supplemental Sections */}
         <Stats />
-
-        {/* Elite Squad — Team Section */}
-        <Team />
 
         {/* WordPress Editable SEO Cards */}
         {seoCards.length > 0 && (
