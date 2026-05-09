@@ -125,7 +125,7 @@ export const Hero: React.FC = () => {
   }, [heroContent.title]);
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20 md:pt-36 md:pb-24 snap-start perspective-[1000px]">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20 md:pt-36 md:pb-24 snap-start perspective-[1000px]">
       <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center perspective-origin-center transform-style-3d">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
