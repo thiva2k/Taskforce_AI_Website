@@ -103,7 +103,7 @@ const server = app.listen(4173, async () => {
     for (const route of routes) {
       const page = await browser.newPage();
 
-      const url = `http://localhost:4173${route}`;
+      const url = `https://taskforceai.tech${route}`;
       console.log(`Rendering: ${url}`);
 
       await page.goto(url, {
