@@ -55,7 +55,7 @@ async function getEngineeringBlogRoutes() {
 }
 
 const server = app.listen(4173, async () => {
-  console.log("Server running: http://localhost:4173");
+  console.log("Server running: https://taskforceai.tech");
 
   // Auto-detect browser: Edge on Windows (avoids AppLocker), bundled Chromium on Linux/CI
   const isWindows = process.platform === "win32";
