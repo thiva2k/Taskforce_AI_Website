@@ -210,12 +210,12 @@ export const ServiceDetail: React.FC = () => {
 
   return (
     <div className="min-h-screen overflow-x-hidden relative selection:bg-primary-DEFAULT selection:text-white">
-      <SEO
-        title={`${service.title} - AI TaskForce Agents`}
-        description={service.shortDesc}
-        keywords={`AI ${service.title}, ${service.title} automation, AI agent, ${routeSlug}`}
-        url={`/service/${routeSlug}`}
-      />
+<SEO
+  title={`${service.title} - AI TaskForce Agents`}
+  description={service.shortDesc}
+  keywords={`AI ${service.title}, ${service.title} automation, AI agent, ${normalizedId}`}
+  url={`/service/${normalizedId}`}
+/>
 
       <ServiceNavigation title={service.title} />
 
