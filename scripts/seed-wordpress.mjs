@@ -437,7 +437,7 @@ async function seedHomePage(t) {
 
   // Hero title: "We build <1/> <2/> <4/> for Every Organization." → insert scramble_text where tags are
   // Result: "We build Multi-language AI Agents for Every Organization."
-  const heroTitle = 'We build Multi-language AI Agents for Every Organization.';
+  const heroTitle = 'We Build AI Voice Agents and Automation for Businesses Worldwide';
 
   // Process section title: "Systematic <1/> <2/>" + "Transformation." → "Systematic Transformation."
   const processTitle = "We Don't Just Build AI Automations - We Map, Design, Test, Deploy and Optimise Them.Here's How.";
