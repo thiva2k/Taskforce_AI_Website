@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ScrambleText } from '../ui/ScrambleText';
 import { GlitchButton } from '../ui/GlitchButton';
+import { SystemLog } from '../ui/SystemLog';
 import { Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +31,7 @@ export const Hero: React.FC = () => {
     primaryButtonText: t('hero.cta.book'),
     primaryButtonLink: '/book-demo',
     secondaryButtonText: t('hero.cta.contact'),
-    secondaryButtonLink: '/contact',
+    secondaryButtonLink: 'mailto:digitalagencylanka@gmail.com',
   };
 
   const [heroContent, setHeroContent] = useState<HeroContent>(fallbackContent);
@@ -111,7 +112,7 @@ export const Hero: React.FC = () => {
   };
 
   const titleParts = useMemo(() => {
-    const match = heroContent.title.match(/^(We build)\s+(AI Voice Agents and Automation )\s+(for.*)$/i);
+    const match = heroContent.title.match(/^(We build)\s+(Multi-language AI Agents)\s+(for.*)$/i);
 
     if (!match) return null;
 
@@ -123,7 +124,7 @@ export const Hero: React.FC = () => {
   }, [heroContent.title]);
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20 md:pt-36 md:pb-24 snap-start perspective-[1000px]">
+    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20 md:pt-36 md:pb-24 snap-start perspective-[1000px]">
       <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center perspective-origin-center transform-style-3d">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -184,7 +185,7 @@ export const Hero: React.FC = () => {
               x: headingX,
               y: headingY
             }}
-            className="text-2xl sm:text-3xl md:text-4xl font-medium text-white mb-6 md:mb-8"
+            className="text-2xl sm:text-3xl md:text-4xl font-medium text-blue-500 mb-6 md:mb-8"
           >
             Your Business on Autopilot
           </motion.h3>
