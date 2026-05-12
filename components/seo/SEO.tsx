@@ -9,15 +9,29 @@ interface SEOProps {
   url?: string;
 }
 
-export const SEO: React.FC<SEOProps> = ({ 
-  title = "AI TaskForce - Intelligent Automation Agents", 
-  description = "Deploy autonomous AI agents to automate workflows, voice calls, document processing, and business intelligence. Scale your workforce instantly with AI TaskForce.", 
-  keywords = "AI agents, automation, business intelligence, voice ai, document processing, workflow automation, enterprise AI",
-  image = new URL('../../Logo_Files/Taskforce Ai logo - Master/Taskforce-Ai-logo---Master.png', import.meta.url).href,
-  url
+const SITE_URL = 'https://www.taskforceai.tech';
+
+const buildCanonicalUrl = (url?: string) => {
+  const path =
+    url ||
+    (typeof window !== 'undefined' ? window.location.pathname : '/');
+
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+
+  return `${SITE_URL}${cleanPath}`;
+};
+
+export const SEO: React.FC<SEOProps> = ({
+  title = 'AI TaskForce - Intelligent Automation Agents',
+  description = 'Deploy autonomous AI agents to automate workflows, voice calls, document processing, and business intelligence. Scale your workforce instantly with AI TaskForce.',
+  keywords = 'AI agents, automation, business intelligence, voice ai, document processing, workflow automation, enterprise AI',
+  image = new URL(
+    '../../Logo_Files/Taskforce Ai logo - Master/Taskforce-Ai-logo---Master.png',
+    import.meta.url
+  ).href,
+  url,
 }) => {
-  const siteUrl = window.location.origin;
-  const canonicalUrl = url ? `${siteUrl}${url}` : window.location.href;
+  const canonicalUrl = buildCanonicalUrl(url);
 
   return (
     <Helmet>
