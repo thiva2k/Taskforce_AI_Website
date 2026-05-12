@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { ScrambleText } from '../ui/ScrambleText';
-import { GlitchButton } from '../ui/GlitchButton';
-import { SystemLog } from '../ui/SystemLog';
+import { ScrambleText } from '../ui/ScrambleText';  // This handles title animation
+import { GlitchButton } from '../ui/GlitchButton'; 
 import { Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -26,7 +25,7 @@ export const Hero: React.FC = () => {
 
   const fallbackContent: HeroContent = {
     badge: t('hero.badge'),
-    title: `We Build AI Voice Agents and Automation for Businesses Worldwide`, // New Title
+    title: `We Build AI Voice Agents and Automation for Businesses Worldwide`,
     description: t('hero.intro'),
     primaryButtonText: t('hero.cta.book'),
     primaryButtonLink: '/book-demo',
@@ -60,7 +59,7 @@ export const Hero: React.FC = () => {
     };
 
     loadHero();
-  }, [fallbackContent.badge, fallbackContent.description, fallbackContent.primaryButtonLink, fallbackContent.primaryButtonText, fallbackContent.secondaryButtonLink, fallbackContent.secondaryButtonText, fallbackContent.title]);
+  }, [fallbackContent]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -111,18 +110,6 @@ export const Hero: React.FC = () => {
     navigate(link);
   };
 
-  const titleParts = useMemo(() => {
-    const match = heroContent.title.match(/^(We build)\s+(AI Voice Agents and Automation)\s+(for.*)$/i);
-
-    if (!match) return null;
-
-    return {
-      prefix: match[1],
-      highlight: match[2],
-      suffix: match[3],
-    };
-  }, [heroContent.title]);
-
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20 md:pt-36 md:pb-24 snap-start perspective-[1000px]">
       <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center perspective-origin-center transform-style-3d">
@@ -164,32 +151,25 @@ export const Hero: React.FC = () => {
             <Zap className="w-3 h-3 text-accent group-hover:text-white transition-colors shrink-0 relative z-10" />
           </motion.div>
 
-          {/* H1 main title with animation */}
-<motion.h1
-  style={{
-    rotateX: headingRotateX,
-    rotateY: headingRotateY,
-    x: headingX,
-    y: headingY
-  }}
-  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
->
-  {titleParts ? (
-    <>
-      {titleParts.prefix}
-      <br className="hidden md:block" />
-      <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light via-white to-accent relative inline-block pb-1 md:pb-2">
-        <ScrambleText text={titleParts.highlight} />
-      </span>
-      <br />
-      {titleParts.suffix}
-    </>
-  ) : (
-    heroContent.title
-  )}
-</motion.h1>
+          {/* H1 title with ScrambleText animation */}
+          <motion.h1
+            style={{
+              rotateX: headingRotateX,
+              rotateY: headingRotateY,
+              x: headingX,
+              y: headingY
+            }}
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
+          >
+            <ScrambleText
+              text={heroContent.title}
+              duration={2.5}
+              delay={0.2}
+              fontSize="inherit"
+            />
+          </motion.h1>
 
-          {/* H3 subtitle below the main title */}
+          {/* H3 subtitle with fixed color */}
           <motion.h3
             style={{
               rotateX: headingRotateX,
