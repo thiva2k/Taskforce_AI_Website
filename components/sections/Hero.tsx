@@ -112,7 +112,7 @@ export const Hero: React.FC = () => {
   };
 
   const titleParts = useMemo(() => {
-    const match = heroContent.title.match(/^(We build)\s+(Multi-language AI Agents)\s+(for.*)$/i);
+    const match = heroContent.title.match(/^(We build)\s+(AI Voice Agents and Automation)\s+(for.*)$/i);
 
     if (!match) return null;
 
