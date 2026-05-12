@@ -8,30 +8,32 @@ interface SEOProps {
   image?: string;
   url?: string;
 }
-console.log('Canonical URL:', canonicalUrl);  // Log the canonical URL for debugging
-const SITE_URL = 'https://www.taskforceai.tech';
 
+const SITE_URL = 'https://www.taskforceai.tech'; // Always use the live domain for SEO
+
+// This function dynamically constructs the canonical URL for the current page.
 const buildCanonicalUrl = (url?: string) => {
+  // Use the provided URL, or if it's not provided, fallback to the current window URL path.
   const path =
-    url ||
-    (typeof window !== 'undefined' ? window.location.pathname : '/');
+    url || (typeof window !== 'undefined' ? window.location.pathname : '/');
 
+  // Ensure the path starts with a '/' and clean it if necessary
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
 
   return `${SITE_URL}${cleanPath}`;
 };
 
 export const SEO: React.FC<SEOProps> = ({
- title = 'TaskForce AI - Intelligent Automation Agents',
-  description = "Sri Lanka's Leading AI  Automation Company. We build AI voice agents, AI call centre agents, and intelligent workflow automation for businesses in Colombo and across the Middle East.Book a free demo. ",
-  keywords = 'AI Sri Lanka, AI voice agent Sri Lanka, AI automation company Sri Lanka, AI voice receptionist Sri Lanka, AI calling agent Sri Lanka, AI customer service Sri Lanka, AI companies in Sri Lanka, Artificial Intelligence companies in Sri Lanka, Intelligent Automation agents Sri Lanka ',
+  title = 'TaskForce AI - Intelligent Automation Agents',
+  description = "Sri Lanka's Leading AI Automation Company. We build AI voice agents, AI call centre agents, and intelligent workflow automation for businesses in Colombo and across the Middle East. Book a free demo.",
+  keywords = 'AI Sri Lanka, AI voice agent Sri Lanka, AI automation company Sri Lanka, AI voice receptionist Sri Lanka, AI calling agent Sri Lanka, AI customer service Sri Lanka, AI companies in Sri Lanka, Artificial Intelligence companies in Sri Lanka, Intelligent Automation agents Sri Lanka',
   image = new URL(
     '../../Logo_Files/Taskforce Ai logo - Master/Taskforce-Ai-logo---Master.png',
     import.meta.url
   ).href,
   url,
 }) => {
-  const canonicalUrl = buildCanonicalUrl(url);
+  const canonicalUrl = buildCanonicalUrl(url); // Generate the canonical URL dynamically
 
   return (
     <Helmet>
@@ -39,7 +41,7 @@ export const SEO: React.FC<SEOProps> = ({
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
-      <link rel="canonical" href={canonicalUrl} />
+      <link rel="canonical" href={canonicalUrl} /> {/* Correctly set the canonical URL */}
 
       {/* Open Graph / Facebook */}
       <meta property="og:type" content="website" />
