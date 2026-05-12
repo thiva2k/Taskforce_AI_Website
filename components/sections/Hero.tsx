@@ -27,7 +27,7 @@ export const Hero: React.FC = () => {
 
   const fallbackContent: HeroContent = {
     badge: t('hero.badge'),
-    title: `We build ${t('hero.scramble_text')} for Every Organization.`,
+    title: `We Build AI Voice Agents and Automation for Businesses Worldwide`, // New Title
     description: t('hero.intro'),
     primaryButtonText: t('hero.cta.book'),
     primaryButtonLink: '/book-demo',
@@ -165,15 +165,6 @@ export const Hero: React.FC = () => {
             <Zap className="w-3 h-3 text-accent group-hover:text-white transition-colors shrink-0 relative z-10" />
           </motion.div>
 
-          {/*<motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 1 }}
-            className="absolute right-4 bottom-24 md:right-10 md:bottom-32 hidden lg:block"
-          >
-            <SystemLog />
-          </motion.div> */}
-
           <motion.h1
             style={{
               rotateX: headingRotateX,
@@ -183,25 +174,21 @@ export const Hero: React.FC = () => {
             }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto"
           >
-            {titleParts ? (
-              <>
-                {titleParts.prefix} <br className="hidden md:block" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light via-white to-accent relative inline-block pb-1 md:pb-2">
-                  <ScrambleText text={titleParts.highlight} startDelay={500} />
-                  <motion.span
-                    className="absolute -bottom-1 md:-bottom-2 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary-DEFAULT to-transparent opacity-50 blur-sm"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{ delay: 0.8, duration: 1 }}
-                  />
-                </span>
-                <br />
-                {titleParts.suffix}
-              </>
-            ) : (
-              heroContent.title
-            )}
+            {heroContent.title}
           </motion.h1>
+
+          {/* H2 subtitle below the main title */}
+          <motion.h2
+            style={{
+              rotateX: headingRotateX,
+              rotateY: headingRotateY,
+              x: headingX,
+              y: headingY
+            }}
+            className="text-2xl sm:text-3xl md:text-4xl font-medium text-white mb-6 md:mb-8"
+          >
+            Your Business on Autopilot
+          </motion.h2>
 
           <motion.p
             style={{ x: contentX, y: contentY }}
