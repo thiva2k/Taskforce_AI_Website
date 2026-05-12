@@ -6,12 +6,12 @@ interface SEOProps {
   description?: string;
   keywords?: string;
   image?: string;
-  url?: string;
+  url?: string; // url can be passed to dynamically generate canonical tag
 }
 
-const SITE_URL =
-  (import.meta.env.VITE_SITE_URL || 'https://www.taskforceai.tech').replace(/\/$/, '');
+const SITE_URL = (process.env.VITE_SITE_URL || 'https://www.taskforceai.tech').replace(/\/$/, '');  // Use live URL
 
+// A function to ensure the URL is properly formatted
 const normalizePath = (url?: string) => {
   if (!url) return '/';
 
@@ -20,12 +20,12 @@ const normalizePath = (url?: string) => {
       return new URL(url).pathname || '/';
     }
   } catch {
-    // Fall through to path handling
+    // fallback for malformed URLs
   }
 
   let path = url.startsWith('/') ? url : `/${url}`;
 
-  // Canonicalize to trailing slash because prerendered routes become directories.
+  // Ensure trailing slash on all paths except root
   if (path !== '/' && !path.endsWith('/')) {
     path += '/';
   }
@@ -33,6 +33,7 @@ const normalizePath = (url?: string) => {
   return path;
 };
 
+// Dynamically generate the canonical URL
 const buildCanonicalUrl = (url?: string) => {
   return `${SITE_URL}${normalizePath(url)}`;
 };
@@ -44,14 +45,14 @@ export const SEO: React.FC<SEOProps> = ({
   image = '/logo-icon.png',
   url,
 }) => {
-  const canonicalUrl = buildCanonicalUrl(url);
+  const canonicalUrl = buildCanonicalUrl(url); // Generate canonical URL dynamically
 
   return (
     <Helmet>
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
-      <link rel="canonical" href={canonicalUrl} />
+      <link rel="canonical" href={canonicalUrl} /> {/* Use the dynamic canonical URL */}
 
       <meta property="og:type" content="website" />
       <meta property="og:url" content={canonicalUrl} />
