@@ -165,17 +165,29 @@ export const Hero: React.FC = () => {
           </motion.div>
 
           {/* H1 main title with animation */}
-          <motion.h1
-            style={{
-              rotateX: headingRotateX,
-              rotateY: headingRotateY,
-              x: headingX,
-              y: headingY
-            }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
-          >
-            {heroContent.title}
-          </motion.h1>
+<motion.h1
+  style={{
+    rotateX: headingRotateX,
+    rotateY: headingRotateY,
+    x: headingX,
+    y: headingY
+  }}
+  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
+>
+  {titleParts ? (
+    <>
+      {titleParts.prefix}
+      <br className="hidden md:block" />
+      <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-light via-white to-accent relative inline-block pb-1 md:pb-2">
+        <ScrambleText text={titleParts.highlight} />
+      </span>
+      <br />
+      {titleParts.suffix}
+    </>
+  ) : (
+    heroContent.title
+  )}
+</motion.h1>
 
           {/* H3 subtitle below the main title */}
           <motion.h3
