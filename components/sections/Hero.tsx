@@ -2,12 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ScrambleText } from '../ui/ScrambleText';
 import { GlitchButton } from '../ui/GlitchButton';
-//import { SystemLog } from '../ui/SystemLog';
 import { Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { fetchHomePageAcf } from '../../lib/wordpress';
-
 
 interface HeroContent {
   badge: string;
@@ -165,6 +163,7 @@ export const Hero: React.FC = () => {
             <Zap className="w-3 h-3 text-accent group-hover:text-white transition-colors shrink-0 relative z-10" />
           </motion.div>
 
+          {/* H1 main title with animation */}
           <motion.h1
             style={{
               rotateX: headingRotateX,
@@ -172,12 +171,12 @@ export const Hero: React.FC = () => {
               x: headingX,
               y: headingY
             }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
           >
             {heroContent.title}
           </motion.h1>
 
-          {/* H2 subtitle below the main title */}
+          {/* H3 subtitle below the main title */}
           <motion.h3
             style={{
               rotateX: headingRotateX,
