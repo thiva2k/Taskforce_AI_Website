@@ -6,7 +6,7 @@ interface SEOProps {
   description?: string;
   keywords?: string;
   image?: string;
-  url?: string;
+  url?: string; // url can be passed to dynamically generate canonical tag
 }
 
 const SITE_URL = 'https://www.taskforceai.tech'; // Always use the live domain for SEO
@@ -37,7 +37,6 @@ export const SEO: React.FC<SEOProps> = ({
 
   return (
     <Helmet>
-      {/* Standard Metadata */}
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
