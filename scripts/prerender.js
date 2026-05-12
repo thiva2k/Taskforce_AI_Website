@@ -113,7 +113,8 @@ const server = app.listen(4173, async () => {
 
   for (const route of routes) {
     const page = await browser.newPage();
-    const url = `http://localhost:4173${route}`;
+    // ?prerender=1 tells the app to skip its 2200ms loading screen
+    const url = `http://localhost:4173${route}?prerender=1`;
     console.log(`Rendering: ${url}`);
 
     try {
@@ -122,11 +123,13 @@ const server = app.listen(4173, async () => {
         timeout: 30000,
       });
 
-      // Wait for content to appear — fall back gracefully if it times out
+      // Wait for actual content — loading screen is bypassed via ?prerender=1
+      // so networkidle0 above should have caught all WP API calls already.
+      // This is a safety fallback.
       try {
         await page.waitForFunction(
-          () => document.body.innerText.length > 100,
-          { timeout: 15000 }
+          () => document.body.innerText.replace(/\s+/g, ' ').trim().length > 300,
+          { timeout: 20000 }
         );
       } catch {
         console.warn(`  ⚠ Content wait timed out for ${route} — saving what we have`);
