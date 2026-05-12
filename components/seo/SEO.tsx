@@ -9,17 +9,19 @@ interface SEOProps {
   url?: string; // url can be passed to dynamically generate canonical tag
 }
 
-const SITE_URL = 'https://www.taskforceai.tech'; // Always use the live domain for SEO
+// Always use the live domain for SEO, so it never points to localhost
+const SITE_URL = 'https://www.taskforceai.tech'; // Hardcoded to live domain
 
 // This function dynamically constructs the canonical URL for the current page.
 const buildCanonicalUrl = (url?: string) => {
-  // Use the provided URL, or if it's not provided, fallback to the current window URL path.
+  // If `url` is provided, use that; otherwise, fallback to the current page path (window.location.pathname).
   const path =
     url || (typeof window !== 'undefined' ? window.location.pathname : '/');
 
   // Ensure the path starts with a '/' and clean it if necessary
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
 
+  // Always prepend the live domain (to avoid localhost issues)
   return `${SITE_URL}${cleanPath}`;
 };
 
