@@ -29,6 +29,13 @@ const serviceIdAliasMap: Record<string, string> = {
   'ai-booking-agents': 'ai-booking-agents',
 };
 
+import { useParams } from 'react-router-dom';
+
+export const ServiceDetail: React.FC = () => {
+  const { id } = useParams<{ id: string }>();  // Get the id from the URL params
+
+  console.log('Service ID from URL:', id);  // Add this line to log the value of id
+
 export const ServiceDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
