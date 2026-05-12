@@ -83,6 +83,63 @@ async function getPublicBlogRoutes() {
   return routes;
 }
 
+async function renderRoute(browser, route) {
+  const page = await browser.newPage();
+  // ?prerender=1 tells the app to skip its 2200ms loading screen
+  const url = `http://localhost:4173${route}?prerender=1`;
+
+  try {
+    await page.goto(url, {
+      waitUntil: "networkidle0",
+      timeout: 30000,
+    });
+
+    // Safety fallback — networkidle0 should already have caught WP API calls
+    try {
+      await page.waitForFunction(
+        () => document.body.innerText.replace(/\s+/g, " ").trim().length > 300,
+        { timeout: 15000 }
+      );
+    } catch {
+      console.warn(`  ⚠ Content wait timed out for ${route} — saving what we have`);
+    }
+
+    const html = await page.content();
+
+    const filePath =
+      route === "/"
+        ? path.join(distPath, "index.html")
+        : path.join(distPath, route, "index.html");
+
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    fs.writeFileSync(filePath, html, "utf8");
+    console.log(`  ✓ ${route}`);
+    return { route, ok: true };
+  } catch (err) {
+    console.error(`  ✗ Failed to render ${route}:`, err.message);
+    return { route, ok: false };
+  } finally {
+    await page.close();
+  }
+}
+
+// Run up to `concurrency` routes at the same time
+async function renderAll(browser, routes, concurrency = 4) {
+  const results = [];
+  let index = 0;
+
+  async function worker() {
+    while (index < routes.length) {
+      const route = routes[index++];
+      results.push(await renderRoute(browser, route));
+    }
+  }
+
+  const workers = Array.from({ length: concurrency }, () => worker());
+  await Promise.all(workers);
+  return results;
+}
+
 const server = app.listen(4173, async () => {
   console.log(`Local prerender server running at: http://127.0.0.1:4173`);
 
@@ -105,54 +162,12 @@ const server = app.listen(4173, async () => {
   const blogRoutes = await getPublicBlogRoutes();
   const routes = [...new Set([...staticRoutes, ...blogRoutes])];
 
-  console.log("Prerender routes:");
-  console.log(routes);
+  console.log(`\nPrerendering ${routes.length} routes (4 at a time)...`);
 
-  let successCount = 0;
-  let failCount = 0;
+  const results = await renderAll(browser, routes, 4);
 
-  for (const route of routes) {
-    const page = await browser.newPage();
-    // ?prerender=1 tells the app to skip its 2200ms loading screen
-    const url = `http://localhost:4173${route}?prerender=1`;
-    console.log(`Rendering: ${url}`);
-
-    try {
-      await page.goto(url, {
-        waitUntil: "networkidle0",
-        timeout: 30000,
-      });
-
-      // Wait for actual content — loading screen is bypassed via ?prerender=1
-      // so networkidle0 above should have caught all WP API calls already.
-      // This is a safety fallback.
-      try {
-        await page.waitForFunction(
-          () => document.body.innerText.replace(/\s+/g, ' ').trim().length > 300,
-          { timeout: 20000 }
-        );
-      } catch {
-        console.warn(`  ⚠ Content wait timed out for ${route} — saving what we have`);
-      }
-
-      const html = await page.content();
-
-      const filePath =
-        route === "/"
-          ? path.join(distPath, "index.html")
-          : path.join(distPath, route, "index.html");
-
-      fs.mkdirSync(path.dirname(filePath), { recursive: true });
-      fs.writeFileSync(filePath, html, "utf8");
-      console.log(`  ✓ ${route}`);
-      successCount++;
-    } catch (err) {
-      console.error(`  ✗ Failed to render ${route}:`, err.message);
-      failCount++;
-    } finally {
-      await page.close();
-    }
-  }
+  const successCount = results.filter((r) => r.ok).length;
+  const failCount = results.filter((r) => !r.ok).length;
 
   console.log(`\n✅ Pre-render complete: ${successCount} succeeded, ${failCount} failed`);
 
