@@ -8,7 +8,7 @@ interface SEOProps {
   image?: string;
   url?: string;
 }
-
+console.log('Canonical URL:', canonicalUrl);  // Log the canonical URL for debugging
 const SITE_URL = 'https://www.taskforceai.tech';
 
 const buildCanonicalUrl = (url?: string) => {
