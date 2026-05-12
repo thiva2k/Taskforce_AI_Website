@@ -178,7 +178,7 @@ export const Hero: React.FC = () => {
           </motion.h1>
 
           {/* H2 subtitle below the main title */}
-          <motion.h2
+          <motion.h3
             style={{
               rotateX: headingRotateX,
               rotateY: headingRotateY,
@@ -188,7 +188,7 @@ export const Hero: React.FC = () => {
             className="text-2xl sm:text-3xl md:text-4xl font-medium text-white mb-6 md:mb-8"
           >
             Your Business on Autopilot
-          </motion.h2>
+          </motion.h3>
 
           <motion.p
             style={{ x: contentX, y: contentY }}
