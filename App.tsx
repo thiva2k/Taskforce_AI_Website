@@ -33,10 +33,16 @@ function ScrollToTop() {
 }
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  // Skip the loading screen during prerendering so Puppeteer captures real content
+  const isPrerender =
+    typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).get('prerender') === '1';
+
+  const [isLoading, setIsLoading] = useState(!isPrerender);
   const { i18n } = useTranslation();
 
   useEffect(() => {
+    if (isPrerender) return; // No timer needed — already skipped
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2200);

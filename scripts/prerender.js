@@ -16,7 +16,6 @@ app.use((req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
 });
 
-const SITE_URL = (process.env.VITE_SITE_URL || "https://www.taskforceai.tech").replace(/\/$/, "");  // Set the live domain URL
 const WP_API = process.env.VITE_WP_API;
 
 const PUBLIC_BLOG_CATEGORY_SLUGS = new Set([
@@ -51,57 +50,112 @@ async function getPublicBlogRoutes() {
   let page = 1;
 
   while (true) {
-    const res = await fetch(`${WP_API}/posts?per_page=100&page=${page}&_embed`);
+    try {
+      const res = await fetch(`${WP_API}/posts?per_page=100&page=${page}&_embed`);
 
-    if (!res.ok) {
-      console.warn(`WordPress fetch failed: ${res.status}`);
+      if (!res.ok) {
+        console.warn(`WordPress fetch failed: ${res.status}`);
+        break;
+      }
+
+      const posts = await res.json();
+
+      for (const post of posts) {
+        const terms = post._embedded?.["wp:term"]?.flat() || [];
+        const isPublicBlogPost = terms.some((term) =>
+          PUBLIC_BLOG_CATEGORY_SLUGS.has(term.slug)
+        );
+
+        if (isPublicBlogPost && post.slug) {
+          routes.push(`/blog/${post.slug}/`);
+        }
+      }
+
+      const totalPages = Number(res.headers.get("x-wp-totalpages") || 1);
+      if (page >= totalPages) break;
+      page++;
+    } catch (err) {
+      console.warn(`Error fetching blog routes (page ${page}):`, err.message);
       break;
     }
-
-    const posts = await res.json();
-
-    for (const post of posts) {
-      const terms = post._embedded?.["wp:term"]?.flat() || [];
-      const isPublicBlogPost = terms.some((term) =>
-        PUBLIC_BLOG_CATEGORY_SLUGS.has(term.slug)
-      );
-
-      if (isPublicBlogPost && post.slug) {
-        routes.push(`/blog/${post.slug}/`);
-      }
-    }
-
-    const totalPages = Number(res.headers.get("x-wp-totalpages") || 1);
-    if (page >= totalPages) break;
-    page++;
   }
 
   return routes;
 }
 
-async function waitForRouteReady(page, route) {
-  await page.waitForFunction(
-    (route) => {
-      const text = document.body.innerText || "";
+async function renderRoute(browser, route) {
+  const page = await browser.newPage();
+  // ?prerender=1 tells the app to skip its 2200ms loading screen
+  const url = `http://localhost:4173${route}?prerender=1`;
 
-      // Wait for key content to load for SEO (exclude "Loading..." and service-specific content markers)
-      if (route.startsWith("/service/")) {
-        return Boolean(document.querySelector('[data-prerender="service-detail"]'));
+  try {
+    await page.goto(url, {
+      waitUntil: "networkidle0",
+      timeout: 30000,
+    });
+
+    // Route-specific content signals
+    try {
+      if (route === "/blog/" || route === "/blog") {
+        // Wait for blog post cards — Blog.tsx has data-prerender="blog-card" on each card
+        await page.waitForFunction(
+          () => document.querySelectorAll('[data-prerender="blog-card"]').length > 0,
+          { timeout: 25000 }
+        );
+      } else if (route.startsWith("/service/")) {
+        // Service pages render static content immediately — just wait for h1
+        await page.waitForFunction(
+          () => {
+            const h1 = document.querySelector("h1");
+            return h1 && !h1.textContent.includes("Loading Service") && h1.textContent.trim().length > 3;
+          },
+          { timeout: 20000 }
+        );
+      } else {
+        // Generic pages — wait for substantial text
+        await page.waitForFunction(
+          () => document.body.innerText.replace(/\s+/g, " ").trim().length > 300,
+          { timeout: 20000 }
+        );
       }
+    } catch {
+      console.warn(`  ⚠ Content wait timed out for ${route} — saving what we have`);
+    }
 
-      if (route === "/blog/") {
-        return document.querySelectorAll('[data-prerender="blog-card"]').length > 0;
-      }
+    const html = await page.content();
 
-      if (route.startsWith("/blog/")) {
-        return Boolean(document.querySelector('[data-prerender="blog-post"]'));
-      }
+    const filePath =
+      route === "/"
+        ? path.join(distPath, "index.html")
+        : path.join(distPath, route, "index.html");
 
-      return text.length > 500;  // Wait for enough content to be visible
-    },
-    { timeout: 90000 },
-    route
-  );
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    fs.writeFileSync(filePath, html, "utf8");
+    console.log(`  ✓ ${route}`);
+    return { route, ok: true };
+  } catch (err) {
+    console.error(`  ✗ Failed to render ${route}:`, err.message);
+    return { route, ok: false };
+  } finally {
+    await page.close();
+  }
+}
+
+// Run up to `concurrency` routes at the same time
+async function renderAll(browser, routes, concurrency = 4) {
+  const results = [];
+  let index = 0;
+
+  async function worker() {
+    while (index < routes.length) {
+      const route = routes[index++];
+      results.push(await renderRoute(browser, route));
+    }
+  }
+
+  const workers = Array.from({ length: concurrency }, () => worker());
+  await Promise.all(workers);
+  return results;
 }
 
 const server = app.listen(4173, async () => {
@@ -123,45 +177,18 @@ const server = app.listen(4173, async () => {
     ],
   });
 
-  try {
-    const blogRoutes = await getPublicBlogRoutes();
-    const routes = [...new Set([...staticRoutes, ...blogRoutes])];
+  const blogRoutes = await getPublicBlogRoutes();
+  const routes = [...new Set([...staticRoutes, ...blogRoutes])];
 
-    console.log("Prerender routes:");
-    console.log(routes);
+  console.log(`\nPrerendering ${routes.length} routes (4 at a time)...`);
 
-    for (const route of routes) {
-      const page = await browser.newPage();
+  const results = await renderAll(browser, routes, 4);
 
-      const liveUrl = `${SITE_URL}${route}`;  // Use live URL (not localhost) for prerendering
-      console.log(`Rendering: ${liveUrl}`);
+  const successCount = results.filter((r) => r.ok).length;
+  const failCount = results.filter((r) => !r.ok).length;
 
-      await page.goto(liveUrl, {
-        waitUntil: "networkidle0",  // Wait until all network requests have completed
-        timeout: 90000,  // 90 seconds to ensure full page load
-      });
+  console.log(`\n✅ Pre-render complete: ${successCount} succeeded, ${failCount} failed`);
 
-      await waitForRouteReady(page, route);
-
-      const html = await page.content();  // Capture the fully rendered HTML
-
-      const filePath =
-        route === "/"
-          ? path.join(distPath, "index.html")  // For homepage
-          : path.join(distPath, route, "index.html");  // For other pages
-
-      fs.mkdirSync(path.dirname(filePath), { recursive: true });
-      fs.writeFileSync(filePath, html, "utf8");  // Save the rendered HTML
-
-      await page.close();
-    }
-
-    console.log("✅ Pre-render complete");
-  } catch (err) {
-    console.error("❌ Pre-render failed:", err);
-    process.exitCode = 1;
-  } finally {
-    await browser.close();
-    server.close();
-  }
+  await browser.close();
+  server.close();
 });
