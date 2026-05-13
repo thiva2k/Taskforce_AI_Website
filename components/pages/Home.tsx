@@ -15,7 +15,6 @@ export const Home: React.FC = () => {
   const [latestBlogs, setLatestBlogs] = useState<any[]>([]); // State for storing blog posts
 
   useEffect(() => {
-    // Fetch SEO cards
     const fetchSeoCards = async () => {
       try {
         const wpApi = import.meta.env.VITE_WP_API;
@@ -45,7 +44,6 @@ export const Home: React.FC = () => {
       }
     };
 
-    // Fetch latest blog posts
     const fetchLatestBlogs = async () => {
       try {
         const wpApi = import.meta.env.VITE_WP_API;
@@ -60,7 +58,7 @@ export const Home: React.FC = () => {
           title: blog.title.rendered,
           slug: blog.slug,
           date: blog.date,
-          featured_image_url: blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'default_image_url.jpg', // Ensure it uses the correct field for the featured image
+          featured_image_url: blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'default_image_url.jpg', // Update based on the response structure
         }));
 
         setLatestBlogs(formattedBlogs);
@@ -85,10 +83,59 @@ export const Home: React.FC = () => {
         {/* 2. Offices/Bases Section */}
         <Offices />
 
-        {/* 3. Deployed AI Agents (Services Section) */}
+        {/* 3. Latest Insights Section */}
+        <section className="container mx-auto px-6 py-20 md:py-28">
+          <div className="mb-12 text-center">
+            <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter leading-tight">
+              Latest Insights
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {latestBlogs.map((blog) => (
+              <a
+                key={blog.id}
+                href={`/blog/${blog.slug}`}
+                className="group block overflow-hidden rounded-2xl border border-white/10 bg-dark-surface/60 backdrop-blur-xl hover:border-primary-DEFAULT/40 transition-all duration-300"
+              >
+                <div className="h-44 w-full overflow-hidden bg-white/5">
+                  {blog.featured_image_url ? (
+                    <img
+                      src={blog.featured_image_url}
+                      alt={blog.title}
+                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900" />
+                  )}
+                </div>
+
+                <div className="p-5">
+                  <p className="text-xs font-mono text-primary-light mb-3">
+                    {blog.category || 'Blog'}
+                  </p>
+
+                  <h3 className="text-lg font-bold text-white leading-snug group-hover:text-primary-light transition-colors">
+                    {blog.title}
+                  </h3>
+
+                  <p className="text-xs text-gray-500 font-mono mt-4">
+                    {new Date(blog.date).toLocaleDateString()}
+                  </p>
+
+                  <p className="text-sm text-primary-light mt-4">
+                    Read More
+                  </p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {/* 4. Deployed AI Agents (Services Section) */}
         <Services />
 
-        {/* 4. Systematic Transformation (Process Section) */}
+        {/* 5. Systematic Transformation (Process Section) */}
         <Process />
 
         {/* Supplemental Sections */}
@@ -131,27 +178,6 @@ export const Home: React.FC = () => {
             </div>
           </section>
         )}
-
-        {/* Latest Insights Section */}
-        <section className="latest-insights py-10">
-          <h2 className="text-2xl font-semibold text-center mb-6">Latest Insights</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {latestBlogs.map((blog, index) => (
-              <div key={index} className="blog-card bg-white p-4 rounded-lg shadow-lg">
-                <img 
-                  src={blog.featured_image_url} 
-                  alt={blog.title} 
-                  className="w-full h-40 object-cover rounded-lg mb-4" 
-                />
-                <h3 className="text-lg font-bold">{blog.title}</h3>
-                <p className="text-sm text-gray-500">{new Date(blog.date).toLocaleDateString()}</p>
-                <a href={`/blog/${blog.slug}`} className="text-orange-500 hover:underline mt-2 inline-block">
-                  Read More
-                </a>
-              </div>
-            ))}
-          </div>
-        </section>
 
         <CTA />
         <Footer />
