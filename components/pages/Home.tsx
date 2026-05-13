@@ -44,6 +44,7 @@ export const Home: React.FC = () => {
       }
     };
 
+    // Fetch latest blog posts
     const fetchLatestBlogs = async () => {
       try {
         const wpApi = import.meta.env.VITE_WP_API;
@@ -58,10 +59,11 @@ export const Home: React.FC = () => {
           title: blog.title.rendered,
           slug: blog.slug,
           date: blog.date,
-          featured_image_url: blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/default_image_url.jpg', // Correct image URL fetching
+          featured_image_url: blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/default_image_url.jpg', // Ensure it uses the correct field for the featured image
         }));
 
-        setLatestBlogs(formattedBlogs.slice(0, 4));  // Limit to 4 blog posts
+        // Limit to 4 posts
+        setLatestBlogs(formattedBlogs.slice(0, 4));  // Slice to ensure only 4 posts are set
       } catch (error) {
         console.error('Failed to fetch blogs:', error);
       }
@@ -83,10 +85,10 @@ export const Home: React.FC = () => {
         {/* 2. Offices/Bases Section */}
         <Offices />
 
-        {/* 3. Latest Insights Section */}
+        {/* 3. Latest Insights Section (Blue Header) */}
         <section className="container mx-auto px-6 py-20 md:py-28">
           <div className="mb-12 text-center">
-            <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter leading-tight">
+            <h2 className="text-4xl md:text-6xl font-bold text-primary-light tracking-tighter leading-tight">
               Latest Insights
             </h2>
           </div>
@@ -94,7 +96,7 @@ export const Home: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {latestBlogs.map((blog) => (
               <a
-                key={blog.slug}
+                key={blog.slug}  // Use slug as the key
                 href={`/blog/${blog.slug}`}
                 className="group block overflow-hidden rounded-2xl border border-white/10 bg-dark-surface/60 backdrop-blur-xl hover:border-primary-DEFAULT/40 transition-all duration-300"
               >
@@ -112,7 +114,8 @@ export const Home: React.FC = () => {
 
                 <div className="p-5">
                   <p className="text-xs font-mono text-primary-light mb-3">
-                    {blog.category || 'Blog'}
+                    {/* Blog Category or leave blank */}
+                    Blog
                   </p>
 
                   <h3 className="text-lg font-bold text-white leading-snug group-hover:text-primary-light transition-colors">
@@ -132,7 +135,7 @@ export const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* 4. Deployed AI Agents (Services Section) */}
+        {/* 4. Ready to deploy your AI workforce? */}
         <Services />
 
         {/* 5. Systematic Transformation (Process Section) */}
