@@ -60,10 +60,9 @@ export const Home: React.FC = () => {
           slug: blog.slug,
           date: blog.date,
           featured_image_url: blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/default_image_url.jpg', // Ensure it uses the correct field for the featured image
-        }));
+        })).slice(0, 4);  // Limit to the latest 4 blogs
 
-        // Limit to 4 posts
-        setLatestBlogs(formattedBlogs.slice(0, 4));  // Slice to ensure only 4 posts are set
+        setLatestBlogs(formattedBlogs);
       } catch (error) {
         console.error('Failed to fetch blogs:', error);
       }
@@ -85,66 +84,7 @@ export const Home: React.FC = () => {
         {/* 2. Offices/Bases Section */}
         <Offices />
 
-        {/* 3. Latest Insights Section (Blue Header) */}
-        <section className="container mx-auto px-6 py-20 md:py-28">
-          <div className="mb-12 text-center">
-            <h2 className="text-4xl md:text-6xl font-bold text-primary-light tracking-tighter leading-tight">
-              Latest Insights
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {latestBlogs.map((blog) => (
-              <a
-                key={blog.slug}  // Use slug as the key
-                href={`/blog/${blog.slug}`}
-                className="group block overflow-hidden rounded-2xl border border-white/10 bg-dark-surface/60 backdrop-blur-xl hover:border-primary-DEFAULT/40 transition-all duration-300"
-              >
-                <div className="h-44 w-full overflow-hidden bg-white/5">
-                  {blog.featured_image_url ? (
-                    <img
-                      src={blog.featured_image_url}
-                      alt={blog.title}
-                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900" />
-                  )}
-                </div>
-
-                <div className="p-5">
-                  <p className="text-xs font-mono text-primary-light mb-3">
-                    {/* Blog Category or leave blank */}
-                    Blog
-                  </p>
-
-                  <h3 className="text-lg font-bold text-white leading-snug group-hover:text-primary-light transition-colors">
-                    {blog.title}
-                  </h3>
-
-                  <p className="text-xs text-gray-500 font-mono mt-4">
-                    {new Date(blog.date).toLocaleDateString()}
-                  </p>
-
-                  <p className="text-sm text-primary-light mt-4">
-                    Read More
-                  </p>
-                </div>
-              </a>
-            ))}
-          </div>
-        </section>
-
-        {/* 4. Ready to deploy your AI workforce? */}
-        <Services />
-
-        {/* 5. Systematic Transformation (Process Section) */}
-        <Process />
-
-        {/* Supplemental Sections */}
-        <Stats />
-
-        {/* WordPress Editable SEO Cards */}
+        {/* 3. WordPress Editable SEO Cards */}
         {seoCards.length > 0 && (
           <section className="container mx-auto px-6 py-20 md:py-28">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-10">
@@ -181,6 +121,60 @@ export const Home: React.FC = () => {
             </div>
           </section>
         )}
+
+        {/* 4. Latest Insights Section */}
+        <section className="container mx-auto px-6 py-20 md:py-28">
+          <div className="mb-12 text-center">
+            <h2 className="text-4xl md:text-6xl font-bold text-primary-light tracking-tighter leading-tight">
+              Blog
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {latestBlogs.map((blog) => (
+              <a
+                key={blog.slug}
+                href={`/blog/${blog.slug}`}
+                className="group block overflow-hidden rounded-2xl border border-white/10 bg-dark-surface/60 backdrop-blur-xl hover:border-primary-DEFAULT/40 transition-all duration-300"
+              >
+                <div className="h-44 w-full overflow-hidden bg-white/5">
+                  {blog.featured_image_url ? (
+                    <img
+                      src={blog.featured_image_url}
+                      alt={blog.title}
+                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900" />
+                  )}
+                </div>
+
+                <div className="p-5">
+                  <h3 className="text-lg font-bold text-white leading-snug group-hover:text-primary-light transition-colors">
+                    {blog.title}
+                  </h3>
+
+                  <p className="text-xs text-gray-500 font-mono mt-4">
+                    {new Date(blog.date).toLocaleDateString()}
+                  </p>
+
+                  <p className="text-sm text-primary-light mt-4">
+                    Read More
+                  </p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {/* 5. Ready to deploy your AI workforce? */}
+        <Services />
+
+        {/* 6. Systematic Transformation (Process Section) */}
+        <Process />
+
+        {/* Supplemental Sections */}
+        <Stats />
 
         <CTA />
         <Footer />
