@@ -46,28 +46,32 @@ export const Home: React.FC = () => {
     };
 
     // Fetch latest blog posts
-const fetchLatestBlogs = async () => {
-  try {
-    const wpApi = import.meta.env.VITE_WP_API;
-    const response = await fetch(`${wpApi}/posts?_limit=4&_sort=publish_date:desc&_=${Date.now()}`, {
-      cache: 'no-store',
-    });
-    const blogs = await response.json();
-    console.log('Fetched Blogs:', blogs);  // Log to see the response structure
+    const fetchLatestBlogs = async () => {
+      try {
+        const wpApi = import.meta.env.VITE_WP_API;
+        const response = await fetch(`${wpApi}/posts?_limit=4&_sort=publish_date:desc&_=${Date.now()}`, {
+          cache: 'no-store',
+        });
+        const blogs = await response.json();
+        console.log('Fetched Blogs:', blogs); // Log to see the response structure
 
-    // Map the fetched blogs to ensure they have the necessary fields
-    const formattedBlogs = blogs.map(blog => ({
-      title: blog.title.rendered,
-      slug: blog.slug,
-      date: blog.date,
-      featured_image_url: blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'default_image_url.jpg', // Update based on the response structure
-    }));
+        // Map the fetched blogs to ensure they have the necessary fields
+        const formattedBlogs = blogs.map(blog => ({
+          title: blog.title.rendered,
+          slug: blog.slug,
+          date: blog.date,
+          featured_image_url: blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'default_image_url.jpg', // Ensure it uses the correct field for the featured image
+        }));
 
-    setLatestBlogs(formattedBlogs);
-  } catch (error) {
-    console.error('Failed to fetch blogs:', error);
-  }
-};
+        setLatestBlogs(formattedBlogs);
+      } catch (error) {
+        console.error('Failed to fetch blogs:', error);
+      }
+    };
+
+    fetchSeoCards();
+    fetchLatestBlogs();
+  }, []);
 
   return (
     <div className="min-h-screen overflow-x-hidden selection:bg-primary-DEFAULT selection:text-white relative">
@@ -134,8 +138,12 @@ const fetchLatestBlogs = async () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {latestBlogs.map((blog, index) => (
               <div key={index} className="blog-card bg-white p-4 rounded-lg shadow-lg">
-                <img src={blog.featured_image_url} alt={blog.title.rendered} className="w-full h-40 object-cover rounded-lg mb-4" />
-                <h3 className="text-lg font-bold">{blog.title.rendered}</h3>
+                <img 
+                  src={blog.featured_image_url} 
+                  alt={blog.title} 
+                  className="w-full h-40 object-cover rounded-lg mb-4" 
+                />
+                <h3 className="text-lg font-bold">{blog.title}</h3>
                 <p className="text-sm text-gray-500">{new Date(blog.date).toLocaleDateString()}</p>
                 <a href={`/blog/${blog.slug}`} className="text-orange-500 hover:underline mt-2 inline-block">
                   Read More
