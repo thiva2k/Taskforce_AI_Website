@@ -46,18 +46,28 @@ export const Home: React.FC = () => {
     };
 
     // Fetch latest blog posts
-    const fetchLatestBlogs = async () => {
-      const wpApi = import.meta.env.VITE_WP_API;
-      const response = await fetch(`${wpApi}/posts?_limit=4&_sort=publish_date:desc&_=${Date.now()}`, {
-        cache: 'no-store',
-      });
-      const blogs = await response.json();
-      setLatestBlogs(blogs);
-    };
+const fetchLatestBlogs = async () => {
+  try {
+    const wpApi = import.meta.env.VITE_WP_API;
+    const response = await fetch(`${wpApi}/posts?_limit=4&_sort=publish_date:desc&_=${Date.now()}`, {
+      cache: 'no-store',
+    });
+    const blogs = await response.json();
+    console.log('Fetched Blogs:', blogs);  // Log to see the response structure
 
-    fetchSeoCards();
-    fetchLatestBlogs();
-  }, []);
+    // Map the fetched blogs to ensure they have the necessary fields
+    const formattedBlogs = blogs.map(blog => ({
+      title: blog.title.rendered,
+      slug: blog.slug,
+      date: blog.date,
+      featured_image_url: blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'default_image_url.jpg', // Update based on the response structure
+    }));
+
+    setLatestBlogs(formattedBlogs);
+  } catch (error) {
+    console.error('Failed to fetch blogs:', error);
+  }
+};
 
   return (
     <div className="min-h-screen overflow-x-hidden selection:bg-primary-DEFAULT selection:text-white relative">
