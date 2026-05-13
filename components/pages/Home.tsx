@@ -125,9 +125,15 @@ export const Home: React.FC = () => {
         {/* 4. Latest Insights Section */}
         <section className="container mx-auto px-6 py-20 md:py-28">
           <div className="mb-12 text-center">
-            <h2 className="text-4xl md:text-6xl font-bold text-primary-light tracking-tighter leading-tight">
-              Blog
+            {/* Main Title */}
+            <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter leading-tight">
+              Latest Insights
             </h2>
+
+            {/* Subtitle */}
+            <h3 className="text-xl md:text-2xl font-semibold text-primary-light mt-4">
+              Blog
+            </h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
