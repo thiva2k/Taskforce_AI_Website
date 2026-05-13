@@ -183,13 +183,68 @@ export const ServiceDetail: React.FC = () => {
 
   const isBookingAgents = service.id === 'ai-booking-agents';
 
+  // Unique SEO descriptions per service for better keyword targeting
+  const serviceMetaMap: Record<string, { description: string; keywords: string }> = {
+    'ai-workflows': {
+      description: "AI workflow automation for Sri Lanka businesses — eliminate manual data entry, sync your CRM, email and databases, and automate repetitive operations 24/7. Cut manual work by 80%. Built and maintained by TaskForce AI in Colombo.",
+      keywords: "AI workflow automation Sri Lanka, business process automation Sri Lanka, AI automation company Sri Lanka, workflow agents Colombo, RPA Sri Lanka, TaskForce AI",
+    },
+    'ai-voice-agents': {
+      description: "AI voice agents for Sri Lankan businesses — handle inbound and outbound calls in English, Sinhala, Tamil and Arabic. 24/7 call handling, lead qualification and appointment booking without a human on the line. Deployed by TaskForce AI.",
+      keywords: "AI voice agent Sri Lanka, AI voice receptionist Sri Lanka, AI calling agent Sri Lanka, AI customer service Sri Lanka, voice AI Colombo, multilingual voice agent",
+    },
+    'ai-document-processing': {
+      description: "AI document processing for Sri Lanka enterprises — automatically extract, validate and process data from invoices, contracts, shipping documents and compliance records with near-perfect accuracy. Cut document handling time by 80%. Built by TaskForce AI.",
+      keywords: "AI document processing Sri Lanka, automated data extraction Sri Lanka, invoice processing AI, document automation Colombo, OCR AI Sri Lanka, TaskForce AI",
+    },
+    'business-intelligence': {
+      description: "AI-powered business intelligence for Sri Lanka — unify your sales, inventory and operations data into real-time dashboards that show you exactly why things are happening and what to do next. Custom BI solutions by TaskForce AI.",
+      keywords: "business intelligence Sri Lanka, AI dashboards Sri Lanka, data analytics Colombo, real-time reporting AI, BI automation Sri Lanka, TaskForce AI",
+    },
+    'custom-ai-software': {
+      description: "Custom AI software development in Sri Lanka — from internal management systems to proprietary SaaS platforms, TaskForce AI designs and builds tailor-made AI applications engineered to your exact business workflows.",
+      keywords: "custom AI software Sri Lanka, AI development company Sri Lanka, bespoke AI solutions Colombo, AI software agency Sri Lanka, TaskForce AI",
+    },
+    'ai-booking-agents': {
+      description: "AI booking agents for Sri Lanka hotels, restaurants, clinics and salons — 24/7 reservation management in multiple languages without the overhead of a reservations team. Handle bookings, cancellations and inquiries automatically. By TaskForce AI.",
+      keywords: "AI booking agent Sri Lanka, automated reservations Sri Lanka, hotel booking AI Colombo, restaurant booking automation, appointment scheduling AI Sri Lanka, TaskForce AI",
+    },
+  };
+
+  const pageMeta = serviceMetaMap[normalizedId] || {
+    description: service.shortDesc,
+    keywords: `AI ${service.title}, ${service.title} automation, AI agent Sri Lanka, ${normalizedId}`,
+  };
+
+  const serviceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: service.title,
+    description: pageMeta.description,
+    url: `https://www.taskforceai.tech/service/${normalizedId}`,
+    provider: {
+      '@type': 'Organization',
+      name: 'TaskForce AI',
+      url: 'https://www.taskforceai.tech',
+      logo: 'https://www.taskforceai.tech/logo-horizontal.png',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Colombo',
+        addressCountry: 'LK',
+      },
+    },
+    areaServed: ['Sri Lanka', 'Oman', 'United Kingdom'],
+    serviceType: 'AI Automation',
+  };
+
   return (
     <div className="min-h-screen overflow-x-hidden relative selection:bg-primary-DEFAULT selection:text-white">
       <SEO
-        title={`${service.title} - AI TaskForce Agents`}
-        description={service.shortDesc}
-        keywords={`AI ${service.title}, ${service.title} automation, AI agent, ${normalizedId}`}
+        title={`${service.title} | TaskForce AI`}
+        description={pageMeta.description}
+        keywords={pageMeta.keywords}
         url={`/service/${normalizedId}`}
+        schema={serviceSchema}
       />
       <ServiceNavigation title={service.title} />
 

@@ -6,7 +6,8 @@ interface SEOProps {
   description?: string;
   keywords?: string;
   image?: string;
-  url?: string; // url can be passed to dynamically generate canonical tag
+  url?: string;
+  schema?: Record<string, unknown>; // JSON-LD structured data
 }
 
 // Always use the live domain for SEO, so it never points to localhost
@@ -31,8 +32,9 @@ export const SEO: React.FC<SEOProps> = ({
   keywords = 'AI Sri Lanka, AI voice agent Sri Lanka, AI automation company Sri Lanka, AI voice receptionist Sri Lanka, AI calling agent Sri Lanka, AI customer service Sri Lanka, AI companies in Sri Lanka, Artificial Intelligence companies in Sri Lanka, Intelligent Automation agents Sri Lanka',
   image = 'https://www.taskforceai.tech/logo-horizontal.png',
   url,
+  schema,
 }) => {
-  const canonicalUrl = buildCanonicalUrl(url); // Generate the canonical URL dynamically
+  const canonicalUrl = buildCanonicalUrl(url);
 
   return (
     <Helmet>
@@ -54,6 +56,13 @@ export const SEO: React.FC<SEOProps> = ({
       <meta property="twitter:title" content={title} />
       <meta property="twitter:description" content={description} />
       <meta property="twitter:image" content={image} />
+
+      {/* JSON-LD structured data */}
+      {schema && (
+        <script type="application/ld+json">
+          {JSON.stringify(schema)}
+        </script>
+      )}
     </Helmet>
   );
 };
