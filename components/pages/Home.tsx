@@ -12,8 +12,10 @@ import { LanguagePopup } from '../ui/LanguagePopup';
 
 export const Home: React.FC = () => {
   const [seoCards, setSeoCards] = useState<string[]>([]);
+  const [latestBlogs, setLatestBlogs] = useState<any[]>([]); // State for storing blog posts
 
   useEffect(() => {
+    // Fetch SEO cards
     const fetchSeoCards = async () => {
       try {
         const wpApi = import.meta.env.VITE_WP_API;
@@ -43,7 +45,18 @@ export const Home: React.FC = () => {
       }
     };
 
+    // Fetch latest blog posts
+    const fetchLatestBlogs = async () => {
+      const wpApi = import.meta.env.VITE_WP_API;
+      const response = await fetch(`${wpApi}/posts?_limit=4&_sort=publish_date:desc&_=${Date.now()}`, {
+        cache: 'no-store',
+      });
+      const blogs = await response.json();
+      setLatestBlogs(blogs);
+    };
+
     fetchSeoCards();
+    fetchLatestBlogs();
   }, []);
 
   return (
@@ -105,11 +118,27 @@ export const Home: React.FC = () => {
           </section>
         )}
 
+        {/* Latest Insights Section */}
+        <section className="latest-insights py-10">
+          <h2 className="text-2xl font-semibold text-center mb-6">Latest Insights</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {latestBlogs.map((blog, index) => (
+              <div key={index} className="blog-card bg-white p-4 rounded-lg shadow-lg">
+                <img src={blog.featured_image_url} alt={blog.title.rendered} className="w-full h-40 object-cover rounded-lg mb-4" />
+                <h3 className="text-lg font-bold">{blog.title.rendered}</h3>
+                <p className="text-sm text-gray-500">{new Date(blog.date).toLocaleDateString()}</p>
+                <a href={`/blog/${blog.slug}`} className="text-orange-500 hover:underline mt-2 inline-block">
+                  Read More
+                </a>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <CTA />
         <Footer />
       </div>
 
-      
       <LanguagePopup />
     </div>
   );
