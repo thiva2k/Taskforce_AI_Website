@@ -60,13 +60,16 @@ export const Home: React.FC = () => {
 
         const blogs = await response.json();
 
-        const formattedBlogs = blogs.map((blog: any) => ({
-          title: blog.title.rendered,
-          slug: blog.slug,
-          date: blog.date,
-          featured_image_url:
-            blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
-        }));
+const formattedBlogs = blogs.map((blog: any) => ({
+  title: blog.title.rendered,
+  slug: blog.slug,
+  excerpt:
+    blog.excerpt?.rendered
+      ?.replace(/<[^>]+>/g, '')
+      ?.substring(0, 110) + '...',
+  featured_image_url:
+    blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+}));
 
         setLatestBlogs(formattedBlogs);
       } catch (error) {
@@ -166,13 +169,14 @@ export const Home: React.FC = () => {
             {blog.title}
           </h3>
 
-          <p className="text-xs text-gray-500 font-mono mt-4">
-            {new Date(blog.date).toLocaleDateString()}
-          </p>
+<p className="text-sm text-gray-400 leading-relaxed mt-4 line-clamp-3">
+  {blog.excerpt}
+</p>
 
-          <p className="text-sm text-primary-light mt-4">
-            Read More
-          </p>
+<p className="text-sm text-primary-light mt-5 font-medium">
+  Read More
+</p>
+        
         </div>
       </a>
     ))}
