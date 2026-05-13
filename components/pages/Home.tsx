@@ -5,7 +5,6 @@ import { Process } from '../sections/Process';
 import { Services } from '../sections/Services';
 import { Stats } from '../sections/Stats';
 import { CTA } from '../sections/CTA';
-import { Tour } from '../ui/Tour';
 import { Footer } from '../layout/Footer';
 import { SEO } from '../seo/SEO';
 import { LanguagePopup } from '../ui/LanguagePopup';
@@ -15,6 +14,7 @@ export const Home: React.FC = () => {
   const [latestBlogs, setLatestBlogs] = useState<any[]>([]); // State for storing blog posts
 
   useEffect(() => {
+    // Fetch SEO cards
     const fetchSeoCards = async () => {
       try {
         const wpApi = import.meta.env.VITE_WP_API;
@@ -58,10 +58,10 @@ export const Home: React.FC = () => {
           title: blog.title.rendered,
           slug: blog.slug,
           date: blog.date,
-          featured_image_url: blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'default_image_url.jpg', // Update based on the response structure
+          featured_image_url: blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/default_image_url.jpg', // Correct image URL fetching
         }));
 
-        setLatestBlogs(formattedBlogs);
+        setLatestBlogs(formattedBlogs.slice(0, 4));  // Limit to 4 blog posts
       } catch (error) {
         console.error('Failed to fetch blogs:', error);
       }
@@ -94,7 +94,7 @@ export const Home: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {latestBlogs.map((blog) => (
               <a
-                key={blog.id}
+                key={blog.slug}
                 href={`/blog/${blog.slug}`}
                 className="group block overflow-hidden rounded-2xl border border-white/10 bg-dark-surface/60 backdrop-blur-xl hover:border-primary-DEFAULT/40 transition-all duration-300"
               >
