@@ -33,41 +33,34 @@ export const ServiceDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [service, setService] = useState<ServiceData | null>(null);
-  const [seoCards, setSeoCards] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const routeSlug = id || '';
   const normalizedId = routeSlug ? (serviceIdAliasMap[routeSlug] || routeSlug) : '';
+
+  // Resolve static fallback synchronously so the page renders immediately —
+  // no loading state means the prerender always captures real content.
+  const staticFallback =
+    servicesData.find((s) => s.id === normalizedId) ||
+    servicesData.find((s) => s.id === routeSlug) ||
+    (routeSlug === 'ai-booking-agents'
+      ? servicesData.find((s) => s.id === 'ai-micro-apps')
+      : undefined);
+
+  const [service, setService] = useState<ServiceData | null>(
+    staticFallback ? { ...staticFallback, id: routeSlug } : null
+  );
+  const [seoCards, setSeoCards] = useState<string[]>([]);
+  const [loading] = useState(false); // Static data is ready immediately
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
   useEffect(() => {
-    const loadServiceDetail = async () => {
-      if (!routeSlug) {
-        setService(null);
-        setSeoCards([]);
-        setLoading(false);
-        return;
-      }
+    // Enhance with WordPress data in the background — static content already showing
+    const enhanceWithWordPress = async () => {
+      if (!routeSlug || !staticFallback) return;
 
       try {
-        const staticFallback =
-          servicesData.find((s) => s.id === normalizedId) ||
-          servicesData.find((s) => s.id === routeSlug) ||
-          (routeSlug === 'ai-booking-agents'
-            ? servicesData.find((s) => s.id === 'ai-micro-apps')
-            : undefined);
-
-        if (!staticFallback) {
-          setService(null);
-          setSeoCards([]);
-          setLoading(false);
-          return;
-        }
-
         const [wpServices, repeatItems] = await Promise.all([
           fetchServices(),
           fetchServiceRepeatItems(routeSlug),
@@ -155,23 +148,12 @@ export const ServiceDetail: React.FC = () => {
 
         setService(mergedService);
       } catch (error) {
-        console.error('Error loading service detail:', error);
-
-        const staticFallback =
-          servicesData.find((s) => s.id === normalizedId) ||
-          servicesData.find((s) => s.id === routeSlug) ||
-          (routeSlug === 'ai-booking-agents'
-            ? servicesData.find((s) => s.id === 'ai-micro-apps')
-            : undefined);
-
-        setService(staticFallback ? { ...staticFallback, id: routeSlug } : null);
-        setSeoCards([]);
-      } finally {
-        setLoading(false);
+        console.error('Error enhancing service with WordPress data:', error);
+        // Static data already showing — nothing to do here
       }
     };
 
-    loadServiceDetail();
+    enhanceWithWordPress();
   }, [routeSlug, normalizedId]);
 
   if (loading) {

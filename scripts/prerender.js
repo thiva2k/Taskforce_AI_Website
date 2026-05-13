@@ -94,12 +94,30 @@ async function renderRoute(browser, route) {
       timeout: 30000,
     });
 
-    // Safety fallback — networkidle0 should already have caught WP API calls
+    // Route-specific content signals
     try {
-      await page.waitForFunction(
-        () => document.body.innerText.replace(/\s+/g, " ").trim().length > 300,
-        { timeout: 15000 }
-      );
+      if (route === "/blog/" || route === "/blog") {
+        // Wait for blog post cards — Blog.tsx has data-prerender="blog-card" on each card
+        await page.waitForFunction(
+          () => document.querySelectorAll('[data-prerender="blog-card"]').length > 0,
+          { timeout: 25000 }
+        );
+      } else if (route.startsWith("/service/")) {
+        // Service pages render static content immediately — just wait for h1
+        await page.waitForFunction(
+          () => {
+            const h1 = document.querySelector("h1");
+            return h1 && !h1.textContent.includes("Loading Service") && h1.textContent.trim().length > 3;
+          },
+          { timeout: 20000 }
+        );
+      } else {
+        // Generic pages — wait for substantial text
+        await page.waitForFunction(
+          () => document.body.innerText.replace(/\s+/g, " ").trim().length > 300,
+          { timeout: 20000 }
+        );
+      }
     } catch {
       console.warn(`  ⚠ Content wait timed out for ${route} — saving what we have`);
     }
