@@ -211,7 +211,7 @@ export const Home: React.FC = () => {
 };
 export const Home: React.FC = () => {
   const [seoCards, setSeoCards] = useState<string[]>([]);
-  const [latestBlogs, setLatestBlogs] = useState<any[]>([]); // State for storing blog posts
+  const [latestBlogs, setLatestBlogs] = useState<any[]>([]);
 
   useEffect(() => {
     // Fetch SEO cards
@@ -219,9 +219,12 @@ export const Home: React.FC = () => {
       try {
         const wpApi = import.meta.env.VITE_WP_API;
 
-        const response = await fetch(`${wpApi}/pages?slug=home&_=${Date.now()}`, {
-          cache: 'no-store',
-        });
+        const response = await fetch(
+          `${wpApi}/pages?slug=home&_=${Date.now()}`,
+          {
+            cache: 'no-store',
+          }
+        );
 
         const pages = await response.json();
 
@@ -248,19 +251,25 @@ export const Home: React.FC = () => {
     const fetchLatestBlogs = async () => {
       try {
         const wpApi = import.meta.env.VITE_WP_API;
-        const response = await fetch(`${wpApi}/posts?_limit=4&_sort=publish_date:desc&_=${Date.now()}`, {
-          cache: 'no-store',
-        });
-        const blogs = await response.json();
-        console.log('Fetched Blogs:', blogs); // Log to see the response structure
 
-        // Map the fetched blogs to ensure they have the necessary fields
-        const formattedBlogs = blogs.map(blog => ({
+        const response = await fetch(
+          `${wpApi}/posts?per_page=4&_embed&_=${Date.now()}`,
+          {
+            cache: 'no-store',
+          }
+        );
+
+        const blogs = await response.json();
+
+        console.log('Fetched Blogs:', blogs);
+
+        const formattedBlogs = blogs.map((blog: any) => ({
           title: blog.title.rendered,
           slug: blog.slug,
           date: blog.date,
-          featured_image_url: blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/default_image_url.jpg', // Ensure it uses the correct field for the featured image
-        })).slice(0, 4);  // Limit to the latest 4 blogs
+          featured_image_url:
+            blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+        }));
 
         setLatestBlogs(formattedBlogs);
       } catch (error) {
@@ -284,7 +293,16 @@ export const Home: React.FC = () => {
         {/* 2. Offices/Bases Section */}
         <Offices />
 
-        {/* 3. WordPress Editable SEO Cards */}
+        {/* 3. Systematic Transformation (Process Section) */}
+        <Process />
+
+        {/* 4. Stats Section */}
+        <Stats />
+
+        {/* 5. CTA Section */}
+        <CTA />
+
+        {/* 6. WordPress Editable SEO Cards */}
         {seoCards.length > 0 && (
           <section className="container mx-auto px-6 py-20 md:py-28">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-10">
@@ -322,11 +340,15 @@ export const Home: React.FC = () => {
           </section>
         )}
 
-        {/* 4. Latest Insights Section */}
+        {/* 7. Latest Insights Section */}
         <section className="container mx-auto px-6 py-20 md:py-28">
-          <div className="mb-12 text-center">
-            <h2 className="text-4xl md:text-6xl font-bold text-primary-light tracking-tighter leading-tight">
-              Blog
+          <div className="mb-14 text-center">
+            <p className="text-sm md:text-base tracking-[0.3em] uppercase text-primary-light font-semibold mb-4">
+              BLOG
+            </p>
+
+            <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter leading-tight">
+              Latest Insights
             </h2>
           </div>
 
@@ -367,16 +389,9 @@ export const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* 5. Ready to deploy your AI workforce? */}
+        {/* 8. Ready to deploy your AI workforce? */}
         <Services />
 
-        {/* 6. Systematic Transformation (Process Section) */}
-        <Process />
-
-        {/* Supplemental Sections */}
-        <Stats />
-
-        <CTA />
         <Footer />
       </div>
 
