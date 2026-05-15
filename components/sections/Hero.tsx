@@ -17,6 +17,7 @@ interface HeroContent {
   secondaryButtonLink: string;
 }
 
+
 export const Hero: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
