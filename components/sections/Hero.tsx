@@ -176,18 +176,18 @@ export const Hero: React.FC = () => {
           </motion.div>
 
           {/* ✅ Correct H1 SEO + animation */}
-          <motion.h1
-            style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
-            data-text={heroContent.title}
-          >
-            <ScrambleText
-              text={heroContent.title}
-              startDelay={200}
-              renderStaticText={isPrerender} // only static for prerender
-            />
-          </motion.h1>
-
+         <motion.h1
+  style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }}
+  className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
+  data-text={heroContent.title} // SEO fallback for prerender
+>
+  {/* ScrambleText handles both prerender and animation */}
+  <ScrambleText
+    text={heroContent.title}
+    startDelay={200}
+    renderStaticText={isPrerender} // shows static text for prerender
+  />
+</motion.h1>
           {/* Subtitle and description */}
           <motion.h3
             style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }}
