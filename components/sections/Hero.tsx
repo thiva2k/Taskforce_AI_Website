@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { ScrambleText } from '../ui/ScrambleText';  // This handles title animation
-import { GlitchButton } from '../ui/GlitchButton'; 
+import { ScrambleText } from '../ui/ScrambleText';
+import { GlitchButton } from '../ui/GlitchButton';
 import { Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -19,23 +19,51 @@ interface HeroContent {
 
 export const Hero: React.FC = () => {
   const { t } = useTranslation();
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
   const navigate = useNavigate();
 
-  const fallbackContent: HeroContent = {
-    badge: t('hero.badge'),
-    title: `We Build AI Voice Agents and Automation for Businesses Worldwide`,
-    description: t('hero.intro'),
-    primaryButtonText: t('hero.cta.book'),
-    primaryButtonLink: '/book-demo',
-    secondaryButtonText: t('hero.cta.contact'),
-    secondaryButtonLink: 'mailto:digitalagencylanka@gmail.com',
-  };
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  /**
+   * This detects your prerender run.
+   * Your updated ScrambleText should also use this same query flag
+   * to render the final text immediately during prerender.
+   */
+  const isPrerender = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+
+    return new URLSearchParams(window.location.search).get('prerender') === '1';
+  }, []);
+
+  /**
+   * Memoized so it does not get recreated on every render.
+   * This prevents the hero ACF useEffect from running repeatedly.
+   */
+  const fallbackContent = useMemo<HeroContent>(
+    () => ({
+      badge: t('hero.badge'),
+      title: 'We Build AI Voice Agents and Automation for Businesses Worldwide',
+      description: t('hero.intro'),
+      primaryButtonText: t('hero.cta.book'),
+      primaryButtonLink: '/book-demo',
+      secondaryButtonText: t('hero.cta.contact'),
+      secondaryButtonLink: 'mailto:digitalagencylanka@gmail.com',
+    }),
+    [t]
+  );
 
   const [heroContent, setHeroContent] = useState<HeroContent>(fallbackContent);
 
   useEffect(() => {
+    /**
+     * During prerender, keep the static fallback H1 in the HTML.
+     * This prevents the prerender snapshot from depending on WordPress/API timing.
+     */
+    if (isPrerender) {
+      setHeroContent(fallbackContent);
+      return;
+    }
+
     const loadHero = async () => {
       try {
         const acf = await fetchHomePageAcf();
@@ -55,11 +83,12 @@ export const Hero: React.FC = () => {
         });
       } catch (error) {
         console.error('Failed to load hero content:', error);
+        setHeroContent(fallbackContent);
       }
     };
 
     loadHero();
-  }, [fallbackContent]);
+  }, [fallbackContent, isPrerender]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -71,6 +100,9 @@ export const Hero: React.FC = () => {
     const handleTouchMove = (e: TouchEvent) => {
       const { innerWidth, innerHeight } = window;
       const touch = e.touches[0];
+
+      if (!touch) return;
+
       mouseX.set(touch.clientX - innerWidth / 2);
       mouseY.set(touch.clientY - innerHeight / 2);
     };
@@ -85,6 +117,7 @@ export const Hero: React.FC = () => {
   }, [mouseX, mouseY]);
 
   const springConfig = { damping: 25, stiffness: 150, mass: 0.5 };
+
   const x = useSpring(mouseX, springConfig);
   const y = useSpring(mouseY, springConfig);
 
@@ -111,7 +144,10 @@ export const Hero: React.FC = () => {
   };
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20 md:pt-36 md:pb-24 snap-start perspective-[1000px]">
+    <section
+      id="hero"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20 md:pt-36 md:pb-24 snap-start perspective-[1000px]"
+    >
       <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center perspective-origin-center transform-style-3d">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -121,19 +157,25 @@ export const Hero: React.FC = () => {
           className="flex flex-col items-center"
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, borderWidth: 1, borderStyle: 'solid', borderColor: 'rgba(255,255,255,0)' }}
+            initial={{
+              opacity: 0,
+              scale: 0.9,
+              borderWidth: 1,
+              borderStyle: 'solid',
+              borderColor: 'rgba(255,255,255,0)',
+            }}
             animate={{
               opacity: 1,
               scale: 1,
               borderColor: 'rgba(255,255,255,0.1)',
-              transition: { duration: 0.5, delay: 0.2 }
+              transition: { duration: 0.5, delay: 0.2 },
             }}
             whileHover={{
               scale: 1.05,
               borderColor: 'rgba(6, 182, 212, 0.5)',
               backgroundColor: 'rgba(6, 182, 212, 0.1)',
               boxShadow: '0 0 20px rgba(6, 182, 212, 0.2)',
-              transition: { duration: 0.2, delay: 0 }
+              transition: { duration: 0.2, delay: 0 },
             }}
             whileTap={{ scale: 0.95 }}
             style={{ x: contentX, y: contentY }}
@@ -142,40 +184,41 @@ export const Hero: React.FC = () => {
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2.5s_infinite]" />
 
             <span className="flex h-2 w-2 relative shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
             </span>
+
             <span className="text-[10px] xs:text-xs md:text-sm font-medium text-white group-hover:text-white transition-all duration-300 truncate relative z-10 drop-shadow-[0_0_8px_rgba(96,165,250,0.7)] group-hover:drop-shadow-[0_0_18px_rgba(96,165,250,1)]">
               {heroContent.badge}
             </span>
+
             <Zap className="w-3 h-3 text-accent group-hover:text-white transition-colors shrink-0 relative z-10" />
           </motion.div>
 
-          {/* H1 title with ScrambleText animation */}
+          {/* 
+            Important SEO fix:
+            The H1 remains the real heading element.
+            ScrambleText must render final text immediately when ?prerender=1 is present.
+          */}
           <motion.h1
             style={{
               rotateX: headingRotateX,
               rotateY: headingRotateY,
               x: headingX,
-              y: headingY
+              y: headingY,
             }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
+            data-prerender-text={heroContent.title}
           >
-            <ScrambleText
-              text={heroContent.title}
-              duration={2.5}
-              delay={0.2}
-              fontSize="inherit"
-            />
+            <ScrambleText text={heroContent.title} startDelay={200} />
           </motion.h1>
 
-          {/* H3 subtitle with fixed color */}
           <motion.h3
             style={{
               rotateX: headingRotateX,
               rotateY: headingRotateY,
               x: headingX,
-              y: headingY
+              y: headingY,
             }}
             className="text-2xl sm:text-3xl md:text-4xl font-medium text-blue-500 mb-6 md:mb-8"
           >
