@@ -16,7 +16,10 @@ interface HeroContent {
   secondaryButtonText: string;
   secondaryButtonLink: string;
 }
-
+const isPrerender = useMemo(() => {
+  if (typeof window === 'undefined') return false;
+  return new URLSearchParams(window.location.search).get('prerender') === '1';
+}, []);
 export const Hero: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
