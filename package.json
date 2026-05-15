@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build:sitemap": "node scripts/generate-sitemap.js",
-    "build": "node scripts/generate-blog-cache.mjs && npm run build:sitemap && vite build && npm run prerender"
+    "build": "npm run build:sitemap && vite build && npm run prerender",
     "prerender": "node scripts/prerender.js",
     "preview": "vite preview"
   },
