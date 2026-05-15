@@ -24,10 +24,12 @@ export const Hero: React.FC = () => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Detect prerender — Puppeteer visits with ?prerender=1
+  // Detect prerender — Puppeteer sets window.__IS_PRERENDER__ = true
+  // via evaluateOnNewDocument() BEFORE React mounts.
+  // This is 100% reliable — no URL parsing, no race condition.
   const isPrerender = useMemo(() => {
     if (typeof window === 'undefined') return false;
-    return new URLSearchParams(window.location.search).get('prerender') === '1';
+    return !!(window as any).__IS_PRERENDER__;
   }, []);
 
   const fallbackContent = useMemo<HeroContent>(
@@ -153,28 +155,30 @@ export const Hero: React.FC = () => {
            *
            * HOW THIS WORKS:
            *
+           * prerender.js uses page.evaluateOnNewDocument() to set
+           * window.__IS_PRERENDER__ = true BEFORE any JS on the page runs.
+           * When React mounts, isPrerender is already true.
+           *
            * Normal users (isPrerender = false):
-           *   - Plain text span is text-transparent — invisible to eye
-           *   - ScrambleText overlay renders on top — users see the animation
+           *   — Plain text span: text-transparent (invisible)
+           *   — ScrambleText overlay: visible, animation runs normally
            *
-           * Puppeteer prerender (isPrerender = true, URL has ?prerender=1):
-           *   - Plain text span is text-white — fully visible
-           *   - No ScrambleText overlay rendered
-           *   - Puppeteer captures clean readable H1 text
-           *   - Google reads the captured HTML and sees the clean text
-           *
-           * Result: Users see scramble animation. Google sees clean text.
+           * Puppeteer prerender (isPrerender = true):
+           *   — Plain text span: text-white (fully visible)
+           *   — No ScrambleText overlay rendered at all
+           *   — Puppeteer captures clean readable H1
+           *   — Google reads: "We Build AI Voice Agents..."
            * ─────────────────────────────────────────────────────────────────── */}
           <motion.h1
             style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }}
             className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
           >
-            {/* Plain text — always in DOM, always readable by Google */}
+            {/* Plain text — always in DOM, Google always reads this */}
             <span className={isPrerender ? 'text-white' : 'text-transparent select-none'}>
               {heroContent.title}
             </span>
 
-            {/* ScrambleText animation — only shown to real users, not to prerenderer */}
+            {/* ScrambleText animation overlay — only for real users, never for prerenderer */}
             {!isPrerender && (
               <span
                 aria-hidden="true"
@@ -189,21 +193,37 @@ export const Hero: React.FC = () => {
           </motion.h1>
 
           {/* Subtitle */}
-          <motion.h3 style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }} className="text-2xl sm:text-3xl md:text-4xl font-medium text-blue-500 mb-6 md:mb-8">
+          <motion.h3
+            style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }}
+            className="text-2xl sm:text-3xl md:text-4xl font-medium text-blue-500 mb-6 md:mb-8"
+          >
             Your Business on Autopilot
           </motion.h3>
 
           {/* Description */}
-          <motion.p style={{ x: contentX, y: contentY }} className="text-base sm:text-lg md:text-xl text-gray-400 mb-8 md:mb-12 max-w-[90vw] md:max-w-3xl mx-auto leading-relaxed">
+          <motion.p
+            style={{ x: contentX, y: contentY }}
+            className="text-base sm:text-lg md:text-xl text-gray-400 mb-8 md:mb-12 max-w-[90vw] md:max-w-3xl mx-auto leading-relaxed"
+          >
             {heroContent.description}
           </motion.p>
 
           {/* Buttons */}
-          <motion.div style={{ x: contentX, y: contentY }} className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto px-6 sm:px-0">
-            <GlitchButton className="w-full sm:w-auto px-6 py-4 md:px-8 md:py-4 text-sm sm:text-base md:text-lg justify-center whitespace-normal text-center h-auto min-h-[50px]" onClick={() => handleLink(heroContent.primaryButtonLink)}>
+          <motion.div
+            style={{ x: contentX, y: contentY }}
+            className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto px-6 sm:px-0"
+          >
+            <GlitchButton
+              className="w-full sm:w-auto px-6 py-4 md:px-8 md:py-4 text-sm sm:text-base md:text-lg justify-center whitespace-normal text-center h-auto min-h-[50px]"
+              onClick={() => handleLink(heroContent.primaryButtonLink)}
+            >
               {heroContent.primaryButtonText}
             </GlitchButton>
-            <GlitchButton variant="secondary" className="w-full sm:w-auto px-6 py-4 md:px-8 md:py-4 text-sm sm:text-base md:text-lg justify-center whitespace-normal text-center h-auto min-h-[50px]" onClick={() => handleLink(heroContent.secondaryButtonLink)}>
+            <GlitchButton
+              variant="secondary"
+              className="w-full sm:w-auto px-6 py-4 md:px-8 md:py-4 text-sm sm:text-base md:text-lg justify-center whitespace-normal text-center h-auto min-h-[50px]"
+              onClick={() => handleLink(heroContent.secondaryButtonLink)}
+            >
               {heroContent.secondaryButtonText}
             </GlitchButton>
           </motion.div>
