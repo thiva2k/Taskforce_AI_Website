@@ -148,17 +148,44 @@ export const Hero: React.FC = () => {
             <Zap className="w-3 h-3 text-accent group-hover:text-white transition-colors shrink-0 relative z-10" />
           </motion.div>
 
-          {/* ✅ Hidden SEO H1 for Google */}
-          <h1 style={{ position: 'absolute', opacity: 0, height: 0, width: 0, overflow: 'hidden' }}>
-            We Build AI Voice Agents and Automation for Businesses Worldwide
-          </h1>
-
-          {/* Visible animated H1 */}
+          {/*
+           * ── SEO-SAFE H1 ──────────────────────────────────────────────────────
+           *
+           * HOW THIS WORKS:
+           * The <h1> always contains the real plain text as its actual DOM content.
+           * Google reads this and ranks you for it.
+           *
+           * The ScrambleText animation runs inside an aria-hidden <span> that is
+           * positioned absolutely over the real text using inset-0. Users see
+           * the animation. Google sees the real text. No cloaking. No hidden divs.
+           *
+           * The real text is made visually invisible (text-transparent) so it
+           * doesn't double-render beneath the animation for sighted users.
+           * Screen readers still read the real text (aria-hidden is only on
+           * the animation span, not the h1 itself).
+           * ─────────────────────────────────────────────────────────────────── */}
           <motion.h1
             style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
+            className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
           >
-            <ScrambleText text={heroContent.title} startDelay={200} renderStaticText={isPrerender} />
+            {/* Real text — always in DOM, always readable by Google */}
+            <span className={isPrerender ? '' : 'text-transparent select-none'}>
+              {heroContent.title}
+            </span>
+
+            {/* Scramble animation overlay — hidden from screen readers, visible to users */}
+            {!isPrerender && (
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <ScrambleText
+                  text={heroContent.title}
+                  startDelay={200}
+                  className="text-white"
+                />
+              </span>
+            )}
           </motion.h1>
 
           {/* Subtitle */}
