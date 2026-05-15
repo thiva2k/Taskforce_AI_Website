@@ -170,23 +170,10 @@ export const Hero: React.FC = () => {
             className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
           >
             {/* Real text — always in DOM, always readable by Google */}
-            <span className={isPrerender ? '' : 'text-transparent select-none'}>
-              {heroContent.title}
-            </span>
-
-            {/* Scramble animation overlay — hidden from screen readers, visible to users */}
-            {!isPrerender && (
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 flex items-center justify-center"
-              >
-                <ScrambleText
-                  text={heroContent.title}
-                  startDelay={200}
-                  className="text-white"
-                />
-              </span>
-            )}
+{/* Plain text always in DOM — Google reads this */}
+<span>
+  {heroContent.title}
+</span>
           </motion.h1>
 
           {/* Subtitle */}
