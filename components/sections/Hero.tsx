@@ -17,7 +17,6 @@ interface HeroContent {
   secondaryButtonLink: string;
 }
 
-
 export const Hero: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -25,7 +24,7 @@ export const Hero: React.FC = () => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Detect prerender
+  // Detect prerender — Puppeteer visits with ?prerender=1
   const isPrerender = useMemo(() => {
     if (typeof window === 'undefined') return false;
     return new URLSearchParams(window.location.search).get('prerender') === '1';
@@ -150,30 +149,43 @@ export const Hero: React.FC = () => {
           </motion.div>
 
           {/*
-           * ── SEO-SAFE H1 ──────────────────────────────────────────────────────
+           * ── SEO-SAFE H1 WITH SCRAMBLE ANIMATION ─────────────────────────────
            *
            * HOW THIS WORKS:
-           * The <h1> always contains the real plain text as its actual DOM content.
-           * Google reads this and ranks you for it.
            *
-           * The ScrambleText animation runs inside an aria-hidden <span> that is
-           * positioned absolutely over the real text using inset-0. Users see
-           * the animation. Google sees the real text. No cloaking. No hidden divs.
+           * Normal users (isPrerender = false):
+           *   - Plain text span is text-transparent — invisible to eye
+           *   - ScrambleText overlay renders on top — users see the animation
            *
-           * The real text is made visually invisible (text-transparent) so it
-           * doesn't double-render beneath the animation for sighted users.
-           * Screen readers still read the real text (aria-hidden is only on
-           * the animation span, not the h1 itself).
+           * Puppeteer prerender (isPrerender = true, URL has ?prerender=1):
+           *   - Plain text span is text-white — fully visible
+           *   - No ScrambleText overlay rendered
+           *   - Puppeteer captures clean readable H1 text
+           *   - Google reads the captured HTML and sees the clean text
+           *
+           * Result: Users see scramble animation. Google sees clean text.
            * ─────────────────────────────────────────────────────────────────── */}
           <motion.h1
             style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }}
             className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
           >
-            {/* Real text — always in DOM, always readable by Google */}
-{/* Plain text always in DOM — Google reads this */}
-<span>
-  {heroContent.title}
-</span>
+            {/* Plain text — always in DOM, always readable by Google */}
+            <span className={isPrerender ? 'text-white' : 'text-transparent select-none'}>
+              {heroContent.title}
+            </span>
+
+            {/* ScrambleText animation — only shown to real users, not to prerenderer */}
+            {!isPrerender && (
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 flex items-center justify-center text-white"
+              >
+                <ScrambleText
+                  text={heroContent.title}
+                  startDelay={200}
+                />
+              </span>
+            )}
           </motion.h1>
 
           {/* Subtitle */}
