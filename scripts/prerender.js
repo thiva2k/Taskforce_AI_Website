@@ -112,16 +112,7 @@ async function renderRoute(browser, route) {
           { timeout: 20000 }
         );
 } else {
-  // Wait for H1 to contain readable text (not scramble chars)
-  await page.waitForFunction(
-    () => {
-      const h1 = document.querySelector('h1');
-      if (!h1) return false;
-      const text = h1.innerText || h1.textContent || '';
-      return text.trim().length > 10 && !text.includes('_') && !text.includes('[');
-    },
-    { timeout: 20000 }
-  );
+  await page.waitForTimeout(3000);
 }
     } catch {
       console.warn(`  ⚠ Content wait timed out for ${route} — saving what we have`);
