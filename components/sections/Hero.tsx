@@ -24,21 +24,12 @@ export const Hero: React.FC = () => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  /**
-   * This detects your prerender run.
-   * Your updated ScrambleText should also use this same query flag
-   * to render the final text immediately during prerender.
-   */
+  // Detect prerender to render static H1
   const isPrerender = useMemo(() => {
     if (typeof window === 'undefined') return false;
-
     return new URLSearchParams(window.location.search).get('prerender') === '1';
   }, []);
 
-  /**
-   * Memoized so it does not get recreated on every render.
-   * This prevents the hero ACF useEffect from running repeatedly.
-   */
   const fallbackContent = useMemo<HeroContent>(
     () => ({
       badge: t('hero.badge'),
@@ -55,11 +46,8 @@ export const Hero: React.FC = () => {
   const [heroContent, setHeroContent] = useState<HeroContent>(fallbackContent);
 
   useEffect(() => {
-    /**
-     * During prerender, keep the static fallback H1 in the HTML.
-     * This prevents the prerender snapshot from depending on WordPress/API timing.
-     */
     if (isPrerender) {
+      // During prerender, keep static headline
       setHeroContent(fallbackContent);
       return;
     }
@@ -100,9 +88,7 @@ export const Hero: React.FC = () => {
     const handleTouchMove = (e: TouchEvent) => {
       const { innerWidth, innerHeight } = window;
       const touch = e.touches[0];
-
       if (!touch) return;
-
       mouseX.set(touch.clientX - innerWidth / 2);
       mouseY.set(touch.clientY - innerHeight / 2);
     };
@@ -117,7 +103,6 @@ export const Hero: React.FC = () => {
   }, [mouseX, mouseY]);
 
   const springConfig = { damping: 25, stiffness: 150, mass: 0.5 };
-
   const x = useSpring(mouseX, springConfig);
   const y = useSpring(mouseY, springConfig);
 
@@ -134,12 +119,10 @@ export const Hero: React.FC = () => {
 
   const handleLink = (link: string) => {
     if (!link) return;
-
     if (link.startsWith('mailto:') || link.startsWith('http')) {
       window.location.href = link;
       return;
     }
-
     navigate(link);
   };
 
@@ -156,6 +139,7 @@ export const Hero: React.FC = () => {
           style={{ rotateX, rotateY }}
           className="flex flex-col items-center"
         >
+          {/* Hero badge & shimmer section remains unchanged */}
           <motion.div
             initial={{
               opacity: 0,
@@ -182,24 +166,17 @@ export const Hero: React.FC = () => {
             className="relative overflow-hidden inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white/5 backdrop-blur-md mb-8 md:mb-10 group cursor-default max-w-[95vw] sm:max-w-none mx-auto"
           >
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-[shimmer_2.5s_infinite]" />
-
             <span className="flex h-2 w-2 relative shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
             </span>
-
             <span className="text-[10px] xs:text-xs md:text-sm font-medium text-white group-hover:text-white transition-all duration-300 truncate relative z-10 drop-shadow-[0_0_8px_rgba(96,165,250,0.7)] group-hover:drop-shadow-[0_0_18px_rgba(96,165,250,1)]">
               {heroContent.badge}
             </span>
-
             <Zap className="w-3 h-3 text-accent group-hover:text-white transition-colors shrink-0 relative z-10" />
           </motion.div>
 
-          {/* 
-            Important SEO fix:
-            The H1 remains the real heading element.
-            ScrambleText must render final text immediately when ?prerender=1 is present.
-          */}
+          {/* ✅ Fixed H1: ScrambleText outputs final text during prerender */}
           <motion.h1
             style={{
               rotateX: headingRotateX,
@@ -213,6 +190,7 @@ export const Hero: React.FC = () => {
             <ScrambleText text={heroContent.title} startDelay={200} />
           </motion.h1>
 
+          {/* Rest of hero content unchanged */}
           <motion.h3
             style={{
               rotateX: headingRotateX,
