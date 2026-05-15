@@ -169,28 +169,35 @@ export const Hero: React.FC = () => {
            *   — Puppeteer captures clean readable H1
            *   — Google reads: "We Build AI Voice Agents..."
            * ─────────────────────────────────────────────────────────────────── */}
-          <motion.h1
-            style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }}
-            className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
-          >
-            {/* Plain text — always in DOM, Google always reads this */}
-            <span className={isPrerender ? 'text-white' : 'text-transparent select-none'}>
-              {heroContent.title}
-            </span>
+<motion.h1
+  style={{
+    rotateX: headingRotateX,
+    rotateY: headingRotateY,
+    x: headingX,
+    y: headingY,
+  }}
+  className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
+>
+  {/* SEO-safe static text */}
+  <span className="sr-only">
+    {heroContent.title}
+  </span>
 
-            {/* ScrambleText animation overlay — only for real users, never for prerenderer */}
-            {!isPrerender && (
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 flex items-center justify-center text-white"
-              >
-                <ScrambleText
-                  text={heroContent.title}
-                  startDelay={200}
-                />
-              </span>
-            )}
-          </motion.h1>
+  {/* Visible text layer */}
+  <span
+    aria-hidden="true"
+    className="block"
+  >
+    {isPrerender ? (
+      heroContent.title
+    ) : (
+      <ScrambleText
+        text={heroContent.title}
+        startDelay={200}
+      />
+    )}
+  </span>
+</motion.h1>
 
           {/* Subtitle */}
           <motion.h3
