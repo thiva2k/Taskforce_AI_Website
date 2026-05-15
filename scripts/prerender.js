@@ -135,12 +135,9 @@ async function renderRoute(browser, route) {
             if (!h1) return false;
             const text = (h1.textContent || "").trim();
             // Must contain readable words — no scramble chars like [ ] ^ { }
-            return (
-              text.length > 10 &&
-              !text.includes("[") &&
-              !text.includes("{") &&
-              !text.includes("^")
-            );
+            return text.includes(
+  "We Build AI Voice Agents and Automation"
+);
           },
           { timeout: 10000 }
         );
