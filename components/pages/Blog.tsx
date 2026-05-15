@@ -4,11 +4,10 @@ import { Calendar, User, ArrowRight, BookOpen, Clock } from 'lucide-react';
 import { Footer } from '../layout/Footer';
 import { SEO } from '../seo/SEO';
 import { TechPanel } from '../ui/TechPanel';
-import { ScrambleText } from '../ui/ScrambleText';
 import { GlitchButton } from '../ui/GlitchButton';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { fetchBlogPosts, BlogListItem } from '../../lib/wordpress';
+import type { BlogListItem } from '../../lib/wordpress';
 
 const CATEGORIES = [
   'All',
@@ -34,28 +33,37 @@ export const Blog: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
+  // ✅ SEO SAFE STATIC BLOG CACHE LOADER
   useEffect(() => {
     let mounted = true;
 
-    const loadPosts = async () => {
+    const loadCachedPosts = async () => {
       try {
         setLoading(true);
         setErrorMessage('');
 
-        const posts = await fetchBlogPosts();
+        const response = await fetch('/blog-cache.json');
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to load blog-cache.json (${response.status})`
+          );
+        }
+
+        const posts = await response.json();
 
         if (mounted) {
           setAllPosts(Array.isArray(posts) ? posts : []);
         }
       } catch (error) {
-        console.error('Error fetching WordPress blog posts:', error);
+        console.error('Error loading cached blog posts:', error);
 
         if (mounted) {
           setAllPosts([]);
           setErrorMessage(
             error instanceof Error
               ? error.message
-              : 'Unknown error while fetching blog posts'
+              : 'Unknown error while loading cached blog posts'
           );
         }
       } finally {
@@ -65,7 +73,7 @@ export const Blog: React.FC = () => {
       }
     };
 
-    loadPosts();
+    loadCachedPosts();
 
     return () => {
       mounted = false;
@@ -116,25 +124,23 @@ export const Blog: React.FC = () => {
               <span>{t('blog.transmission_log')}</span>
             </motion.div>
 
-            {/* ✅ MODIFIED TITLE */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="mb-6"
             >
-              <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter leading-tight">
+              {/* ✅ SEO SAFE H1 */}
+              <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tighter leading-tight">
                 AI Agents & Business Automation
-              </h2>
+              </h1>
 
-              <h3 className="text-lg md:text-2xl font-semibold text-primary-light mt-2 leading-relaxed">
+              <h2 className="text-lg md:text-2xl font-semibold text-primary-light mt-2 leading-relaxed">
                 Insights, Guides & Case Studies
-              </h3>
+              </h2>
             </motion.div>
-
           </div>
         </section>
-
 
         <section className="container mx-auto px-6 mb-12">
           <div className="flex flex-wrap gap-2 md:gap-4 border-b border-white/10 pb-6">
@@ -167,12 +173,15 @@ export const Blog: React.FC = () => {
               <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
                 <BookOpen className="w-8 h-8 text-red-300" />
               </div>
+
               <h3 className="text-xl font-bold text-white mb-2">
                 Blog posts failed to load
               </h3>
+
               <p className="text-gray-400 max-w-2xl mx-auto mb-2">
-                React could not get blog data from WordPress.
+                Could not load prerender blog cache.
               </p>
+
               <p className="text-red-300 text-sm break-all max-w-3xl mx-auto">
                 {errorMessage}
               </p>
@@ -185,20 +194,32 @@ export const Blog: React.FC = () => {
               <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
                 <BookOpen className="w-8 h-8 text-gray-500" />
               </div>
+
               <h3 className="text-xl font-bold text-white mb-2">
                 {t('blog.empty.title')}
               </h3>
+
               <p className="text-gray-400 max-w-md mx-auto mb-3">
                 {t('blog.empty.desc')}
-              </p>
-
-              <p className="text-xs text-gray-500 max-w-2xl mx-auto">
-                Debug: WordPress returned {allPosts.length} total post(s), but
-                category "{activeCategory}" matched {filteredPosts.length} post(s).
               </p>
             </TechPanel>
           ) : (
             <>
+              {/* ✅ IMPORTANT FOR PRERENDER */}
+              <div
+                data-prerender="blog-posts"
+                className="hidden"
+              >
+                {filteredPosts.map((post) => (
+                  <article key={post.id}>
+                    <a href={`/blog/${post.slug}`}>
+                      {post.title}
+                    </a>
+                    <p>{post.excerpt}</p>
+                  </article>
+                ))}
+              </div>
+
               <motion.div
                 layout
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
@@ -231,8 +252,6 @@ export const Blog: React.FC = () => {
                             <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
                           )}
 
-                          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none" />
-
                           <div className="absolute top-4 left-4 z-10 flex gap-2">
                             <span className="px-3 py-1 rounded-full bg-black/40 backdrop-blur-md text-[10px] font-mono text-white border border-white/10">
                               {post.category || 'General'}
@@ -243,10 +262,13 @@ export const Blog: React.FC = () => {
                         <div className="p-6 md:p-8 flex flex-col flex-1">
                           <div className="flex items-center gap-4 text-xs text-gray-500 font-mono mb-4 flex-wrap">
                             <span className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3" /> {post.date}
+                              <Calendar className="w-3 h-3" />
+                              {post.date}
                             </span>
+
                             <span className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" /> {post.readTime}
+                              <Clock className="w-3 h-3" />
+                              {post.readTime}
                             </span>
                           </div>
 
@@ -263,6 +285,7 @@ export const Blog: React.FC = () => {
                               <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-gray-700 to-gray-600 flex items-center justify-center">
                                 <User className="w-3 h-3 text-white" />
                               </div>
+
                               {post.author || 'TaskForce Team'}
                             </div>
 
@@ -293,16 +316,15 @@ export const Blog: React.FC = () => {
             className="rounded-[2.5rem] bg-[#0F1115] overflow-hidden p-12 md:p-20 text-center"
             animateScan={false}
           >
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03]" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary-DEFAULT/5 blur-[100px] rounded-full pointer-events-none" />
-
             <div className="relative z-10 max-w-2xl mx-auto">
               <h2 className="text-3xl font-bold text-white mb-4">
                 Stay in the loop
               </h2>
+
               <p className="text-gray-400 mb-8">
-                Get the latest intelligence on autonomous agents, case studies,
-                and engineering deep dives delivered to your inbox.
+                Get the latest intelligence on autonomous agents,
+                case studies, and engineering deep dives delivered
+                to your inbox.
               </p>
 
               <form
@@ -314,6 +336,7 @@ export const Blog: React.FC = () => {
                   placeholder="Enter your email address"
                   className="flex-1 bg-white/5 border border-white/10 rounded-xl px-6 py-4 text-white placeholder:text-gray-600 focus:outline-none focus:border-primary-DEFAULT/50 focus:bg-white/10 transition-all"
                 />
+
                 <GlitchButton className="px-8 py-4 justify-center">
                   Subscribe
                 </GlitchButton>
