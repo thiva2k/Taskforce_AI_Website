@@ -180,23 +180,17 @@ export const Hero: React.FC = () => {
           </motion.div>
 
           {/* ✅ Fixed H1: ScrambleText outputs final text during prerender */}
-          <motion.h1
-  style={{
-    rotateX: headingRotateX,
-    rotateY: headingRotateY,
-    x: headingX,
-    y: headingY,
-  }}
+         <motion.h1
+  style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }}
   className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
   data-text="We Build AI Voice Agents and Automation for Businesses Worldwide"
 >
-  {/* Render the static headline directly */}
+  {/* Static text for SEO / pre-renderer */}
   We Build AI Voice Agents and Automation for Businesses Worldwide
 
-  {/* Keep ScrambleText for the animation effect */}
+  {/* Animation runs only after hydration for real users */}
   {!isPrerender && <ScrambleText text={heroContent.title} startDelay={200} />}
 </motion.h1>
-
           {/* Rest of hero content unchanged */}
           <motion.h3
             style={{
