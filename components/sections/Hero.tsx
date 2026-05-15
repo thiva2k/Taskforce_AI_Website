@@ -17,7 +17,6 @@ interface HeroContent {
   secondaryButtonLink: string;
 }
 
-
 export const Hero: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -25,10 +24,12 @@ export const Hero: React.FC = () => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Detect prerender
+  // Detect prerender — Puppeteer sets window.__IS_PRERENDER__ = true
+  // via evaluateOnNewDocument() BEFORE React mounts.
+  // This is 100% reliable — no URL parsing, no race condition.
   const isPrerender = useMemo(() => {
     if (typeof window === 'undefined') return false;
-    return new URLSearchParams(window.location.search).get('prerender') === '1';
+    return !!(window as any).__IS_PRERENDER__;
   }, []);
 
   const fallbackContent = useMemo<HeroContent>(
@@ -150,48 +151,86 @@ export const Hero: React.FC = () => {
           </motion.div>
 
           {/*
-           * ── SEO-SAFE H1 ──────────────────────────────────────────────────────
+           * ── SEO-SAFE H1 WITH SCRAMBLE ANIMATION ─────────────────────────────
            *
            * HOW THIS WORKS:
-           * The <h1> always contains the real plain text as its actual DOM content.
-           * Google reads this and ranks you for it.
            *
-           * The ScrambleText animation runs inside an aria-hidden <span> that is
-           * positioned absolutely over the real text using inset-0. Users see
-           * the animation. Google sees the real text. No cloaking. No hidden divs.
+           * prerender.js uses page.evaluateOnNewDocument() to set
+           * window.__IS_PRERENDER__ = true BEFORE any JS on the page runs.
+           * When React mounts, isPrerender is already true.
            *
-           * The real text is made visually invisible (text-transparent) so it
-           * doesn't double-render beneath the animation for sighted users.
-           * Screen readers still read the real text (aria-hidden is only on
-           * the animation span, not the h1 itself).
+           * Normal users (isPrerender = false):
+           *   — Plain text span: text-transparent (invisible)
+           *   — ScrambleText overlay: visible, animation runs normally
+           *
+           * Puppeteer prerender (isPrerender = true):
+           *   — Plain text span: text-white (fully visible)
+           *   — No ScrambleText overlay rendered at all
+           *   — Puppeteer captures clean readable H1
+           *   — Google reads: "We Build AI Voice Agents..."
            * ─────────────────────────────────────────────────────────────────── */}
-          <motion.h1
-            style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }}
-            className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
-          >
-            {/* Real text — always in DOM, always readable by Google */}
-{/* Plain text always in DOM — Google reads this */}
-<span>
-  {heroContent.title}
-</span>
-          </motion.h1>
+<motion.h1
+  style={{
+    rotateX: headingRotateX,
+    rotateY: headingRotateY,
+    x: headingX,
+    y: headingY,
+  }}
+  className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
+>
+  {/* SEO-safe static text */}
+  <span className="sr-only">
+    {heroContent.title}
+  </span>
+
+  {/* Visible text layer */}
+  <span
+    aria-hidden="true"
+    className="block"
+  >
+    {isPrerender ? (
+      heroContent.title
+    ) : (
+      <ScrambleText
+        text={heroContent.title}
+        startDelay={200}
+      />
+    )}
+  </span>
+</motion.h1>
 
           {/* Subtitle */}
-          <motion.h3 style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }} className="text-2xl sm:text-3xl md:text-4xl font-medium text-blue-500 mb-6 md:mb-8">
+          <motion.h3
+            style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }}
+            className="text-2xl sm:text-3xl md:text-4xl font-medium text-blue-500 mb-6 md:mb-8"
+          >
             Your Business on Autopilot
           </motion.h3>
 
           {/* Description */}
-          <motion.p style={{ x: contentX, y: contentY }} className="text-base sm:text-lg md:text-xl text-gray-400 mb-8 md:mb-12 max-w-[90vw] md:max-w-3xl mx-auto leading-relaxed">
+          <motion.p
+            style={{ x: contentX, y: contentY }}
+            className="text-base sm:text-lg md:text-xl text-gray-400 mb-8 md:mb-12 max-w-[90vw] md:max-w-3xl mx-auto leading-relaxed"
+          >
             {heroContent.description}
           </motion.p>
 
           {/* Buttons */}
-          <motion.div style={{ x: contentX, y: contentY }} className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto px-6 sm:px-0">
-            <GlitchButton className="w-full sm:w-auto px-6 py-4 md:px-8 md:py-4 text-sm sm:text-base md:text-lg justify-center whitespace-normal text-center h-auto min-h-[50px]" onClick={() => handleLink(heroContent.primaryButtonLink)}>
+          <motion.div
+            style={{ x: contentX, y: contentY }}
+            className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto px-6 sm:px-0"
+          >
+            <GlitchButton
+              className="w-full sm:w-auto px-6 py-4 md:px-8 md:py-4 text-sm sm:text-base md:text-lg justify-center whitespace-normal text-center h-auto min-h-[50px]"
+              onClick={() => handleLink(heroContent.primaryButtonLink)}
+            >
               {heroContent.primaryButtonText}
             </GlitchButton>
-            <GlitchButton variant="secondary" className="w-full sm:w-auto px-6 py-4 md:px-8 md:py-4 text-sm sm:text-base md:text-lg justify-center whitespace-normal text-center h-auto min-h-[50px]" onClick={() => handleLink(heroContent.secondaryButtonLink)}>
+            <GlitchButton
+              variant="secondary"
+              className="w-full sm:w-auto px-6 py-4 md:px-8 md:py-4 text-sm sm:text-base md:text-lg justify-center whitespace-normal text-center h-auto min-h-[50px]"
+              onClick={() => handleLink(heroContent.secondaryButtonLink)}
+            >
               {heroContent.secondaryButtonText}
             </GlitchButton>
           </motion.div>

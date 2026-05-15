@@ -85,10 +85,20 @@ async function getPublicBlogRoutes() {
 
 async function renderRoute(browser, route) {
   const page = await browser.newPage();
-  // ?prerender=1 tells the app to skip its 2200ms loading screen
-  const url = `http://localhost:4173${route}?prerender=1`;
 
   try {
+    // ── KEY FIX ──────────────────────────────────────────────────────────────
+    // evaluateOnNewDocument runs BEFORE any JavaScript on the page executes.
+    // This means window.__IS_PRERENDER__ = true is set before React even loads.
+    // When Hero.tsx mounts and reads window.__IS_PRERENDER__, it is already true.
+    // This is guaranteed — no race condition, no URL parsing issues.
+    // ─────────────────────────────────────────────────────────────────────────
+    await page.evaluateOnNewDocument(() => {
+      window.__IS_PRERENDER__ = true;
+    });
+
+    const url = `http://localhost:4173${route}`;
+
     await page.goto(url, {
       waitUntil: "networkidle0",
       timeout: 30000,
@@ -103,17 +113,35 @@ async function renderRoute(browser, route) {
           { timeout: 25000 }
         );
       } else if (route.startsWith("/service/")) {
-        // Service pages render static content immediately — just wait for h1
+        // Service pages — wait for h1 to contain real content
         await page.waitForFunction(
           () => {
             const h1 = document.querySelector("h1");
-            return h1 && !h1.textContent.includes("Loading Service") && h1.textContent.trim().length > 3;
+            return (
+              h1 &&
+              !h1.textContent.includes("Loading Service") &&
+              h1.textContent.trim().length > 3
+            );
           },
           { timeout: 20000 }
         );
-} else {
-  await page.waitForTimeout(3000);
-}
+      } else {
+        // Homepage and all other pages — wait for H1 to contain the clean title text.
+        // Because __IS_PRERENDER__ is true, ScrambleText is skipped and the plain
+        // text span renders immediately. We wait for it to appear in the DOM.
+        await page.waitForFunction(
+          () => {
+            const h1 = document.querySelector("h1");
+            if (!h1) return false;
+            const text = (h1.textContent || "").trim();
+            // Must contain readable words — no scramble chars like [ ] ^ { }
+            return text.includes(
+  "We Build AI Voice Agents and Automation"
+);
+          },
+          { timeout: 10000 }
+        );
+      }
     } catch {
       console.warn(`  ⚠ Content wait timed out for ${route} — saving what we have`);
     }
