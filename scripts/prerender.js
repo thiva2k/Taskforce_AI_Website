@@ -85,7 +85,8 @@ async function getPublicBlogRoutes() {
 
 async function renderRoute(browser, route) {
   const page = await browser.newPage();
-  // ?prerender=1 tells the app to skip its 2200ms loading screen
+  // ?prerender=1 tells Hero.tsx to skip ScrambleText animation
+  // and render plain text — this is what Google will read
   const url = `http://localhost:4173${route}?prerender=1`;
 
   try {
@@ -111,9 +112,12 @@ async function renderRoute(browser, route) {
           },
           { timeout: 20000 }
         );
-} else {
-  await page.waitForTimeout(3000);
-}
+      } else {
+        // Homepage and other pages — wait 3 seconds for React to fully mount
+        // and for isPrerender=true to take effect in Hero.tsx
+        // This gives the plain text span time to render before we capture HTML
+        await page.waitForTimeout(3000);
+      }
     } catch {
       console.warn(`  ⚠ Content wait timed out for ${route} — saving what we have`);
     }
