@@ -24,7 +24,7 @@ export const Hero: React.FC = () => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // ✅ Only inside component
+  // ✅ Detect prerender inside component
   const isPrerender = useMemo(() => {
     if (typeof window === 'undefined') return false;
     return new URLSearchParams(window.location.search).get('prerender') === '1';
@@ -175,14 +175,17 @@ export const Hero: React.FC = () => {
             <Zap className="w-3 h-3 text-accent group-hover:text-white transition-colors shrink-0 relative z-10" />
           </motion.div>
 
-          {/* ✅ H1 SEO + animation */}
+          {/* ✅ Correct H1 SEO + animation */}
           <motion.h1
             style={{ rotateX: headingRotateX, rotateY: headingRotateY, x: headingX, y: headingY }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
-            data-text="We Build AI Voice Agents and Automation for Businesses Worldwide"
+            data-text={heroContent.title}
           >
-            We Build AI Voice Agents and Automation for Businesses Worldwide
-            {!isPrerender && <ScrambleText text={heroContent.title} startDelay={200} />}
+            <ScrambleText
+              text={heroContent.title}
+              startDelay={200}
+              renderStaticText={isPrerender} // only static for prerender
+            />
           </motion.h1>
 
           {/* Subtitle and description */}
