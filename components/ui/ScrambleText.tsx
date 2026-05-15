@@ -10,30 +10,24 @@ interface ScrambleTextProps {
   startDelay?: number;
 }
 
-export const ScrambleText: React.FC<ScrambleTextProps> = ({
+export const ScrambleText: React.FC<ScrambleTextProps & { renderStaticText?: boolean }> = ({
   text,
+  renderStaticText = false,
   className = '',
   scrambleSpeed = 50,
   revealSpeed = 100,
   scrambleChars = '!<>-_\\/[]{}—=+*^?#________',
   startDelay = 0,
 }) => {
-  const isPrerender =
-    typeof window !== 'undefined' &&
-    new URLSearchParams(window.location.search).get('prerender') === '1';
-
-  const [displayText, setDisplayText] = useState(text);
+  // If prerender or renderStaticText=true, show full text immediately
+  const [displayText, setDisplayText] = useState(renderStaticText ? text : '');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const frameRef = useRef<number>(0);
 
   useEffect(() => {
-    if (isPrerender) {
-      setDisplayText(text);
-      return;
-    }
+    if (renderStaticText) return;
 
     setDisplayText('');
-
     let currentIndex = 0;
     let timeoutId: NodeJS.Timeout | undefined;
 
@@ -50,9 +44,7 @@ export const ScrambleText: React.FC<ScrambleTextProps> = ({
         setDisplayText(scrambled);
         frameRef.current++;
 
-        if (frameRef.current % (revealSpeed / scrambleSpeed) === 0) {
-          currentIndex++;
-        }
+        if (frameRef.current % (revealSpeed / scrambleSpeed) === 0) currentIndex++;
 
         if (currentIndex > text.length) {
           if (intervalRef.current) clearInterval(intervalRef.current);
@@ -61,21 +53,14 @@ export const ScrambleText: React.FC<ScrambleTextProps> = ({
       }, scrambleSpeed);
     };
 
-    if (startDelay > 0) {
-      timeoutId = setTimeout(startScramble, startDelay);
-    } else {
-      startScramble();
-    }
+    if (startDelay > 0) timeoutId = setTimeout(startScramble, startDelay);
+    else startScramble();
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [text, scrambleSpeed, revealSpeed, scrambleChars, startDelay, isPrerender]);
+  }, [text, scrambleSpeed, revealSpeed, scrambleChars, startDelay, renderStaticText]);
 
-  return (
-    <motion.span className={className} data-prerender-text={text}>
-      {displayText}
-    </motion.span>
-  );
+  return <span className={className}>{displayText}</span>;
 };
