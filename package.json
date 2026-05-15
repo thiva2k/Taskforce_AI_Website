@@ -7,6 +7,7 @@
     "dev": "vite",
     "build:sitemap": "node scripts/generate-sitemap.js",
    "build": "npm run build:sitemap && vite build && npm run prerender",
+    
     "prerender": "node scripts/prerender.js",
     "preview": "vite preview"
   },
