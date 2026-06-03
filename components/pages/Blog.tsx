@@ -19,7 +19,7 @@ const CATEGORIES = [
   'Report',
 ];
 
-const POSTS_PER_PAGE = 6;
+const POSTS_PER_PAGE = 50;
 
 const normalizeCategory = (value?: string) =>
   (value || '').trim().toLowerCase();
