@@ -3,6 +3,11 @@
   RewriteEngine On
   RewriteBase /
 
+  # Canonical host: force HTTPS + non-www -> www (single 301 hop)
+  RewriteCond %{HTTPS} off [OR]
+  RewriteCond %{HTTP_HOST} !^www\. [NC]
+  RewriteRule ^(.*)$ https://www.taskforceai.tech/$1 [R=301,L]
+
   # If the request is not for an existing file or directory, serve index.html
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
