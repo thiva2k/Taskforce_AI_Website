@@ -40,6 +40,34 @@ const staticRoutes = [
   "/service/ai-booking-agents/",
 ];
 
+async function fetchWpWithRetry(url, maxAttempts = 3) {
+  let lastError;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
+    try {
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timer);
+      if (res.ok) return res;
+
+      lastError = new Error(`HTTP ${res.status}`);
+      const transient = res.status >= 500 || res.status === 429;
+      if (!transient || attempt >= maxAttempts) throw lastError;
+      console.warn(`  WP route fetch ${url} -> ${res.status} (attempt ${attempt}); retrying...`);
+    } catch (err) {
+      clearTimeout(timer);
+      lastError = err;
+      if (attempt >= maxAttempts) throw err;
+      console.warn(`  WP route fetch ${url} failed (attempt ${attempt}): ${err.message}; retrying...`);
+    }
+    await new Promise((r) => setTimeout(r, attempt * 1500));
+  }
+  throw lastError || new Error("WP fetch failed");
+}
+
+// Throws (rather than silently returning a partial list) if WordPress cannot be
+// reached after retries, so the caller can abort the build instead of shipping
+// an incomplete set of blog routes.
 async function getPublicBlogRoutes() {
   if (!WP_API) {
     console.warn("VITE_WP_API is missing. Blog post routes will not be prerendered.");
@@ -50,34 +78,23 @@ async function getPublicBlogRoutes() {
   let page = 1;
 
   while (true) {
-    try {
-      const res = await fetch(`${WP_API}/posts?per_page=100&page=${page}&_embed`);
+    const res = await fetchWpWithRetry(`${WP_API}/posts?per_page=100&page=${page}&_embed`);
+    const posts = await res.json();
 
-      if (!res.ok) {
-        console.warn(`WordPress fetch failed: ${res.status}`);
-        break;
+    for (const post of posts) {
+      const terms = post._embedded?.["wp:term"]?.flat() || [];
+      const isPublicBlogPost = terms.some((term) =>
+        PUBLIC_BLOG_CATEGORY_SLUGS.has(term.slug)
+      );
+
+      if (isPublicBlogPost && post.slug) {
+        routes.push(`/blog/${post.slug}/`);
       }
-
-      const posts = await res.json();
-
-      for (const post of posts) {
-        const terms = post._embedded?.["wp:term"]?.flat() || [];
-        const isPublicBlogPost = terms.some((term) =>
-          PUBLIC_BLOG_CATEGORY_SLUGS.has(term.slug)
-        );
-
-        if (isPublicBlogPost && post.slug) {
-          routes.push(`/blog/${post.slug}/`);
-        }
-      }
-
-      const totalPages = Number(res.headers.get("x-wp-totalpages") || 1);
-      if (page >= totalPages) break;
-      page++;
-    } catch (err) {
-      console.warn(`Error fetching blog routes (page ${page}):`, err.message);
-      break;
     }
+
+    const totalPages = Number(res.headers.get("x-wp-totalpages") || 1);
+    if (page >= totalPages) break;
+    page++;
   }
 
   return routes;
@@ -97,20 +114,32 @@ async function renderRoute(browser, route) {
       window.__IS_PRERENDER__ = true;
     });
 
+    const isBlogList = route === "/blog/" || route === "/blog";
+    const isBlogPost = route.startsWith("/blog/") && !isBlogList;
+
     const url = `http://localhost:4173${route}`;
 
     await page.goto(url, {
       waitUntil: "networkidle0",
-      timeout: 30000,
+      timeout: 60000,
     });
 
-    // Route-specific content signals
+    // Route-specific content signals. contentOk tracks whether the page reached
+    // its real, data-loaded state (vs a loading spinner or error placeholder).
+    let contentOk = true;
     try {
-      if (route === "/blog/" || route === "/blog") {
-        // Wait for blog post cards — Blog.tsx has data-prerender="blog-card" on each card
+      if (isBlogList) {
+        // Blog listing — Blog.tsx puts data-prerender="blog-card" on each card.
         await page.waitForFunction(
           () => document.querySelectorAll('[data-prerender="blog-card"]').length > 0,
-          { timeout: 25000 }
+          { timeout: 45000 }
+        );
+      } else if (isBlogPost) {
+        // Blog post detail — BlogPost.tsx puts data-prerender="blog-post" on the
+        // <article>, which only renders once the post has loaded successfully.
+        await page.waitForFunction(
+          () => document.querySelector('[data-prerender="blog-post"]') !== null,
+          { timeout: 45000 }
         );
       } else if (route.startsWith("/service/")) {
         // Service pages — wait for h1 to contain real content
@@ -135,18 +164,29 @@ async function renderRoute(browser, route) {
             if (!h1) return false;
             const text = (h1.textContent || "").trim();
             // Must contain readable words — no scramble chars like [ ] ^ { }
-            return text.includes(
-  "We Build AI Voice Agents and Automation"
-);
+            return text.includes("We Build AI Voice Agents and Automation");
           },
           { timeout: 10000 }
         );
       }
     } catch {
-      console.warn(`  ⚠ Content wait timed out for ${route} — saving what we have`);
+      contentOk = false;
+      console.warn(`  ⚠ Content wait timed out for ${route}`);
     }
 
     const html = await page.content();
+
+    // Never ship a broken blog page. If a blog route didn't reach its loaded
+    // state, or rendered the explicit WordPress error, treat it as a failure and
+    // DO NOT write the file — the build aborts below instead of deploying it.
+    const hasBlogError = html.includes("Blog posts failed to load");
+    if ((isBlogList || isBlogPost) && (!contentOk || hasBlogError)) {
+      console.error(
+        `  ✗ Blog route ${route} rendered without content ` +
+          `(contentOk=${contentOk}, wpError=${hasBlogError}) — not writing file`
+      );
+      return { route, ok: false, blogError: true };
+    }
 
     const filePath =
       route === "/"
@@ -159,7 +199,7 @@ async function renderRoute(browser, route) {
     return { route, ok: true };
   } catch (err) {
     console.error(`  ✗ Failed to render ${route}:`, err.message);
-    return { route, ok: false };
+    return { route, ok: false, blogError: route.startsWith("/blog") };
   } finally {
     await page.close();
   }
@@ -201,7 +241,17 @@ const server = app.listen(4173, async () => {
     ],
   });
 
-  const blogRoutes = await getPublicBlogRoutes();
+  let blogRoutes = [];
+  try {
+    blogRoutes = await getPublicBlogRoutes();
+  } catch (err) {
+    console.error(`
+❌ Could not fetch blog routes from WordPress: ${err.message}`);
+    console.error(`Aborting build so an incomplete blog is NOT deployed.`);
+    await browser.close();
+    server.close();
+    process.exit(1);
+  }
   const routes = [...new Set([...staticRoutes, ...blogRoutes])];
 
   console.log(`\nPrerendering ${routes.length} routes (4 at a time)...`);
@@ -210,9 +260,23 @@ const server = app.listen(4173, async () => {
 
   const successCount = results.filter((r) => r.ok).length;
   const failCount = results.filter((r) => !r.ok).length;
+  const blogFailures = results.filter((r) => r.blogError);
 
   console.log(`\n✅ Pre-render complete: ${successCount} succeeded, ${failCount} failed`);
 
   await browser.close();
   server.close();
+
+  // Layer A: fail the build if any blog route rendered without real content, so a
+  // transient WordPress outage during the build can't ship a broken blog to prod.
+  if (blogFailures.length > 0) {
+    console.error(`
+❌ ${blogFailures.length} blog route(s) failed to render real content:`);
+    blogFailures.forEach((r) => console.error(`   - ${r.route}`));
+    console.error(
+      `Aborting build so a broken blog is NOT deployed ` +
+        `(WordPress was likely slow or unavailable during the build).`
+    );
+    process.exit(1);
+  }
 });

@@ -120,7 +120,7 @@ export const BlogPost: React.FC = () => {
         <div className="absolute top-0 right-0 w-full h-[500px] bg-gradient-to-b from-secondary-DEFAULT/5 to-transparent" />
       </div>
 
-      <article className="relative z-10 pt-32 md:pt-40 pb-20">
+      <article data-prerender="blog-post" className="relative z-10 pt-32 md:pt-40 pb-20">
         <div className="container mx-auto px-6 max-w-4xl">
           <motion.button
             initial={{ opacity: 0, x: -20 }}

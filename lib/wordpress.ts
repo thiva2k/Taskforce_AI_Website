@@ -1,18 +1,69 @@
 export const WP_API_BASE = import.meta.env.VITE_WP_API;
 
+// The WordPress backend (wp.taskforceai.tech) can be slow (~7s/request) and
+// occasionally returns transient 5xx/429 under build-time load. Without a
+// timeout + retry, a single hiccup throws and bakes a "Blog posts failed to
+// load" error page into the prerendered HTML. These guards make the fetch
+// resilient; genuine, persistent failures still throw (and the prerender step
+// then fails the build rather than shipping a broken blog).
+const WP_FETCH_TIMEOUT_MS = 15000;
+const WP_FETCH_MAX_ATTEMPTS = 3;
+
+function wpDelay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function fetchWpResponse(path: string): Promise<Response> {
   const url = `${WP_API_BASE}${path}`;
-  const response = await fetch(url);
+  let lastError: unknown;
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('WP API FAILED URL:', url);
-    console.error('WP API FAILED STATUS:', response.status);
-    console.error('WP API FAILED RESPONSE:', errorText);
-    throw new Error(`WordPress API error: ${response.status}`);
+  for (let attempt = 1; attempt <= WP_FETCH_MAX_ATTEMPTS; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), WP_FETCH_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      clearTimeout(timer);
+
+      if (response.ok) {
+        return response;
+      }
+
+      // Retry transient server-side failures; fail fast on 4xx.
+      const isTransient = response.status >= 500 || response.status === 429;
+      if (isTransient && attempt < WP_FETCH_MAX_ATTEMPTS) {
+        lastError = new Error(`WordPress API error: ${response.status}`);
+        console.warn(`WP fetch ${url} -> ${response.status} (attempt ${attempt}); retrying...`);
+        await wpDelay(attempt * 1500);
+        continue;
+      }
+
+      const errorText = await response.text();
+      console.error('WP API FAILED URL:', url);
+      console.error('WP API FAILED STATUS:', response.status);
+      console.error('WP API FAILED RESPONSE:', errorText);
+      throw new Error(`WordPress API error: ${response.status}`);
+    } catch (error) {
+      clearTimeout(timer);
+      lastError = error;
+
+      // An HTTP error we already decided not to retry — propagate immediately.
+      const isThrownHttp =
+        error instanceof Error && error.message.startsWith('WordPress API error:');
+      if (isThrownHttp || attempt >= WP_FETCH_MAX_ATTEMPTS) {
+        throw error;
+      }
+
+      // Timeout (AbortError) or network error — back off and retry.
+      const reason = error instanceof Error ? error.message : String(error);
+      console.warn(`WP fetch ${url} failed (attempt ${attempt}): ${reason}; retrying...`);
+      await wpDelay(attempt * 1500);
+    }
   }
 
-  return response;
+  throw lastError instanceof Error
+    ? lastError
+    : new Error('WordPress API request failed');
 }
 
 async function fetchWp<T>(path: string): Promise<T> {
