@@ -38,27 +38,34 @@ export const BlogPost: React.FC = () => {
           return;
         }
 
-        // Related posts are non-essential. Fetching the full list is heavy
-        // (every post page would otherwise pull all posts with _embed), which
-        // overwhelms WordPress during the prerender build. Make it best-effort
-        // so the post still renders even if the list fetch fails.
-        let related: BlogListItem[] = [];
-        try {
-          const allPosts = await fetchBlogPosts();
-          related = allPosts
-            .filter(
-              (item) =>
-                item.slug !== currentPost.slug &&
-                item.category === currentPost.category
-            )
-            .slice(0, 3);
-        } catch (relatedError) {
-          console.warn('Related posts unavailable:', relatedError);
-        }
-
+        // Render the article immediately from the cheap single-post fetch
+        // (~1.7s). Do NOT block on the heavy related-posts list first.
         if (mounted) {
           setPost(currentPost);
-          setRelatedPosts(related);
+          setLoading(false);
+        }
+
+        // Related posts need the full post list (~6 MB with _embed). Skip it
+        // entirely during the prerender build — pulling 6 MB on every one of
+        // ~158 post pages is what overwhelms WordPress. Real visitors still get
+        // related posts when the hydrated page fetches them client-side.
+        const isPrerender =
+          typeof window !== 'undefined' && (window as any).__IS_PRERENDER__ === true;
+
+        if (!isPrerender) {
+          try {
+            const allPosts = await fetchBlogPosts();
+            const related = allPosts
+              .filter(
+                (item) =>
+                  item.slug !== currentPost.slug &&
+                  item.category === currentPost.category
+              )
+              .slice(0, 3);
+            if (mounted) setRelatedPosts(related);
+          } catch (relatedError) {
+            console.warn('Related posts unavailable:', relatedError);
+          }
         }
       } catch (error) {
         console.error('Error fetching WordPress blog post:', error);
