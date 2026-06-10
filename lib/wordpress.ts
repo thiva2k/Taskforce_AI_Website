@@ -6,8 +6,8 @@ export const WP_API_BASE = import.meta.env.VITE_WP_API;
 // load" error page into the prerendered HTML. These guards make the fetch
 // resilient; genuine, persistent failures still throw (and the prerender step
 // then fails the build rather than shipping a broken blog).
-const WP_FETCH_TIMEOUT_MS = 15000;
-const WP_FETCH_MAX_ATTEMPTS = 3;
+const WP_FETCH_TIMEOUT_MS = 20000;
+const WP_FETCH_MAX_ATTEMPTS = 5;
 
 function wpDelay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -34,7 +34,7 @@ async function fetchWpResponse(path: string): Promise<Response> {
       if (isTransient && attempt < WP_FETCH_MAX_ATTEMPTS) {
         lastError = new Error(`WordPress API error: ${response.status}`);
         console.warn(`WP fetch ${url} -> ${response.status} (attempt ${attempt}); retrying...`);
-        await wpDelay(attempt * 1500);
+        await wpDelay(attempt * 2000);
         continue;
       }
 
@@ -57,7 +57,7 @@ async function fetchWpResponse(path: string): Promise<Response> {
       // Timeout (AbortError) or network error — back off and retry.
       const reason = error instanceof Error ? error.message : String(error);
       console.warn(`WP fetch ${url} failed (attempt ${attempt}): ${reason}; retrying...`);
-      await wpDelay(attempt * 1500);
+      await wpDelay(attempt * 2000);
     }
   }
 
