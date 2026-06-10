@@ -251,6 +251,13 @@ const server = app.listen(4173, async () => {
       "--disable-setuid-sandbox",
       "--disable-gpu",
       "--disable-dev-shm-usage",
+      // WordPress hardcodes Access-Control-Allow-Origin: https://taskforceai.tech
+      // for every origin, so the prerender server's origin (http://localhost:4173)
+      // is CORS-blocked and all blog fetches fail in-browser. This is a controlled,
+      // throwaway headless browser, so it's safe to disable web security here to let
+      // the blog data load and be baked into the static HTML.
+      "--disable-web-security",
+      "--disable-features=IsolateOrigins,site-per-process",
     ],
   });
 
