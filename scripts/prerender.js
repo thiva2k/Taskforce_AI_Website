@@ -44,7 +44,7 @@ async function fetchWpWithRetry(url, maxAttempts = 3) {
   let lastError;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 15000);
+    const timer = setTimeout(() => controller.abort(), 30000);
     try {
       const res = await fetch(url, { signal: controller.signal });
       clearTimeout(timer);
@@ -74,17 +74,30 @@ async function getPublicBlogRoutes() {
     return [];
   }
 
+  // Map public category slugs -> ids once (tiny payload), so we can detect
+  // public posts from their category ids without pulling the heavy ~6 MB
+  // _embed payload for every page of posts.
+  const catRes = await fetchWpWithRetry(`${WP_API}/categories?per_page=100&_fields=id,slug`);
+  const categories = await catRes.json();
+  const publicCategoryIds = new Set(
+    categories
+      .filter((c) => PUBLIC_BLOG_CATEGORY_SLUGS.has(c.slug))
+      .map((c) => c.id)
+  );
+
   const routes = [];
   let page = 1;
 
   while (true) {
-    const res = await fetchWpWithRetry(`${WP_API}/posts?per_page=100&page=${page}&_embed`);
+    // _fields keeps this light (slug + category ids only) instead of ~6 MB/_embed.
+    const res = await fetchWpWithRetry(
+      `${WP_API}/posts?per_page=100&page=${page}&_fields=slug,categories`
+    );
     const posts = await res.json();
 
     for (const post of posts) {
-      const terms = post._embedded?.["wp:term"]?.flat() || [];
-      const isPublicBlogPost = terms.some((term) =>
-        PUBLIC_BLOG_CATEGORY_SLUGS.has(term.slug)
+      const isPublicBlogPost = (post.categories || []).some((id) =>
+        publicCategoryIds.has(id)
       );
 
       if (isPublicBlogPost && post.slug) {
