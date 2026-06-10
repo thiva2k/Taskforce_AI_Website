@@ -38,14 +38,23 @@ export const BlogPost: React.FC = () => {
           return;
         }
 
-        const allPosts = await fetchBlogPosts();
-        const related = allPosts
-          .filter(
-            (item) =>
-              item.slug !== currentPost.slug &&
-              item.category === currentPost.category
-          )
-          .slice(0, 3);
+        // Related posts are non-essential. Fetching the full list is heavy
+        // (every post page would otherwise pull all posts with _embed), which
+        // overwhelms WordPress during the prerender build. Make it best-effort
+        // so the post still renders even if the list fetch fails.
+        let related: BlogListItem[] = [];
+        try {
+          const allPosts = await fetchBlogPosts();
+          related = allPosts
+            .filter(
+              (item) =>
+                item.slug !== currentPost.slug &&
+                item.category === currentPost.category
+            )
+            .slice(0, 3);
+        } catch (relatedError) {
+          console.warn('Related posts unavailable:', relatedError);
+        }
 
         if (mounted) {
           setPost(currentPost);

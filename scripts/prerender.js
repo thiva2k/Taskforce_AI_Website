@@ -254,9 +254,9 @@ const server = app.listen(4173, async () => {
   }
   const routes = [...new Set([...staticRoutes, ...blogRoutes])];
 
-  console.log(`\nPrerendering ${routes.length} routes (4 at a time)...`);
+  console.log(`\nPrerendering ${routes.length} routes (2 at a time)...`);
 
-  const results = await renderAll(browser, routes, 4);
+  const results = await renderAll(browser, routes, 2);
 
   const successCount = results.filter((r) => r.ok).length;
   const failCount = results.filter((r) => !r.ok).length;
