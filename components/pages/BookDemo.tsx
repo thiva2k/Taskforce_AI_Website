@@ -17,13 +17,13 @@ import { SEO } from '../seo/SEO';
 // Royalty-free hill-country / mountain hotel imagery (Unsplash license — free for commercial use).
 // Ordered candidates: a lush hillside resort first, then reliable fallbacks so the visual
 // panel always renders a proper hotel-in-the-hills and never appears broken.
+// Hill-country hotel imagery. Primary is the vendored property photo; the stock
+// entries are reliable fallbacks that only show if the local file fails to load.
 const HOTEL_IMGS = [
-  'photo-1455587734955-081b22074882', // lodges set against a mountain lake
-  'photo-1566073771259-6a8506099945', // lush hillside resort & pool
-  'photo-1540541338287-41700207dee6', // village/chalets below the mountains
-  'photo-1571896349842-33c89424de2d', // luxury property (known-good)
-  'photo-1506905925346-21bda4d32df4', // mountain backdrop (guaranteed)
-].map((id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1400&q=80`);
+  '/images/hatton-hills.jpg', // vendored hillside property photo
+  'https://images.unsplash.com/photo-1455587734955-081b22074882?auto=format&fit=crop&w=1400&q=80',
+  'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1400&q=80',
+];
 const HOTEL_IMG = HOTEL_IMGS[0];
 
 const TRAINED_ON = [
