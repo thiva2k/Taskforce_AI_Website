@@ -7,14 +7,17 @@ import {
   PhoneOff,
   Loader2,
   Sparkles,
+  Mic,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { GlitchButton } from '../ui/GlitchButton';
 import { Footer } from '../layout/Footer';
 import { SEO } from '../seo/SEO';
 
-// Royalty-free hotel imagery (Unsplash license — free for commercial use).
+// Royalty-free hillside / mountain hotel imagery (Unsplash license — free for commercial use).
 const HOTEL_IMG =
+  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1400&q=80';
+const HOTEL_IMG_FALLBACK =
   'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1400&q=80';
 
 const TRAINED_ON = [
@@ -52,6 +55,27 @@ type CallState = 'idle' | 'connecting' | 'live';
 const formatTime = (s: number) =>
   `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
+/* Animated voice equalizer for the live-call screen */
+const Equalizer: React.FC = () => (
+  <div className="flex items-end justify-center gap-1.5 h-12">
+    {[0.2, 0.5, 0.9, 0.4, 0.7, 1, 0.5, 0.8, 0.3].map((seed, i) => (
+      <motion.span
+        key={i}
+        className="w-1.5 rounded-full bg-gradient-to-t from-primary-DEFAULT to-accent"
+        animate={{ height: ['18%', '100%', '40%', '85%', '25%'] }}
+        transition={{
+          duration: 1 + seed,
+          repeat: Infinity,
+          repeatType: 'mirror',
+          ease: 'easeInOut',
+          delay: i * 0.08,
+        }}
+        style={{ height: '40%' }}
+      />
+    ))}
+  </div>
+);
+
 export const BookDemo: React.FC = () => {
   const navigate = useNavigate();
 
@@ -65,7 +89,6 @@ export const BookDemo: React.FC = () => {
       timerRef.current = window.setInterval(() => {
         setSeconds((s) => {
           if (s >= 120) {
-            // auto-end the ~2 min demo
             window.clearInterval(timerRef.current!);
             setCallState('idle');
             return 0;
@@ -95,7 +118,7 @@ export const BookDemo: React.FC = () => {
     <div className="min-h-screen text-white relative overflow-x-hidden selection:bg-primary-DEFAULT selection:text-white">
       <SEO
         title="Demo Our Voice Agent - AI TaskForce"
-        description="Speak with Tanya, our AI front-office reservation agent for Treehouse Chalets. A live, no-sign-up demo of a TaskForce AI hotel voice agent."
+        description="Speak with Tanya, our AI front-office reservation agent for Hatton Hills. A live, no-sign-up demo of a TaskForce AI hotel voice agent."
         url="/book-demo"
       />
 
@@ -113,9 +136,17 @@ export const BookDemo: React.FC = () => {
           className="absolute inset-0 opacity-[0.15] mix-blend-soft-light"
           style={{ backgroundImage: 'url(/noise.svg)' }}
         />
-        {/* soft brand glows */}
-        <div className="absolute -top-40 -left-40 w-[32rem] h-[32rem] rounded-full bg-primary-DEFAULT/20 blur-[140px]" />
-        <div className="absolute -bottom-40 -right-40 w-[32rem] h-[32rem] rounded-full bg-accent/15 blur-[140px]" />
+        {/* drifting brand glows */}
+        <motion.div
+          className="absolute -top-40 -left-40 w-[32rem] h-[32rem] rounded-full bg-primary-DEFAULT/20 blur-[140px]"
+          animate={{ x: [0, 60, 0], y: [0, 40, 0] }}
+          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute -bottom-40 -right-40 w-[32rem] h-[32rem] rounded-full bg-accent/15 blur-[140px]"
+          animate={{ x: [0, -50, 0], y: [0, -30, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+        />
       </div>
 
       <div className="relative z-10 min-h-screen flex flex-col">
@@ -147,23 +178,43 @@ export const BookDemo: React.FC = () => {
             transition={{ duration: 0.5 }}
             className="relative w-full max-w-5xl rounded-[2rem] border border-white/10 bg-dark-surface/50 backdrop-blur-2xl shadow-[0_0_80px_rgba(0,102,255,0.15)] overflow-hidden"
           >
-            {/* gradient border glow */}
-            <div className="pointer-events-none absolute -inset-px rounded-[2rem] bg-gradient-to-br from-primary-DEFAULT/40 via-transparent to-accent/40 opacity-40" />
+            {/* animated gradient border glow */}
+            <motion.div
+              className="pointer-events-none absolute -inset-px rounded-[2rem] bg-gradient-to-br from-primary-DEFAULT/40 via-transparent to-accent/40"
+              animate={{ opacity: [0.3, 0.6, 0.3] }}
+              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+            />
 
             <div className="relative grid grid-cols-1 lg:grid-cols-12">
-              {/* LEFT — hotel visual */}
-              <div className="lg:col-span-5 relative min-h-[260px] lg:min-h-[600px] overflow-hidden">
-                <img
+              {/* LEFT — hillside hotel visual */}
+              <div className="lg:col-span-5 relative min-h-[260px] lg:min-h-[640px] overflow-hidden">
+                <motion.img
                   src={HOTEL_IMG}
-                  alt="Treehouse Chalets, Kandy District"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = HOTEL_IMG_FALLBACK;
+                  }}
+                  alt="Hatton Hills — hillside retreat, Sri Lanka"
                   className="absolute inset-0 w-full h-full object-cover"
+                  initial={{ scale: 1.12 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 8, ease: 'easeOut' }}
                 />
-                {/* brand wash */}
+                {/* slow ken-burns drift */}
+                <motion.div
+                  className="absolute inset-0"
+                  animate={{ scale: [1, 1.06, 1] }}
+                  transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-dark-bg via-primary-dark/30 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-DEFAULT/25 to-accent/15 mix-blend-overlay" />
 
                 {/* bottom label block */}
-                <div className="absolute inset-x-0 bottom-0 p-7">
+                <motion.div
+                  className="absolute inset-x-0 bottom-0 p-7"
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
                   <span className="inline-flex items-center gap-2 mb-4 px-3 py-1.5 rounded-full bg-gradient-to-r from-primary-DEFAULT to-accent text-white text-[11px] font-bold uppercase tracking-widest shadow-lg">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
@@ -172,152 +223,270 @@ export const BookDemo: React.FC = () => {
                     Live Demo
                   </span>
                   <h2 className="text-2xl md:text-3xl font-bold text-white drop-shadow">
-                    Treehouse Chalets
+                    Hatton Hills
                   </h2>
                   <p className="flex items-center gap-1.5 text-gray-200 text-sm mt-1.5">
                     <MapPin className="w-4 h-4 text-accent" />
-                    Kandy District, Sri Lanka
+                    Hatton, Sri Lanka
                   </p>
-                </div>
+                </motion.div>
               </div>
 
               {/* RIGHT — agent details */}
               <div className="lg:col-span-7 p-7 md:p-10">
-                <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-accent mb-3">
-                  <span className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.8)]" />
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-accent mb-3"
+                >
+                  <span className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.8)] animate-pulse" />
                   Reservation Agent · English
-                </div>
+                </motion.div>
 
-                <h1 className="text-2xl md:text-[2rem] leading-tight font-bold text-white mb-4">
+                <motion.h1
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-2xl md:text-[2rem] leading-tight font-bold text-white mb-4"
+                >
                   Tanya — Front Office Reservation Agent
-                </h1>
+                </motion.h1>
 
-                <p className="text-gray-300 leading-relaxed mb-7">
-                  Tanya handles inbound reservation inquiries for Treehouse
-                  Chalets — a boutique jungle property in the Kandy hills. She is
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.28 }}
+                  className="text-gray-300 leading-relaxed mb-7"
+                >
+                  Tanya handles inbound reservation inquiries for Hatton Hills — a
+                  boutique hillside retreat above Sri Lanka's tea country. She is
                   trained on the full property knowledge base and responds exactly
                   as a professional front office agent would, 24 hours a day.
-                </p>
+                </motion.p>
 
                 {/* Trained on */}
-                <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 mb-8">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 mb-7">
                   <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">
                     Trained on
                   </p>
-                  <div className="flex flex-wrap gap-2.5">
+                  <motion.div
+                    className="flex flex-wrap gap-2.5"
+                    initial="hidden"
+                    animate="show"
+                    variants={{
+                      hidden: {},
+                      show: { transition: { staggerChildren: 0.05, delayChildren: 0.3 } },
+                    }}
+                  >
                     {TRAINED_ON.map((chip) => (
-                      <span
+                      <motion.span
                         key={chip}
-                        className="px-3.5 py-2 rounded-lg text-sm text-gray-200 bg-white/[0.04] border border-white/10 hover:border-accent/50 hover:bg-accent/5 hover:text-white transition-colors"
+                        variants={{
+                          hidden: { opacity: 0, y: 8, scale: 0.95 },
+                          show: { opacity: 1, y: 0, scale: 1 },
+                        }}
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        className="px-3.5 py-2 rounded-lg text-sm text-gray-200 bg-white/[0.04] border border-white/10 hover:border-accent/60 hover:bg-accent/10 hover:text-white transition-colors cursor-default"
                       >
                         {chip}
-                      </span>
+                      </motion.span>
                     ))}
-                  </div>
+                  </motion.div>
                 </div>
+
+                {/* CTA — moved between Trained on & How to use, made eye-catching */}
+                <motion.button
+                  type="button"
+                  onClick={startDemo}
+                  disabled={callState !== 'idle'}
+                  whileHover={{ scale: 1.025 }}
+                  whileTap={{ scale: 0.97 }}
+                  animate={{
+                    boxShadow: [
+                      '0 8px 30px rgba(0,102,255,0.30)',
+                      '0 12px 44px rgba(6,182,212,0.55)',
+                      '0 8px 30px rgba(0,102,255,0.30)',
+                    ],
+                  }}
+                  transition={{ boxShadow: { duration: 2.4, repeat: Infinity, ease: 'easeInOut' } }}
+                  className="group relative w-full h-16 rounded-2xl overflow-hidden font-bold text-white text-lg disabled:opacity-70 mb-2.5"
+                >
+                  {/* animated flowing gradient */}
+                  <motion.span
+                    className="absolute inset-0"
+                    style={{
+                      backgroundImage:
+                        'linear-gradient(90deg, #0066FF, #06B6D4, #7C3AED, #0066FF)',
+                      backgroundSize: '300% 100%',
+                    }}
+                    animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                  />
+                  {/* moving shine sweep */}
+                  <motion.span
+                    className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/35 to-transparent skew-x-[-20deg]"
+                    animate={{ x: ['-120%', '320%'] }}
+                    transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', repeatDelay: 1 }}
+                  />
+                  <span className="relative z-10 flex items-center justify-center gap-3">
+                    <motion.span
+                      animate={{ rotate: [0, -12, 12, -12, 0] }}
+                      transition={{ duration: 1.4, repeat: Infinity, repeatDelay: 1.2 }}
+                    >
+                      <Phone className="w-5 h-5" />
+                    </motion.span>
+                    Speak with Tanya
+                    <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
+                      Live
+                    </span>
+                  </span>
+                </motion.button>
+
+                <p className="text-center text-xs text-gray-500 mb-8 font-mono">
+                  No sign-up required · Live agent · ~2 min demo
+                </p>
 
                 {/* How to use */}
                 <h3 className="text-lg font-bold text-white mb-5">
                   How to use this demo
                 </h3>
-                <div className="space-y-4 mb-9">
+                <motion.div
+                  className="space-y-4"
+                  initial="hidden"
+                  animate="show"
+                  variants={{
+                    hidden: {},
+                    show: { transition: { staggerChildren: 0.1, delayChildren: 0.45 } },
+                  }}
+                >
                   {STEPS.map((step, i) => (
-                    <div key={i} className="flex gap-4">
+                    <motion.div
+                      key={i}
+                      variants={{
+                        hidden: { opacity: 0, x: -12 },
+                        show: { opacity: 1, x: 0 },
+                      }}
+                      className="flex gap-4"
+                    >
                       <span className="shrink-0 grid place-items-center w-7 h-7 rounded-full bg-gradient-to-br from-primary-DEFAULT to-accent text-white text-xs font-bold shadow-[0_0_14px_rgba(0,102,255,0.4)]">
                         {i + 1}
                       </span>
                       <p className="text-gray-300 leading-relaxed text-[15px]">
-                        <span className="text-white font-semibold">
-                          {step.bold}
-                        </span>
+                        <span className="text-white font-semibold">{step.bold}</span>
                         {step.rest}
                       </p>
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
-
-                {/* CTA */}
-                <button
-                  type="button"
-                  onClick={startDemo}
-                  disabled={callState !== 'idle'}
-                  className="group relative w-full h-14 rounded-xl overflow-hidden font-bold text-white shadow-[0_8px_30px_rgba(0,102,255,0.35)] disabled:opacity-70 transition"
-                >
-                  <span className="absolute inset-0 bg-gradient-to-r from-primary-DEFAULT to-accent" />
-                  <span className="absolute inset-0 bg-gradient-to-r from-accent to-primary-DEFAULT opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <span className="relative z-10 flex items-center justify-center gap-2.5">
-                    <Phone className="w-5 h-5" />
-                    Speak with Tanya
-                  </span>
-                </button>
-
-                <p className="text-center text-xs text-gray-500 mt-4 font-mono">
-                  No sign-up required · Live agent · ~2 min demo
-                </p>
+                </motion.div>
               </div>
             </div>
 
-            {/* ---- Call overlay (UI-only) ---- */}
+            {/* ---- Live call screen (UI-only) ---- */}
             <AnimatePresence>
               {callState !== 'idle' && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center bg-dark-bg/80 backdrop-blur-xl p-8"
+                  className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center p-8 overflow-hidden"
                 >
-                  <div className="relative mb-7">
-                    <div className="w-28 h-28 rounded-full bg-gradient-to-br from-primary-DEFAULT to-accent grid place-items-center text-4xl font-bold shadow-[0_0_50px_rgba(0,102,255,0.5)]">
-                      T
+                  {/* layered animated backdrop */}
+                  <div className="absolute inset-0 bg-dark-bg/85 backdrop-blur-2xl" />
+                  <motion.div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        'radial-gradient(circle at 50% 40%, rgba(6,182,212,0.25), transparent 60%)',
+                    }}
+                    animate={{ opacity: [0.4, 0.8, 0.4] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+
+                  <div className="relative z-10 flex flex-col items-center">
+                    {/* avatar with concentric pulse rings */}
+                    <div className="relative mb-8 grid place-items-center">
+                      {[0, 1, 2].map((r) => (
+                        <motion.span
+                          key={r}
+                          className="absolute rounded-full border border-accent/40"
+                          style={{ width: 128, height: 128 }}
+                          animate={{ scale: [1, 2.1], opacity: [0.5, 0] }}
+                          transition={{
+                            duration: 2.4,
+                            repeat: Infinity,
+                            ease: 'easeOut',
+                            delay: r * 0.8,
+                          }}
+                        />
+                      ))}
+                      <motion.div
+                        className="relative w-32 h-32 rounded-full bg-gradient-to-br from-primary-DEFAULT to-accent grid place-items-center text-5xl font-bold shadow-[0_0_60px_rgba(0,102,255,0.6)]"
+                        animate={{ scale: callState === 'live' ? [1, 1.04, 1] : 1 }}
+                        transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+                      >
+                        T
+                        {callState === 'live' && (
+                          <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-green-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg">
+                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                            LIVE
+                          </span>
+                        )}
+                      </motion.div>
                     </div>
-                    {callState === 'connecting' && (
-                      <>
-                        <span className="absolute inset-0 rounded-full border-2 border-accent/40 animate-ping" />
-                        <span className="absolute -inset-3 rounded-full border border-primary-DEFAULT/30 animate-ping" />
-                      </>
+
+                    {callState === 'connecting' ? (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        <h4 className="text-2xl md:text-3xl font-bold text-white mb-3 flex items-center justify-center gap-2.5">
+                          <Loader2 className="w-6 h-6 animate-spin text-accent" />
+                          Connecting you to Tanya…
+                        </h4>
+                        <p className="text-gray-300 max-w-sm">
+                          She's picking up the line. Get ready to speak as a guest
+                          calling Hatton Hills.
+                        </p>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col items-center"
+                      >
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/15 border border-green-400/30 text-green-300 text-xs font-bold uppercase tracking-widest mb-4">
+                          <Mic className="w-3.5 h-3.5" />
+                          On the line
+                        </div>
+                        <h4 className="text-2xl md:text-3xl font-bold text-white mb-1">
+                          Tanya is on the line
+                        </h4>
+                        <p className="text-accent font-mono text-2xl mb-5 tabular-nums">
+                          {formatTime(seconds)}
+                        </p>
+                        <div className="w-64 mb-5">
+                          <Equalizer />
+                        </div>
+                        <p className="text-gray-300 max-w-sm mb-2 inline-flex items-center gap-2 justify-center">
+                          <Sparkles className="w-4 h-4 text-accent" />
+                          Go ahead — ask about rooms, rates or availability.
+                        </p>
+                      </motion.div>
                     )}
-                    {callState === 'live' && (
-                      <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-green-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg">
-                        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                        LIVE
-                      </span>
-                    )}
+
+                    <motion.button
+                      type="button"
+                      onClick={endDemo}
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.96 }}
+                      className="mt-7 inline-flex items-center gap-2 px-7 h-12 rounded-xl bg-red-500/90 hover:bg-red-500 text-white font-semibold transition shadow-[0_8px_30px_rgba(239,68,68,0.4)]"
+                    >
+                      <PhoneOff className="w-5 h-5" />
+                      {callState === 'connecting' ? 'Cancel' : 'End demo'}
+                    </motion.button>
                   </div>
-
-                  {callState === 'connecting' ? (
-                    <>
-                      <h4 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                        <Loader2 className="w-5 h-5 animate-spin text-accent" />
-                        Connecting you to Tanya…
-                      </h4>
-                      <p className="text-gray-400 max-w-sm">
-                        She's picking up the line. Get ready to speak as a guest
-                        calling Treehouse Chalets.
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <h4 className="text-2xl font-bold text-white mb-1">
-                        Tanya is on the line
-                      </h4>
-                      <p className="text-accent font-mono text-lg mb-2">
-                        {formatTime(seconds)}
-                      </p>
-                      <p className="text-gray-400 max-w-sm mb-7 inline-flex items-center gap-2 justify-center">
-                        <Sparkles className="w-4 h-4 text-accent" />
-                        Go ahead — ask about rooms, rates or availability.
-                      </p>
-                    </>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={endDemo}
-                    className="mt-6 inline-flex items-center gap-2 px-6 h-12 rounded-xl bg-red-500/90 hover:bg-red-500 text-white font-semibold transition shadow-lg"
-                  >
-                    <PhoneOff className="w-5 h-5" />
-                    {callState === 'connecting' ? 'Cancel' : 'End demo'}
-                  </button>
                 </motion.div>
               )}
             </AnimatePresence>
