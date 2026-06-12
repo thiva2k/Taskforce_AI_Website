@@ -202,18 +202,12 @@ export const BookDemo: React.FC = () => {
                   }
                   alt="Hatton Hills — hillside retreat, Sri Lanka"
                   className="absolute inset-0 w-full h-full object-cover"
-                  initial={{ scale: 1.12 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 8, ease: 'easeOut' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.8, ease: 'easeOut' }}
                 />
-                {/* slow ken-burns drift */}
-                <motion.div
-                  className="absolute inset-0"
-                  animate={{ scale: [1, 1.06, 1] }}
-                  transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-dark-bg via-primary-dark/30 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-DEFAULT/25 to-accent/15 mix-blend-overlay" />
+                {/* subtle bottom scrim only — keep the photo crisp & clear */}
+                <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-dark-bg via-dark-bg/50 to-transparent" />
 
                 {/* bottom label block */}
                 <motion.div
