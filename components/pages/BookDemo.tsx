@@ -14,11 +14,17 @@ import { GlitchButton } from '../ui/GlitchButton';
 import { Footer } from '../layout/Footer';
 import { SEO } from '../seo/SEO';
 
-// Royalty-free hillside / mountain hotel imagery (Unsplash license — free for commercial use).
-const HOTEL_IMG =
-  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1400&q=80';
-const HOTEL_IMG_FALLBACK =
-  'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1400&q=80';
+// Royalty-free hill-country / mountain hotel imagery (Unsplash license — free for commercial use).
+// Ordered candidates: a lush hillside resort first, then reliable fallbacks so the visual
+// panel always renders a proper hotel-in-the-hills and never appears broken.
+const HOTEL_IMGS = [
+  'photo-1455587734955-081b22074882', // lodges set against a mountain lake
+  'photo-1566073771259-6a8506099945', // lush hillside resort & pool
+  'photo-1540541338287-41700207dee6', // village/chalets below the mountains
+  'photo-1571896349842-33c89424de2d', // luxury property (known-good)
+  'photo-1506905925346-21bda4d32df4', // mountain backdrop (guaranteed)
+].map((id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1400&q=80`);
+const HOTEL_IMG = HOTEL_IMGS[0];
 
 const TRAINED_ON = [
   'Room categories & capacity',
@@ -81,6 +87,7 @@ export const BookDemo: React.FC = () => {
 
   const [callState, setCallState] = useState<CallState>('idle');
   const [seconds, setSeconds] = useState(0);
+  const [imgIdx, setImgIdx] = useState(0);
   const timerRef = useRef<number | null>(null);
 
   // drive the live-call timer (UI-only simulation)
@@ -189,10 +196,10 @@ export const BookDemo: React.FC = () => {
               {/* LEFT — hillside hotel visual */}
               <div className="lg:col-span-5 relative min-h-[260px] lg:min-h-[640px] overflow-hidden">
                 <motion.img
-                  src={HOTEL_IMG}
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = HOTEL_IMG_FALLBACK;
-                  }}
+                  src={HOTEL_IMGS[imgIdx]}
+                  onError={() =>
+                    setImgIdx((i) => (i + 1 < HOTEL_IMGS.length ? i + 1 : i))
+                  }
                   alt="Hatton Hills — hillside retreat, Sri Lanka"
                   className="absolute inset-0 w-full h-full object-cover"
                   initial={{ scale: 1.12 }}
