@@ -40,7 +40,7 @@ const TRAINED_ON = [
 const STEPS: Array<{ bold: string; rest: string }> = [
   {
     bold: 'Click the demo link',
-    rest: ' and wait for Tanya to answer. She will greet you as a guest calling the property.',
+    rest: ' and wait for the Voice Agent to answer. It will greet you as a guest calling the property.',
   },
   {
     bold: 'Act as a guest.',
@@ -125,7 +125,7 @@ export const BookDemo: React.FC = () => {
     <div className="min-h-screen text-white relative overflow-x-hidden selection:bg-primary-DEFAULT selection:text-white">
       <SEO
         title="Demo Our Voice Agent - AI TaskForce"
-        description="Speak with Tanya, our AI front-office reservation agent for Hatton Hills. A live, no-sign-up demo of a TaskForce AI hotel voice agent."
+        description="Speak with our Voice Agent, the AI front-office reservation agent for Hatton Hills. A live, no-sign-up demo of a TaskForce AI hotel voice agent."
         url="/book-demo"
       />
 
@@ -251,7 +251,7 @@ export const BookDemo: React.FC = () => {
                   transition={{ delay: 0.2 }}
                   className="text-2xl md:text-[2rem] leading-tight font-bold text-white mb-4"
                 >
-                  Tanya — Front Office Reservation Agent
+                  Hatton Hills — Front Office Reservation Agent
                 </motion.h1>
 
                 <motion.p
@@ -260,8 +260,9 @@ export const BookDemo: React.FC = () => {
                   transition={{ delay: 0.28 }}
                   className="text-gray-300 leading-relaxed mb-7"
                 >
-                  Tanya handles inbound reservation inquiries for Hatton Hills — a
-                  boutique hillside retreat above Sri Lanka's tea country. She is
+                  Hatton Hills — Front Office Reservation Agent handles inbound
+                  reservation inquiries for the property — a boutique hillside
+                  retreat above Sri Lanka's tea country. The voice agent is
                   trained on the full property knowledge base and responds exactly
                   as a professional front office agent would, 24 hours a day.
                 </motion.p>
@@ -337,7 +338,7 @@ export const BookDemo: React.FC = () => {
                     >
                       <Phone className="w-5 h-5" />
                     </motion.span>
-                    Speak with Tanya
+                    Speak with Voice Agent
                     <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full">
                       <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
                       Live
@@ -427,7 +428,7 @@ export const BookDemo: React.FC = () => {
                         animate={{ scale: callState === 'live' ? [1, 1.04, 1] : 1 }}
                         transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
                       >
-                        T
+                        <Mic className="w-12 h-12" />
                         {callState === 'live' && (
                           <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-green-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg">
                             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
@@ -444,11 +445,11 @@ export const BookDemo: React.FC = () => {
                       >
                         <h4 className="text-2xl md:text-3xl font-bold text-white mb-3 flex items-center justify-center gap-2.5">
                           <Loader2 className="w-6 h-6 animate-spin text-accent" />
-                          Connecting you to Tanya…
+                          Connecting you to the Voice Agent…
                         </h4>
                         <p className="text-gray-300 max-w-sm">
-                          She's picking up the line. Get ready to speak as a guest
-                          calling Hatton Hills.
+                          The agent is picking up the line. Get ready to speak as a
+                          guest calling Hatton Hills.
                         </p>
                       </motion.div>
                     ) : (
@@ -462,7 +463,7 @@ export const BookDemo: React.FC = () => {
                           On the line
                         </div>
                         <h4 className="text-2xl md:text-3xl font-bold text-white mb-1">
-                          Tanya is on the line
+                          The Voice Agent is on the line
                         </h4>
                         <p className="text-accent font-mono text-2xl mb-5 tabular-nums">
                           {formatTime(seconds)}
