@@ -4,7 +4,7 @@
     "scramble_text": "Agents IA Multilingues",
     "intro": "Des ministères gouvernementaux aux grandes entreprises en passant par les PME, nos agents IA prennent en charge les tâches opérationnelles quotidiennes afin que vos employés puissent innover, collaborer et se concentrer sur la créativité et la croissance stratégique. Économisez plus de 40 heures par semaine et réduisez les coûts opérationnels de 65 %",
     "cta": {
-      "book": "Réserver un appel gratuit de 15 min",
+      "book": "Tester notre agent vocal",
       "contact": "Contactez-nous @ QG"
     },
     "badge": "Transformez chaque membre de l'équipe en un contributeur à fort impact"
@@ -131,7 +131,7 @@
     "title": "Prêt à déployer votre <1/> <2/>",
     "title_highlight": "Main-d'œuvre IA ?",
     "description": "Arrêtez de perdre du temps avec des processus manuels. Planifiez une consultation pour voir comment nos agents autonomes peuvent s'intégrer à votre stack aujourd'hui.",
-    "button": "Réserver un appel de découverte gratuit de 30 min",
+    "button": "Tester notre agent vocal",
     "subtext": "Aucun engagement requis • Session stratégique de 30 minutes",
     "trust_indicators": [
       "Conforme SOC-2",
@@ -145,7 +145,7 @@
     "solutions": "Solutions",
     "results": "Résultats",
     "contact": "Contact",
-    "book": "Réserver une démo"
+    "book": "Tester notre agent vocal"
   },
   "common": {
     "language": "Langue",
