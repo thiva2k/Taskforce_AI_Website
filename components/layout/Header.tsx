@@ -290,7 +290,7 @@ export const Header: React.FC = () => {
                         navigate('/book-demo');
                       }}
                     >
-                      Book Consultation
+                      {t('nav.book')}
                     </MagneticButton>
                   </div>
                 </div>

@@ -90,7 +90,7 @@ export const About: React.FC = () => {
     stat4_value: '1B+',
 
     cta_title: 'Ready to evolve your workforce?',
-    cta_button1: 'Book a Discovery Call',
+    cta_button1: 'Demo Our Voice Agent Now',
     cta_button2: 'Contact Sales',
     cta_buttonlink1: '/book-demo',
     cta_buttonlink2: '/contact',
