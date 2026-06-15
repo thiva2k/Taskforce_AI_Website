@@ -338,7 +338,7 @@ export const BookDemo: React.FC = () => {
                     >
                       <Phone className="w-5 h-5" />
                     </motion.span>
-                    Speak with Voice Agent
+                    Call Hatton Hills
                     <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full">
                       <span className="w-1.5 h-1.5 rounded-full bg-green-300 animate-pulse" />
                       Live
