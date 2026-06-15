@@ -103,11 +103,11 @@ export const BookDemo: React.FC = () => {
   const deviceRef = useRef<Device | null>(null);
   const callRef = useRef<any>(null);
 
-  // drive the live-call timer; auto-hang up at the 2-minute cap
+  // drive the live-call timer; auto-hang up at the 5-minute cap
   useEffect(() => {
     if (callState === 'live') {
       timerRef.current = window.setInterval(() => {
-        setSeconds((s) => (s >= 120 ? 120 : s + 1));
+        setSeconds((s) => (s >= 300 ? 300 : s + 1));
       }, 1000);
     }
     return () => {
@@ -115,11 +115,11 @@ export const BookDemo: React.FC = () => {
     };
   }, [callState]);
 
-  // Enforce the 2-minute cap as a side effect (not inside the setSeconds updater,
+  // Enforce the 5-minute cap as a side effect (not inside the setSeconds updater,
   // which must stay pure — StrictMode double-invokes updaters). endDemo() performs
   // the real hangup; its disconnect handler settles the UI back to idle.
   useEffect(() => {
-    if (callState === 'live' && seconds >= 120) {
+    if (callState === 'live' && seconds >= 300) {
       endDemo();
     }
   }, [callState, seconds]);
@@ -428,7 +428,7 @@ export const BookDemo: React.FC = () => {
                 </motion.button>
 
                 <p className="text-center text-xs text-gray-500 mb-8 font-mono">
-                  No sign-up required · Live agent · ~2 min demo
+                  No sign-up required · Live agent · ~5 min demo
                 </p>
 
                 {/* How to use */}
