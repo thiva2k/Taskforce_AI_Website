@@ -284,6 +284,30 @@ const server = app.listen(4173, async () => {
 
   console.log(`\n✅ Pre-render complete: ${successCount} succeeded, ${failCount} failed`);
 
+  // Prerender the NotFound page -> dist/404.html (served via ErrorDocument 404,
+  // so unknown URLs return a real 404 instead of a soft 200 SPA shell).
+  try {
+    const p404 = await browser.newPage();
+    await p404.evaluateOnNewDocument(() => { window.__IS_PRERENDER__ = true; });
+    await p404.goto("http://localhost:4173/__not_found__", {
+      waitUntil: "networkidle0",
+      timeout: 30000,
+    });
+    try {
+      await p404.waitForFunction(
+        () => document.querySelector('[data-prerender="notfound"]') !== null,
+        { timeout: 15000 }
+      );
+    } catch {
+      console.warn("  404 content wait timed out");
+    }
+    fs.writeFileSync(path.join(distPath, "404.html"), await p404.content(), "utf8");
+    await p404.close();
+    console.log("  generated /404.html");
+  } catch (err) {
+    console.error("  Failed to render 404.html:", err.message);
+  }
+
   await browser.close();
   server.close();
 

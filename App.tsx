@@ -11,6 +11,7 @@ import { Contact } from './components/pages/Contact';
 import { About } from './components/pages/About';
 import { Blog } from './components/pages/Blog';
 import { BlogPost } from './components/pages/BlogPost';
+import { NotFound } from './components/pages/NotFound';
 import { AdminLogin } from './components/admin/AdminLogin';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { BlogEditor } from './components/admin/BlogEditor';
@@ -115,6 +116,7 @@ function App() {
                       </ProtectedRoute>
                     }
                   />
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
 
