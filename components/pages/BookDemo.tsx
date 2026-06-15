@@ -10,9 +10,17 @@ import {
   Mic,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+// Twilio Voice JS SDK v2 — Device/Call browser API.
+// Ref: https://www.twilio.com/docs/voice/sdks/javascript (v2.x: `new Device(token)`,
+// `device.connect()`, Call events 'accept'|'disconnect'|'cancel'|'error', `device.destroy()`).
+import { Device } from '@twilio/voice-sdk';
 import { GlitchButton } from '../ui/GlitchButton';
 import { Footer } from '../layout/Footer';
 import { SEO } from '../seo/SEO';
+
+// Public token-minting endpoint (no secrets in the frontend; the backend issues
+// a short-lived Twilio access token scoped to the Hatton Hills / Tanya TwiML app).
+const TOKEN_URL = 'https://hattonhills.taskforceai.tech/api/voice-token';
 
 // Royalty-free hill-country / mountain hotel imagery (Unsplash license — free for commercial use).
 // Ordered candidates: a lush hillside resort first, then reliable fallbacks so the visual
@@ -90,18 +98,16 @@ export const BookDemo: React.FC = () => {
   const [imgIdx, setImgIdx] = useState(0);
   const timerRef = useRef<number | null>(null);
 
-  // drive the live-call timer (UI-only simulation)
+  // Live Twilio call handles. The Device authenticates with the access token and
+  // the Call is the active outbound leg into the TwiML app / ConversationRelay.
+  const deviceRef = useRef<Device | null>(null);
+  const callRef = useRef<any>(null);
+
+  // drive the live-call timer; auto-hang up at the 2-minute cap
   useEffect(() => {
     if (callState === 'live') {
       timerRef.current = window.setInterval(() => {
-        setSeconds((s) => {
-          if (s >= 120) {
-            window.clearInterval(timerRef.current!);
-            setCallState('idle');
-            return 0;
-          }
-          return s + 1;
-        });
+        setSeconds((s) => (s >= 120 ? 120 : s + 1));
       }, 1000);
     }
     return () => {
@@ -109,17 +115,92 @@ export const BookDemo: React.FC = () => {
     };
   }, [callState]);
 
-  const startDemo = () => {
-    setSeconds(0);
-    setCallState('connecting');
-    window.setTimeout(() => setCallState('live'), 1800);
-  };
+  // Enforce the 2-minute cap as a side effect (not inside the setSeconds updater,
+  // which must stay pure — StrictMode double-invokes updaters). endDemo() performs
+  // the real hangup; its disconnect handler settles the UI back to idle.
+  useEffect(() => {
+    if (callState === 'live' && seconds >= 120) {
+      endDemo();
+    }
+  }, [callState, seconds]);
 
+  // Tear down the call + device exactly once. We null the refs *first* so the
+  // re-entrant endDemo() triggered by the Call's own 'disconnect' event sees
+  // nulled handles and turns into a no-op (prevents a recursive teardown loop).
   const endDemo = () => {
+    const call = callRef.current;
+    callRef.current = null;
+    const device = deviceRef.current;
+    deviceRef.current = null;
+
+    try {
+      call?.disconnect();
+    } catch {
+      /* ignore — already torn down */
+    }
+    try {
+      device?.destroy();
+    } catch {
+      /* ignore */
+    }
+
     if (timerRef.current) window.clearInterval(timerRef.current);
     setCallState('idle');
     setSeconds(0);
   };
+
+  const startDemo = async () => {
+    setSeconds(0);
+    setCallState('connecting');
+
+    try {
+      // 1) Mic permission — required before placing a WebRTC call.
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      // 2) Mint a short-lived Twilio access token from the public backend.
+      const res = await fetch(TOKEN_URL);
+      if (!res.ok) throw new Error(`token request failed: ${res.status}`);
+      const { token } = await res.json();
+      if (!token) throw new Error('no token in response');
+
+      // 3) Spin up the Device and place the outbound call into the TwiML app.
+      const device = new Device(token);
+      deviceRef.current = device;
+
+      const call = await device.connect({ params: {} });
+      callRef.current = call;
+
+      // 4) Map Call lifecycle events onto the existing UI states.
+      call.on('accept', () => setCallState('live'));
+      call.on('disconnect', () => endDemo());
+      call.on('cancel', () => endDemo());
+      call.on('error', (e: unknown) => {
+        console.error('[twilio] call error', e);
+        endDemo();
+      });
+    } catch (err) {
+      // Mic denial, token fetch failure, bad JSON, or Device error — revert
+      // gracefully so the UI never hangs on "connecting".
+      console.error('[twilio] could not start demo call', err);
+      endDemo();
+    }
+  };
+
+  // End any in-flight call when the user navigates away from the page.
+  useEffect(() => {
+    return () => {
+      try {
+        callRef.current?.disconnect();
+      } catch {
+        /* ignore */
+      }
+      try {
+        deviceRef.current?.destroy();
+      } catch {
+        /* ignore */
+      }
+    };
+  }, []);
 
   return (
     <div className="min-h-screen text-white relative overflow-x-hidden selection:bg-primary-DEFAULT selection:text-white">
