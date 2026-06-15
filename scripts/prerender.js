@@ -40,7 +40,7 @@ const staticRoutes = [
   "/service/ai-booking-agents/",
 ];
 
-async function fetchWpWithRetry(url, maxAttempts = 3) {
+async function fetchWpWithRetry(url, maxAttempts = 5) {
   let lastError;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const controller = new AbortController();
@@ -60,7 +60,7 @@ async function fetchWpWithRetry(url, maxAttempts = 3) {
       if (attempt >= maxAttempts) throw err;
       console.warn(`  WP route fetch ${url} failed (attempt ${attempt}): ${err.message}; retrying...`);
     }
-    await new Promise((r) => setTimeout(r, attempt * 1500));
+    await new Promise((r) => setTimeout(r, attempt * 2000));
   }
   throw lastError || new Error("WP fetch failed");
 }
