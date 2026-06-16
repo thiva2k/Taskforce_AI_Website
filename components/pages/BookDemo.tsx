@@ -8,6 +8,9 @@ import {
   Loader2,
   Sparkles,
   Mic,
+  Globe,
+  ChevronDown,
+  Check,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 // Twilio Voice JS SDK v2 — Device/Call browser API.
@@ -66,6 +69,16 @@ const STEPS: Array<{ bold: string; rest: string }> = [
 
 type CallState = 'idle' | 'connecting' | 'live';
 
+// Demo voice languages. The value is passed to the backend TwiML app via
+// Device.connect({ params: { lang } }); the backend routes `en` to English
+// ConversationRelay and `ar` to the Arabic Media Streams path (Tanya in Arabic).
+type Lang = 'en' | 'ar';
+const LANGS: Array<{ value: Lang; label: string; native: string; flag: string }> = [
+  { value: 'en', label: 'English', native: 'English', flag: '🇬🇧' },
+  { value: 'ar', label: 'Arabic', native: 'العربية', flag: '🇸🇦' },
+];
+const langMeta = (v: Lang) => LANGS.find((l) => l.value === v) ?? LANGS[0];
+
 const formatTime = (s: number) =>
   `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
@@ -96,6 +109,9 @@ export const BookDemo: React.FC = () => {
   const [callState, setCallState] = useState<CallState>('idle');
   const [seconds, setSeconds] = useState(0);
   const [imgIdx, setImgIdx] = useState(0);
+  // Selected demo voice language + dropdown open state.
+  const [lang, setLang] = useState<Lang>('en');
+  const [langOpen, setLangOpen] = useState(false);
   const timerRef = useRef<number | null>(null);
 
   // Live Twilio call handles. The Device authenticates with the access token and
@@ -167,7 +183,10 @@ export const BookDemo: React.FC = () => {
       const device = new Device(token);
       deviceRef.current = device;
 
-      const call = await device.connect({ params: {} });
+      // Pass the chosen language to the TwiML app. Twilio forwards `params` to
+      // the voiceUrl (/voice/demo-incoming) as POST fields, where the backend
+      // routes en → English ConversationRelay, ar → Arabic Media Streams.
+      const call = await device.connect({ params: { lang } });
       callRef.current = call;
 
       // 4) Map Call lifecycle events onto the existing UI states.
@@ -323,7 +342,7 @@ export const BookDemo: React.FC = () => {
                   className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-accent mb-3"
                 >
                   <span className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.8)] animate-pulse" />
-                  Reservation Agent · English
+                  Reservation Agent · {langMeta(lang).native}
                 </motion.div>
 
                 <motion.h1
@@ -376,6 +395,77 @@ export const BookDemo: React.FC = () => {
                       </motion.span>
                     ))}
                   </motion.div>
+                </div>
+
+                {/* Voice language selector — choose the language Tanya speaks */}
+                <div className="mb-3.5">
+                  <label className="block text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-2">
+                    Voice language
+                  </label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setLangOpen((o) => !o)}
+                      disabled={callState !== 'idle'}
+                      aria-haspopup="listbox"
+                      aria-expanded={langOpen}
+                      className="w-full flex items-center justify-between gap-3 h-12 px-4 rounded-xl border border-white/15 bg-white/[0.04] text-white hover:border-accent/60 hover:bg-accent/5 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <Globe className="w-4 h-4 text-accent" />
+                        <span className="text-base leading-none">{langMeta(lang).flag}</span>
+                        <span className="font-semibold">{langMeta(lang).native}</span>
+                        {lang === 'ar' && (
+                          <span className="text-xs text-gray-400 font-normal">(Arabic)</span>
+                        )}
+                      </span>
+                      <ChevronDown
+                        className={`w-4 h-4 text-gray-400 transition-transform ${langOpen ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+
+                    <AnimatePresence>
+                      {langOpen && (
+                        <>
+                          {/* click-away backdrop */}
+                          <div
+                            className="fixed inset-0 z-20"
+                            onClick={() => setLangOpen(false)}
+                          />
+                          <motion.ul
+                            role="listbox"
+                            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                            transition={{ duration: 0.15 }}
+                            className="absolute z-30 mt-2 w-full rounded-xl border border-white/15 bg-dark-surface/95 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden"
+                          >
+                            {LANGS.map((l) => (
+                              <li key={l.value} role="option" aria-selected={lang === l.value}>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setLang(l.value);
+                                    setLangOpen(false);
+                                  }}
+                                  className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left hover:bg-accent/10 transition-colors"
+                                >
+                                  <span className="flex items-center gap-2.5">
+                                    <span className="text-base leading-none">{l.flag}</span>
+                                    <span className="font-medium text-white">{l.native}</span>
+                                    <span className="text-xs text-gray-400">{l.label}</span>
+                                  </span>
+                                  {lang === l.value && (
+                                    <Check className="w-4 h-4 text-accent" />
+                                  )}
+                                </button>
+                              </li>
+                            ))}
+                          </motion.ul>
+                        </>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
 
                 {/* CTA — moved between Trained on & How to use, made eye-catching */}
