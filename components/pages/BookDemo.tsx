@@ -70,12 +70,13 @@ const STEPS: Array<{ bold: string; rest: string }> = [
 type CallState = 'idle' | 'connecting' | 'live';
 
 // Demo voice languages. The value is passed to the backend TwiML app via
-// Device.connect({ params: { lang } }); the backend routes `en` to English
+// Device.connect({ params: { lang } }); the backend routes `en`/`ru` to
 // ConversationRelay and `ar` to the Arabic Media Streams path (Tanya in Arabic).
-type Lang = 'en' | 'ar';
+type Lang = 'en' | 'ar' | 'ru';
 const LANGS: Array<{ value: Lang; label: string; native: string; flag: string }> = [
   { value: 'en', label: 'English', native: 'English', flag: '🇬🇧' },
   { value: 'ar', label: 'Arabic', native: 'العربية', flag: '🇸🇦' },
+  { value: 'ru', label: 'Russian', native: 'Русский', flag: '🇷🇺' },
 ];
 const langMeta = (v: Lang) => LANGS.find((l) => l.value === v) ?? LANGS[0];
 
