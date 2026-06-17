@@ -48,7 +48,7 @@ const getServiceIds = () => {
   }
 };
 
-async function fetchWpWithRetry(url, maxAttempts = 5) {
+async function fetchWpWithRetry(url, maxAttempts = 8) {
   let lastError;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const controller = new AbortController();
@@ -67,7 +67,10 @@ async function fetchWpWithRetry(url, maxAttempts = 5) {
       if (attempt >= maxAttempts) throw err;
       console.warn(`  sitemap WP fetch ${url} failed (attempt ${attempt}): ${err.message}; retrying...`);
     }
-    await new Promise((r) => setTimeout(r, attempt * 2000));
+    // Capped backoff + jitter so an intermittent WP/CI network blip (seen from
+    // GitHub runners) is ridden out over a few minutes instead of failing fast.
+    const backoff = Math.min(attempt * 4000, 20000) + Math.floor(Math.random() * 1000);
+    await new Promise((r) => setTimeout(r, backoff));
   }
   throw lastError || new Error('WP fetch failed');
 }
@@ -112,7 +115,24 @@ async function getBlogSlugs() {
 
 const generateSitemap = async () => {
   const serviceIds = getServiceIds();
-  const blogSlugs = await getBlogSlugs();
+  // Resilience: a WP outage from CI must not fail the whole deploy. On fetch
+  // failure, generate the sitemap WITHOUT blog posts (static + service routes).
+  // Set STRICT_BLOG_PRERENDER=1 to restore hard-fail behavior.
+  let blogSlugs = [];
+  try {
+    blogSlugs = await getBlogSlugs();
+  } catch (err) {
+    if (process.env.STRICT_BLOG_PRERENDER === '1') {
+      console.error(`\n❌ Sitemap: WordPress unreachable (${err.message}) — aborting (STRICT_BLOG_PRERENDER=1).`);
+      process.exit(1);
+    }
+    console.warn(
+      `\n⚠ Sitemap: WordPress unreachable (${err.message}) — generating sitemap ` +
+      `WITHOUT blog posts. Blog URLs will return on the next successful deploy. ` +
+      `(Set STRICT_BLOG_PRERENDER=1 to hard-fail instead.)`
+    );
+    blogSlugs = [];
+  }
 
   const routes = [
     ...staticRoutes,

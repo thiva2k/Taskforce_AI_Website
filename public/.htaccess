@@ -14,6 +14,15 @@
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^admin(/.*)?$ index.html [QSA,L]
+
+  # Blog routes are normally prerendered to static files. If a transient WordPress
+  # outage during the build left a blog route un-prerendered, serve the SPA shell
+  # so the page client-renders (WordPress is reachable from browsers) instead of
+  # returning a 404. When the blog IS prerendered, the static file exists and the
+  # !-f / !-d conditions skip this rule, so prerendered HTML is served as before.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^blog(/.*)?$ index.html [QSA,L]
 </IfModule>
 
 # Unknown URLs return a proper 404 status, served as the prerendered NotFound
