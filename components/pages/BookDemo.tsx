@@ -369,36 +369,6 @@ export const BookDemo: React.FC = () => {
                   as a professional front office agent would, 24 hours a day.
                 </motion.p>
 
-                {/* Trained on */}
-                <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 mb-7">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">
-                    Trained on
-                  </p>
-                  <motion.div
-                    className="flex flex-wrap gap-2.5"
-                    initial="hidden"
-                    animate="show"
-                    variants={{
-                      hidden: {},
-                      show: { transition: { staggerChildren: 0.05, delayChildren: 0.3 } },
-                    }}
-                  >
-                    {TRAINED_ON.map((chip) => (
-                      <motion.span
-                        key={chip}
-                        variants={{
-                          hidden: { opacity: 0, y: 8, scale: 0.95 },
-                          show: { opacity: 1, y: 0, scale: 1 },
-                        }}
-                        whileHover={{ scale: 1.05, y: -2 }}
-                        className="px-3.5 py-2 rounded-lg text-sm text-gray-200 bg-white/[0.04] border border-white/10 hover:border-accent/60 hover:bg-accent/10 hover:text-white transition-colors cursor-default"
-                      >
-                        {chip}
-                      </motion.span>
-                    ))}
-                  </motion.div>
-                </div>
-
                 {/* Voice language selector — choose the language Tanya speaks */}
                 <div className="mb-3.5">
                   <label className="block text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-2">
@@ -470,7 +440,7 @@ export const BookDemo: React.FC = () => {
                   </div>
                 </div>
 
-                {/* CTA — moved between Trained on & How to use, made eye-catching */}
+                {/* CTA — placed above the fold (before Trained on) so callers don't scroll; eye-catching */}
                 <motion.button
                   type="button"
                   onClick={startDemo}
@@ -522,6 +492,36 @@ export const BookDemo: React.FC = () => {
                 <p className="text-center text-xs text-gray-500 mb-8 font-mono">
                   No sign-up required · Live agent · ~5 min demo
                 </p>
+
+                {/* Trained on */}
+                <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 mb-7">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">
+                    Trained on
+                  </p>
+                  <motion.div
+                    className="flex flex-wrap gap-2.5"
+                    initial="hidden"
+                    animate="show"
+                    variants={{
+                      hidden: {},
+                      show: { transition: { staggerChildren: 0.05, delayChildren: 0.3 } },
+                    }}
+                  >
+                    {TRAINED_ON.map((chip) => (
+                      <motion.span
+                        key={chip}
+                        variants={{
+                          hidden: { opacity: 0, y: 8, scale: 0.95 },
+                          show: { opacity: 1, y: 0, scale: 1 },
+                        }}
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        className="px-3.5 py-2 rounded-lg text-sm text-gray-200 bg-white/[0.04] border border-white/10 hover:border-accent/60 hover:bg-accent/10 hover:text-white transition-colors cursor-default"
+                      >
+                        {chip}
+                      </motion.span>
+                    ))}
+                  </motion.div>
+                </div>
 
                 {/* How to use */}
                 <h3 className="text-lg font-bold text-white mb-5">
