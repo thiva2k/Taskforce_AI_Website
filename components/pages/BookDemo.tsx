@@ -106,12 +106,12 @@ const AGENTS: Agent[] = [
   },
   {
     id: 'kitchened',
-    brand: 'KITCHENED',
+    brand: 'Kitchen & Co.',
     agentName: 'Nira',
     role: 'Lead-Gen Specialist',
     location: 'Colombo, Sri Lanka',
     description:
-      "KITCHENED is Sri Lanka's commercial kitchen & bakery equipment specialist. " +
+      "Kitchen & Co. is Sri Lanka's commercial kitchen & bakery equipment specialist. " +
       'Nira helps you scope the right equipment for your bakery, hotel, restaurant or ' +
       'institution, answers product and service questions, and connects you with a ' +
       'specialist for a tailored quote — any time of day.',
@@ -131,7 +131,7 @@ const AGENTS: Agent[] = [
       'Free quote & specialist callback',
     ],
     langs: ['en'],
-    callLabel: 'Call KITCHENED',
+    callLabel: 'Call Kitchen & Co.',
     askHint: 'ovens, mixers or a full kitchen fit-out',
     steps: [
       {
