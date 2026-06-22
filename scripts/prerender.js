@@ -18,6 +18,17 @@ app.use((req, res) => {
 
 const WP_API = process.env.VITE_WP_API;
 
+// Resilience switch: by default a WP outage from CI does NOT fail the deploy —
+// blog routes are skipped (they client-render at runtime; see the /blog SPA
+// fallback in public/.htaccess). Set STRICT_BLOG_PRERENDER=1 to restore the old
+// hard-fail behavior (abort rather than ship a non-prerendered blog).
+const STRICT_BLOG = process.env.STRICT_BLOG_PRERENDER === "1";
+
+// Set when the WP route-list fetch can't reach WordPress after all retries. Used
+// to decide whether blog render failures are tolerable (WP outage) vs a real bug
+// (WP reachable but a blog page rendered broken — that should still hard-fail).
+let wpUnreachable = false;
+
 const PUBLIC_BLOG_CATEGORY_SLUGS = new Set([
   "engineering",
   "case-study",
@@ -40,7 +51,7 @@ const staticRoutes = [
   "/service/ai-booking-agents/",
 ];
 
-async function fetchWpWithRetry(url, maxAttempts = 3) {
+async function fetchWpWithRetry(url, maxAttempts = 8) {
   let lastError;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const controller = new AbortController();
@@ -60,7 +71,10 @@ async function fetchWpWithRetry(url, maxAttempts = 3) {
       if (attempt >= maxAttempts) throw err;
       console.warn(`  WP route fetch ${url} failed (attempt ${attempt}): ${err.message}; retrying...`);
     }
-    await new Promise((r) => setTimeout(r, attempt * 1500));
+    // Capped backoff + jitter so an intermittent WP/CI network blip (seen from
+    // GitHub runners) is ridden out over a few minutes instead of failing fast.
+    const backoff = Math.min(attempt * 4000, 20000) + Math.floor(Math.random() * 1000);
+    await new Promise((r) => setTimeout(r, backoff));
   }
   throw lastError || new Error("WP fetch failed");
 }
@@ -266,11 +280,20 @@ const server = app.listen(4173, async () => {
     blogRoutes = await getPublicBlogRoutes();
   } catch (err) {
     console.error(`
-❌ Could not fetch blog routes from WordPress: ${err.message}`);
-    console.error(`Aborting build so an incomplete blog is NOT deployed.`);
-    await browser.close();
-    server.close();
-    process.exit(1);
+⚠ Could not fetch blog routes from WordPress: ${err.message}`);
+    wpUnreachable = true;
+    if (STRICT_BLOG) {
+      console.error(`STRICT_BLOG_PRERENDER=1 — aborting so an incomplete blog is NOT deployed.`);
+      await browser.close();
+      server.close();
+      process.exit(1);
+    }
+    console.warn(
+      `Continuing WITHOUT blog prerendering — static + service routes still deploy; ` +
+      `blog pages fall back to client-side rendering via the /blog .htaccess rule. ` +
+      `(Set STRICT_BLOG_PRERENDER=1 to hard-fail instead.)`
+    );
+    blogRoutes = [];
   }
   const routes = [...new Set([...staticRoutes, ...blogRoutes])];
 
@@ -284,6 +307,30 @@ const server = app.listen(4173, async () => {
 
   console.log(`\n✅ Pre-render complete: ${successCount} succeeded, ${failCount} failed`);
 
+  // Prerender the NotFound page -> dist/404.html (served via ErrorDocument 404,
+  // so unknown URLs return a real 404 instead of a soft 200 SPA shell).
+  try {
+    const p404 = await browser.newPage();
+    await p404.evaluateOnNewDocument(() => { window.__IS_PRERENDER__ = true; });
+    await p404.goto("http://localhost:4173/__not_found__", {
+      waitUntil: "networkidle0",
+      timeout: 30000,
+    });
+    try {
+      await p404.waitForFunction(
+        () => document.querySelector('[data-prerender="notfound"]') !== null,
+        { timeout: 15000 }
+      );
+    } catch {
+      console.warn("  404 content wait timed out");
+    }
+    fs.writeFileSync(path.join(distPath, "404.html"), await p404.content(), "utf8");
+    await p404.close();
+    console.log("  generated /404.html");
+  } catch (err) {
+    console.error("  Failed to render 404.html:", err.message);
+  }
+
   await browser.close();
   server.close();
 
@@ -291,12 +338,26 @@ const server = app.listen(4173, async () => {
   // transient WordPress outage during the build can't ship a broken blog to prod.
   if (blogFailures.length > 0) {
     console.error(`
-❌ ${blogFailures.length} blog route(s) failed to render real content:`);
+⚠ ${blogFailures.length} blog route(s) failed to render real content:`);
     blogFailures.forEach((r) => console.error(`   - ${r.route}`));
-    console.error(
-      `Aborting build so a broken blog is NOT deployed ` +
-        `(WordPress was likely slow or unavailable during the build).`
+    // Tolerate blog render failures ONLY when WordPress was unreachable (the
+    // timeout/outage case this resilience targets). If WP WAS reachable but a
+    // blog page still rendered broken, that's a likely real bug — hard-fail so it
+    // isn't shipped. STRICT_BLOG_PRERENDER=1 always hard-fails.
+    const tolerate = !STRICT_BLOG && wpUnreachable;
+    if (!tolerate) {
+      console.error(
+        `Aborting build so a broken blog is NOT deployed ` +
+          `(WordPress was reachable, so this looks like a real render failure, ` +
+          `not a transient outage). Set STRICT_BLOG_PRERENDER=1 to always hard-fail.`
+      );
+      process.exit(1);
+    }
+    console.warn(
+      `Not writing those blog pages (no static file → they client-render at ` +
+        `runtime via the /blog .htaccess fallback). Continuing the deploy because ` +
+        `WordPress was unreachable during the build. ` +
+        `(Set STRICT_BLOG_PRERENDER=1 to hard-fail instead.)`
     );
-    process.exit(1);
   }
 });

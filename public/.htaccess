@@ -8,11 +8,26 @@
   RewriteCond %{HTTP_HOST} !^www\. [NC]
   RewriteRule ^(.*)$ https://www.taskforceai.tech/$1 [R=301,L]
 
-  # If the request is not for an existing file or directory, serve index.html
+  # Admin routes are client-side only (not prerendered) — serve the SPA shell so
+  # React Router can handle them. Every other path that is not a real file/dir
+  # falls through to a real 404 (see ErrorDocument below) instead of a soft 200.
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^ index.html [QSA,L]
+  RewriteRule ^admin(/.*)?$ index.html [QSA,L]
+
+  # Blog routes are normally prerendered to static files. If a transient WordPress
+  # outage during the build left a blog route un-prerendered, serve the SPA shell
+  # so the page client-renders (WordPress is reachable from browsers) instead of
+  # returning a 404. When the blog IS prerendered, the static file exists and the
+  # !-f / !-d conditions skip this rule, so prerendered HTML is served as before.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^blog(/.*)?$ index.html [QSA,L]
 </IfModule>
+
+# Unknown URLs return a proper 404 status, served as the prerendered NotFound
+# page (dist/404.html) — instead of the SPA shell with HTTP 200 (a soft 404).
+ErrorDocument 404 /404.html
 
 # Enable compression
 <IfModule mod_deflate.c>
