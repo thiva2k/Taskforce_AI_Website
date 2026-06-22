@@ -178,15 +178,17 @@ export const Hero: React.FC = () => {
   }}
   className="relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-white mb-6 md:mb-8 leading-[1.1] md:leading-[1.1] max-w-[90vw] md:max-w-5xl mx-auto hero-main-title"
 >
-  {/* SEO-safe static text */}
-  <span className="sr-only">
+  {/* Real title in normal flow — reserves the title's final size so the
+      scramble animation can never change the <h1> height and shift the
+      content below it. Stays accessible & SEO-readable (just transparent). */}
+  <span className="block text-transparent select-none">
     {heroContent.title}
   </span>
 
-  {/* Visible text layer */}
+  {/* Visible animated layer, overlaid on top — does NOT affect layout */}
   <span
     aria-hidden="true"
-    className="block"
+    className="absolute inset-0 block"
   >
     {isPrerender ? (
       heroContent.title
