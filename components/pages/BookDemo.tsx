@@ -427,6 +427,36 @@ export const BookDemo: React.FC = () => {
 
         {/* Body — agent carousel */}
         <div className="flex-grow flex flex-col items-center justify-center px-4 py-6 md:py-10">
+          {/* Agent selector — at the top so visitors can pick a demo right away */}
+          <div className="w-full max-w-5xl mb-6 md:mb-8">
+            <p className="text-center text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3">
+              Choose a demo
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {AGENTS.map((a, i) => (
+                <button
+                  key={a.id}
+                  type="button"
+                  onClick={() => selectAgent(i)}
+                  disabled={callState !== 'idle'}
+                  aria-label={`Show ${a.brand}`}
+                  className={`group flex items-center gap-2 rounded-full border px-3 py-1.5 transition disabled:opacity-50 ${
+                    i === agentIdx
+                      ? 'border-accent/70 bg-accent/15 text-white'
+                      : 'border-white/10 bg-white/[0.03] text-gray-400 hover:border-white/25 hover:text-white'
+                  }`}
+                >
+                  <span
+                    className={`h-2 w-2 rounded-full transition ${
+                      i === agentIdx ? 'bg-accent' : 'bg-gray-500 group-hover:bg-gray-300'
+                    }`}
+                  />
+                  <span className="text-xs font-semibold whitespace-nowrap">{a.brand}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Carousel + arrows */}
           <div className="relative w-full max-w-5xl">
             {/* Prev / Next arrows — hidden during an active call */}
@@ -794,31 +824,6 @@ export const BookDemo: React.FC = () => {
                 )}
               </AnimatePresence>
             </div>
-          </div>
-
-          {/* Agent selector dots */}
-          <div className="mt-6 flex items-center justify-center gap-3">
-            {AGENTS.map((a, i) => (
-              <button
-                key={a.id}
-                type="button"
-                onClick={() => selectAgent(i)}
-                disabled={callState !== 'idle'}
-                aria-label={`Show ${a.brand}`}
-                className={`group flex items-center gap-2 rounded-full border px-3 py-1.5 transition disabled:opacity-50 ${
-                  i === agentIdx
-                    ? 'border-accent/70 bg-accent/15 text-white'
-                    : 'border-white/10 bg-white/[0.03] text-gray-400 hover:border-white/25 hover:text-white'
-                }`}
-              >
-                <span
-                  className={`h-2 w-2 rounded-full transition ${
-                    i === agentIdx ? 'bg-accent' : 'bg-gray-500 group-hover:bg-gray-300'
-                  }`}
-                />
-                <span className="text-xs font-semibold whitespace-nowrap">{a.brand}</span>
-              </button>
-            ))}
           </div>
         </div>
 
