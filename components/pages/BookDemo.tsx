@@ -430,7 +430,7 @@ export const BookDemo: React.FC = () => {
           {/* Agent selector — at the top so visitors can pick a demo right away */}
           <div className="w-full max-w-5xl mb-6 md:mb-8">
             <p className="text-center text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3">
-              Choose a demo
+              Choose a demo · <span className="text-accent">tap the arrows</span> to switch between {AGENTS.length} agents
             </p>
             <div className="flex items-center justify-center gap-3 sm:gap-4">
               {/* Prev arrow — highlighted, at the top for easy access */}
@@ -439,19 +439,14 @@ export const BookDemo: React.FC = () => {
                 aria-label="Previous agent"
                 onClick={() => goToAgent(-1)}
                 disabled={callState !== 'idle'}
-                whileHover={{ scale: 1.12 }}
-                whileTap={{ scale: 0.94 }}
-                animate={{
-                  boxShadow: [
-                    '0 0 14px rgba(6,182,212,0.40)',
-                    '0 0 28px rgba(6,182,212,0.80)',
-                    '0 0 14px rgba(6,182,212,0.40)',
-                  ],
-                }}
-                transition={{ boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' } }}
-                className="shrink-0 grid place-items-center w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary-DEFAULT to-accent text-white ring-2 ring-white/25 disabled:opacity-40 disabled:cursor-not-allowed"
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.92 }}
+                animate={{ x: [0, -5, 0] }}
+                transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
+                className="relative shrink-0 grid place-items-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-primary-DEFAULT to-accent text-white ring-2 ring-white/30 shadow-[0_0_26px_rgba(6,182,212,0.7)] disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <ChevronLeft className="w-6 h-6" />
+                <span className="absolute inset-0 rounded-full bg-accent/30 animate-ping" />
+                <ChevronLeft className="relative w-7 h-7" strokeWidth={2.5} />
               </motion.button>
 
               {/* Agent pills */}
@@ -485,19 +480,14 @@ export const BookDemo: React.FC = () => {
                 aria-label="Next agent"
                 onClick={() => goToAgent(1)}
                 disabled={callState !== 'idle'}
-                whileHover={{ scale: 1.12 }}
-                whileTap={{ scale: 0.94 }}
-                animate={{
-                  boxShadow: [
-                    '0 0 14px rgba(6,182,212,0.40)',
-                    '0 0 28px rgba(6,182,212,0.80)',
-                    '0 0 14px rgba(6,182,212,0.40)',
-                  ],
-                }}
-                transition={{ boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' } }}
-                className="shrink-0 grid place-items-center w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary-DEFAULT to-accent text-white ring-2 ring-white/25 disabled:opacity-40 disabled:cursor-not-allowed"
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.92 }}
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
+                className="relative shrink-0 grid place-items-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-primary-DEFAULT to-accent text-white ring-2 ring-white/30 shadow-[0_0_26px_rgba(6,182,212,0.7)] disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <ChevronRight className="w-6 h-6" />
+                <span className="absolute inset-0 rounded-full bg-accent/30 animate-ping" />
+                <ChevronRight className="relative w-7 h-7" strokeWidth={2.5} />
               </motion.button>
             </div>
           </div>
