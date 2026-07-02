@@ -430,7 +430,7 @@ export const BookDemo: React.FC = () => {
           {/* Agent selector — at the top so visitors can pick a demo right away */}
           <div className="w-full max-w-5xl mb-6 md:mb-8">
             <p className="text-center text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3">
-              Choose a demo · <span className="text-accent">tap the arrows</span> to switch between {AGENTS.length} agents
+              Choose a demo
             </p>
             <div className="flex items-center justify-center gap-3 sm:gap-4">
               {/* Prev arrow — highlighted, at the top for easy access */}
