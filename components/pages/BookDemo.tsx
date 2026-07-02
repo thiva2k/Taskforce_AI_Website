@@ -116,6 +116,8 @@ const AGENTS: Agent[] = [
       'institution, answers product and service questions, and connects you with a ' +
       'specialist for a tailored quote — any time of day.',
     images: [
+      // Chosen photo (Unsplash rO6709B116E) — high-res via public download endpoint.
+      'https://unsplash.com/photos/rO6709B116E/download?force=true&w=1920',
       'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1400&q=80',
       'https://images.unsplash.com/photo-1581349437898-cebbe9831942?auto=format&fit=crop&w=1400&q=80',
       'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1400&q=80',
@@ -164,6 +166,8 @@ const AGENTS: Agent[] = [
       'budget, compares brands like Abans, LG and Haier, and walks you to a purchase ' +
       'with live prices — 24 hours a day.',
     images: [
+      // Chosen photo (Unsplash 90Zgfs4Xrf4) — high-res via public download endpoint.
+      'https://unsplash.com/photos/90Zgfs4Xrf4/download?force=true&w=1920',
       'https://images.unsplash.com/photo-1536353284924-9220c464e262?auto=format&fit=crop&w=1400&q=80',
       'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?auto=format&fit=crop&w=1400&q=80',
       'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fit=crop&w=1400&q=80',
