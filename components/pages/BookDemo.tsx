@@ -432,55 +432,78 @@ export const BookDemo: React.FC = () => {
             <p className="text-center text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3">
               Choose a demo
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              {AGENTS.map((a, i) => (
-                <button
-                  key={a.id}
-                  type="button"
-                  onClick={() => selectAgent(i)}
-                  disabled={callState !== 'idle'}
-                  aria-label={`Show ${a.brand}`}
-                  className={`group flex items-center gap-2 rounded-full border px-3 py-1.5 transition disabled:opacity-50 ${
-                    i === agentIdx
-                      ? 'border-accent/70 bg-accent/15 text-white'
-                      : 'border-white/10 bg-white/[0.03] text-gray-400 hover:border-white/25 hover:text-white'
-                  }`}
-                >
-                  <span
-                    className={`h-2 w-2 rounded-full transition ${
-                      i === agentIdx ? 'bg-accent' : 'bg-gray-500 group-hover:bg-gray-300'
+            <div className="flex items-center justify-center gap-3 sm:gap-4">
+              {/* Prev arrow — highlighted, at the top for easy access */}
+              <motion.button
+                type="button"
+                aria-label="Previous agent"
+                onClick={() => goToAgent(-1)}
+                disabled={callState !== 'idle'}
+                whileHover={{ scale: 1.12 }}
+                whileTap={{ scale: 0.94 }}
+                animate={{
+                  boxShadow: [
+                    '0 0 14px rgba(6,182,212,0.40)',
+                    '0 0 28px rgba(6,182,212,0.80)',
+                    '0 0 14px rgba(6,182,212,0.40)',
+                  ],
+                }}
+                transition={{ boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' } }}
+                className="shrink-0 grid place-items-center w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary-DEFAULT to-accent text-white ring-2 ring-white/25 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </motion.button>
+
+              {/* Agent pills */}
+              <div className="flex flex-wrap items-center justify-center gap-2.5">
+                {AGENTS.map((a, i) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    onClick={() => selectAgent(i)}
+                    disabled={callState !== 'idle'}
+                    aria-label={`Show ${a.brand}`}
+                    className={`group flex items-center gap-2 rounded-full border px-3 py-1.5 transition disabled:opacity-50 ${
+                      i === agentIdx
+                        ? 'border-accent/70 bg-accent/15 text-white'
+                        : 'border-white/10 bg-white/[0.03] text-gray-400 hover:border-white/25 hover:text-white'
                     }`}
-                  />
-                  <span className="text-xs font-semibold whitespace-nowrap">{a.brand}</span>
-                </button>
-              ))}
+                  >
+                    <span
+                      className={`h-2 w-2 rounded-full transition ${
+                        i === agentIdx ? 'bg-accent' : 'bg-gray-500 group-hover:bg-gray-300'
+                      }`}
+                    />
+                    <span className="text-xs font-semibold whitespace-nowrap">{a.brand}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Next arrow — highlighted, at the top for easy access */}
+              <motion.button
+                type="button"
+                aria-label="Next agent"
+                onClick={() => goToAgent(1)}
+                disabled={callState !== 'idle'}
+                whileHover={{ scale: 1.12 }}
+                whileTap={{ scale: 0.94 }}
+                animate={{
+                  boxShadow: [
+                    '0 0 14px rgba(6,182,212,0.40)',
+                    '0 0 28px rgba(6,182,212,0.80)',
+                    '0 0 14px rgba(6,182,212,0.40)',
+                  ],
+                }}
+                transition={{ boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' } }}
+                className="shrink-0 grid place-items-center w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary-DEFAULT to-accent text-white ring-2 ring-white/25 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </motion.button>
             </div>
           </div>
 
-          {/* Carousel + arrows */}
+          {/* Carousel */}
           <div className="relative w-full max-w-5xl">
-            {/* Prev / Next arrows — hidden during an active call */}
-            {callState === 'idle' && (
-              <>
-                <button
-                  type="button"
-                  aria-label="Previous agent"
-                  onClick={() => goToAgent(-1)}
-                  className="absolute z-30 left-1 sm:-left-5 top-1/2 -translate-y-1/2 grid place-items-center w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-white/15 bg-dark-surface/70 backdrop-blur-md text-white hover:border-accent/70 hover:bg-accent/15 hover:scale-105 active:scale-95 transition shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
-                >
-                  <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-                </button>
-                <button
-                  type="button"
-                  aria-label="Next agent"
-                  onClick={() => goToAgent(1)}
-                  className="absolute z-30 right-1 sm:-right-5 top-1/2 -translate-y-1/2 grid place-items-center w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-white/15 bg-dark-surface/70 backdrop-blur-md text-white hover:border-accent/70 hover:bg-accent/15 hover:scale-105 active:scale-95 transition shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
-                >
-                  <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-                </button>
-              </>
-            )}
-
             <div className="relative w-full rounded-[2rem] border border-white/10 bg-dark-surface/50 backdrop-blur-2xl shadow-[0_0_80px_rgba(0,102,255,0.15)] overflow-hidden">
               {/* animated gradient border glow */}
               <motion.div
