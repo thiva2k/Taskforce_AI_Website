@@ -516,15 +516,8 @@ export const BookDemo: React.FC = () => {
                 >
                   <div className="relative grid grid-cols-1 lg:grid-cols-12">
                     {/* LEFT — property / business visual */}
-                    <div className="lg:col-span-5 relative min-h-[260px] lg:min-h-[640px] overflow-hidden">
-                      {/* Blurred backdrop (same photo) fills the panel so the full
-                          image can be shown below without cropping on any screen. */}
-                      <img
-                        src={agent.images[imgIdx]}
-                        aria-hidden="true"
-                        className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 opacity-60"
-                      />
-                      {/* The full, uncropped photo — object-contain shows all of it */}
+                    <div className="lg:col-span-5 relative min-h-[260px] lg:min-h-[640px] overflow-hidden bg-dark-bg">
+                      {/* Full, uncropped photo shown inside the box on a clean dark background */}
                       <motion.img
                         src={agent.images[imgIdx]}
                         onError={() =>
