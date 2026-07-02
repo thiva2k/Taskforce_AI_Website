@@ -116,11 +116,9 @@ const AGENTS: Agent[] = [
       'institution, answers product and service questions, and connects you with a ' +
       'specialist for a tailored quote — any time of day.',
     images: [
-      // Chosen photo (Unsplash rO6709B116E) — high-res via public download endpoint.
-      'https://unsplash.com/photos/rO6709B116E/download?force=true&w=1920',
+      '/images/kitchen-and-co.jpg', // vendored full-res commercial-kitchen photo
       'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1400&q=80',
       'https://images.unsplash.com/photo-1581349437898-cebbe9831942?auto=format&fit=crop&w=1400&q=80',
-      'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1400&q=80',
     ],
     trainedOn: [
       'Commercial ovens & bakery lines',
@@ -166,11 +164,9 @@ const AGENTS: Agent[] = [
       'budget, compares brands like Abans, LG and Haier, and walks you to a purchase ' +
       'with live prices — 24 hours a day.',
     images: [
-      // Chosen photo (Unsplash 90Zgfs4Xrf4) — high-res via public download endpoint.
-      'https://unsplash.com/photos/90Zgfs4Xrf4/download?force=true&w=1920',
+      '/images/world-of-refrigerators.jpg', // vendored full-res smart-fridge photo
       'https://images.unsplash.com/photo-1536353284924-9220c464e262?auto=format&fit=crop&w=1400&q=80',
       'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?auto=format&fit=crop&w=1400&q=80',
-      'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fit=crop&w=1400&q=80',
     ],
     trainedOn: [
       'Single & double-door fridges',
@@ -521,18 +517,26 @@ export const BookDemo: React.FC = () => {
                   <div className="relative grid grid-cols-1 lg:grid-cols-12">
                     {/* LEFT — property / business visual */}
                     <div className="lg:col-span-5 relative min-h-[260px] lg:min-h-[640px] overflow-hidden">
+                      {/* Blurred backdrop (same photo) fills the panel so the full
+                          image can be shown below without cropping on any screen. */}
+                      <img
+                        src={agent.images[imgIdx]}
+                        aria-hidden="true"
+                        className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 opacity-60"
+                      />
+                      {/* The full, uncropped photo — object-contain shows all of it */}
                       <motion.img
                         src={agent.images[imgIdx]}
                         onError={() =>
                           setImgIdx((i) => (i + 1 < agent.images.length ? i + 1 : i))
                         }
                         alt={`${agent.brand} — ${agent.location}`}
-                        className="absolute inset-0 w-full h-full object-cover"
+                        className="absolute inset-0 w-full h-full object-contain"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.8, ease: 'easeOut' }}
                       />
-                      <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-dark-bg via-dark-bg/50 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-dark-bg via-dark-bg/50 to-transparent pointer-events-none" />
 
                       <motion.div
                         className="absolute inset-x-0 bottom-0 p-7"
