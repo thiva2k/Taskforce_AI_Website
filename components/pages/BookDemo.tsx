@@ -134,7 +134,6 @@ const AGENTS: Agent[] = [
     langs: ['en'],
     callLabel: 'Call Kitchen & Co.',
     askHint: 'ovens, mixers or a full kitchen fit-out',
-    imgPosition: '35% 50%', // bias the crop toward the equipment-dense left/centre
 
     steps: [
       {
