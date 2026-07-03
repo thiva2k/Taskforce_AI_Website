@@ -486,44 +486,44 @@ export const servicesData: ServiceData[] = [
     },
     useCasesList: [
       {
-        title: "Employee Expense Submission App",
-        description: "Staff currently email receipts to managers who manually process expenses. Simple mobile app lets employees snap a photo of receipts, select category, and submit—AI extracts data, routes for approval, and syncs to accounting automatically."
+        title: "Hotel & Villa Room Reservations",
+        description: "Guests call or message at all hours wanting to check availability, room types, and rates — and your front desk misses enquiries overnight and on weekends. An AI booking agent answers instantly, presents available rooms based on live inventory, collects guest details, confirms the reservation, and sends a booking summary — 24/7 without a single staff member involved."
       },
       {
-        title: "Leave Request & Approval Dashboard",
-        description: "Leave requests happen via email chains between staff, managers, and HR. Clean micro app shows available leave balance, lets staff request time off with one click, routes to managers for instant approval, and updates calendars automatically."
+        title: "Restaurant Table Bookings",
+        description: "Your phone rings constantly during peak hours and your floor staff can't stop to take reservations — so you lose bookings to competitors who pick up. The AI booking agent handles all inbound reservation calls and WhatsApp messages, checks table availability in real time, captures party size and special requests, and sends instant confirmation to the guest."
       },
       {
-        title: "Document Upload Processing Portal",
-        description: "Customers email documents that your team manually processes and enters into systems. Branded upload portal lets customers drag-and-drop documents (invoices, applications, contracts), AI processes everything automatically, and customers get instant confirmation."
+        title: "Hair & Beauty Salon Appointment Scheduling",
+        description: "Your front desk spends hours each day managing appointment calls, cancellations, and reschedules — time that could be spent on clients already in the chair. The AI booking agent manages your full service diary, lets clients book specific treatments and preferred stylists, sends reminders before their appointment, and handles rescheduling requests automatically."
       },
       {
-        title: "Inventory Check-In/Check-Out Interface",
-        description: "Warehouse staff uses clipboards and manually updates spreadsheets for inventory movements. Mobile app lets them scan barcodes to check items in/out, updates inventory in real-time, and triggers reorder workflows when stock is low."
+        title: "Dental & Medical Clinic Bookings",
+        description: "Patients call during surgery hours when your receptionist is occupied with in-clinic patients, resulting in missed calls and lost appointments. The AI booking agent answers every call, collects the patient's name, treatment required, and preferred time slot, books directly into your clinic calendar, and sends a confirmation with pre-appointment instructions."
       },
       {
-        title: "Customer Feedback Collection Form",
-        description: "You want customer feedback but surveys via email get ignored. Simple post-service app sends a push notification, customers rate experience with emoji buttons, add comments if desired, and AI routes negative feedback to management immediately."
+        title: "Spa & Wellness Centre Reservations",
+        description: "Guests want to book massages, facials, and wellness packages but your booking line is unmanned outside business hours. The AI booking agent presents your full treatment menu, checks therapist and room availability, takes the booking, upsells package combinations, and confirms the appointment — capturing revenue you would otherwise lose after closing time."
       },
       {
-        title: "Invoice Approval Manager Dashboard",
-        description: "Managers receive invoice approval requests via email and lose track. Dashboard shows all pending invoices, relevant details, and approval history—managers approve or reject with one click from phone or desktop, triggering payment or follow-up automatically."
+        title: "Tour & Excursion Booking for Resorts",
+        description: "Guests staying at your property want to book day tours, water sports, and excursions but your activities desk isn't always staffed. The AI booking agent handles enquiries across WhatsApp, phone, and Instagram DM, presents available tour slots and pricing, collects participant details and payment preferences, and sends booking confirmations — keeping your excursion calendar full with zero manual effort."
       },
       {
-        title: "Maintenance Request Tracking App",
-        description: "Staff email maintenance requests that get lost in inboxes. Micro app lets anyone submit requests with photos, AI categorizes urgency, routes to appropriate team, tracks status, and notifies requesters when complete—full visibility, zero emails."
+        title: "Fitness Studio & Personal Training Slots",
+        description: "Members try to book classes and PT sessions but your studio line is busy or goes to voicemail — and they simply book elsewhere. The AI booking agent manages your class timetable and trainer availability in real time, handles bookings and cancellations, enforces your cancellation policy, and sends automated class reminders to reduce no-shows."
       },
       {
-        title: "Lead Qualification Form for Sales",
-        description: "Sales reps manually enter lead details into CRM after meetings. Mobile app provides a quick lead qualification form with essential fields—reps complete in 60 seconds after meetings, AI enriches data with company information, and creates CRM records automatically."
+        title: "Event Venue & Private Dining Reservations",
+        description: "Enquiries for private events, corporate dinners, and celebration bookings require back-and-forth communication that delays conversion. The AI booking agent captures event date, guest count, and requirements, checks venue availability, provides pricing and package options, and schedules a follow-up call with your events team — qualifying every lead before a human gets involved."
       },
       {
-        title: "Project Status Update Interface",
-        description: "Project managers chase team members for status updates via email and meetings. Simple app sends scheduled prompts, team members update progress with sliders and quick notes, AI compiles updates into reports for stakeholders automatically."
+        title: "Booking Modification & Cancellation Handling",
+        description: "Your team wastes significant time processing simple changes — date shifts, room upgrades, party size adjustments, and cancellations — that don't need a human decision. The AI booking agent handles all modification and cancellation requests, applies your policy rules automatically, updates the booking system in real time, and sends revised confirmation to the guest without any staff involvement."
       },
       {
-        title: "Onboarding Workflow App for HR",
-        description: "New hire onboarding involves chasing paperwork across multiple people. App provides new employees with a checklist interface showing required documents, tasks, and training—they upload documents and complete items, HR sees real-time progress, and AI triggers next steps automatically."
+        title: "Multi-Property & Multi-Branch Booking Management",
+        description: "You operate multiple locations — hotels, branches, or franchise sites — and customers struggle to reach the right property or find cross-location availability. The AI booking agent handles all inbound enquiries from a single contact point, identifies the caller's preferred location or date, checks availability across all properties, and routes the booking to the correct branch — giving customers a seamless experience across your entire operation."
       }
     ],
     primaryButtonText: "Initialize Agent",
