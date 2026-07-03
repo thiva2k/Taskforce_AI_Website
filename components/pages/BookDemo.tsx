@@ -50,6 +50,7 @@ interface Agent {
   langs: Lang[];        // supported demo languages (first is default)
   callLabel: string;    // CTA text, e.g. "Call Hatton Hills"
   askHint: string;      // live-call hint, e.g. "rooms, rates or availability"
+  imgPosition?: string; // object-position for the cover crop (default 'center')
   steps: Array<{ bold: string; rest: string }>;
 }
 
@@ -133,6 +134,8 @@ const AGENTS: Agent[] = [
     langs: ['en'],
     callLabel: 'Call Kitchen & Co.',
     askHint: 'ovens, mixers or a full kitchen fit-out',
+    imgPosition: '35% 50%', // bias the crop toward the equipment-dense left/centre
+
     steps: [
       {
         bold: 'Click the demo link',
@@ -516,15 +519,15 @@ export const BookDemo: React.FC = () => {
                 >
                   <div className="relative grid grid-cols-1 lg:grid-cols-12">
                     {/* LEFT — property / business visual */}
-                    <div className="lg:col-span-5 relative min-h-[260px] lg:min-h-[640px] overflow-hidden bg-dark-bg">
-                      {/* Full, uncropped photo shown inside the box on a clean dark background */}
+                    <div className="lg:col-span-5 relative min-h-[260px] lg:min-h-[640px] overflow-hidden">
                       <motion.img
                         src={agent.images[imgIdx]}
                         onError={() =>
                           setImgIdx((i) => (i + 1 < agent.images.length ? i + 1 : i))
                         }
                         alt={`${agent.brand} — ${agent.location}`}
-                        className="absolute inset-0 w-full h-full object-contain"
+                        className="absolute inset-0 w-full h-full object-cover"
+                        style={{ objectPosition: agent.imgPosition ?? 'center' }}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.8, ease: 'easeOut' }}
