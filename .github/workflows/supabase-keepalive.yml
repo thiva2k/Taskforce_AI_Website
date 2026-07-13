@@ -1,0 +1,39 @@
+name: Supabase Keep-Alive
+
+# Keeps the free-tier Supabase project awake so it never hits 7 days of
+# inactivity and gets auto-paused (which silently breaks the contact form).
+# It sends one lightweight read request to the database on a schedule; that
+# request counts as activity and resets Supabase's inactivity timer.
+#
+# Reuses the same repository secrets as the deploy workflow:
+#   - VITE_SUPABASE_URL
+#   - VITE_SUPABASE_ANON_KEY
+#
+# NOTE: scheduled workflows only run from the repository's DEFAULT branch,
+# so this must be merged into `main` before the cron will fire.
+
+on:
+  schedule:
+    # 06:00 UTC every Monday and Thursday. Twice a week keeps the gap to
+    # ~3-4 days — a safe margin under the 7-day pause threshold even if a
+    # scheduled run is delayed or skipped by GitHub.
+    - cron: '0 6 * * 1,4'
+  workflow_dispatch: {}   # allow running it manually from the Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase database
+        run: |
+          code=$(curl -sS -o /dev/null -w "%{http_code}" \
+            "${{ secrets.VITE_SUPABASE_URL }}/rest/v1/contact_submissions?select=id&limit=1" \
+            -H "apikey: ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_ANON_KEY }}")
+          echo "Supabase responded with HTTP $code"
+          # A 2xx/4xx still means the project processed the request (awake).
+          # A 5xx or connection failure suggests the project is paused/down.
+          if [ "$code" -ge 500 ] || [ "$code" -eq 000 ]; then
+            echo "::error::Supabase returned HTTP $code — the project may be paused or unreachable."
+            exit 1
+          fi
