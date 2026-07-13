@@ -7,7 +7,6 @@ import { Stats } from '../sections/Stats';
 import { CTA } from '../sections/CTA';
 import { Footer } from '../layout/Footer';
 import { SEO } from '../seo/SEO';
-import { LanguagePopup } from '../ui/LanguagePopup';
 
 export const Home: React.FC = () => {
   const [seoCards, setSeoCards] = useState<string[]>([]);
@@ -189,8 +188,6 @@ const formattedBlogs = blogs.map((blog: any) => ({
 {/* 9. Footer */}
 <Footer />
       </div>
-
-      <LanguagePopup />
     </div>
   );
 };
