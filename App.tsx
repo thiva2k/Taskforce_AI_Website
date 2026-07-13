@@ -20,7 +20,6 @@ import { LoadingScreen } from './components/ui/LoadingScreen';
 import { GlobalSpotlight } from './components/ui/GlobalSpotlight';
 import { InteractiveBackground } from './components/ui/InteractiveBackground';
 import { TechScrollIndicator } from './components/ui/TechScrollIndicator';
-import { LanguagePopup } from './components/ui/LanguagePopup';
 import Chatbot from './components/ui/Chatbot';
 
 function ScrollToTop() {
@@ -78,7 +77,6 @@ function App() {
 
           {!isLoading && (
             <>
-              <LanguagePopup />
               <Header />
 
               <main>
