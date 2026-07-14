@@ -229,7 +229,9 @@ export const ServiceDetail: React.FC = () => {
       logo: 'https://www.taskforceai.tech/logo-horizontal.png',
       address: {
         '@type': 'PostalAddress',
-        addressLocality: 'Colombo',
+        streetAddress: 'Nugegoda Business Center, Unit 37, 2nd Floor, 80 Nawala Rd',
+        addressLocality: 'Nugegoda',
+        postalCode: '10250',
         addressCountry: 'LK',
       },
     },

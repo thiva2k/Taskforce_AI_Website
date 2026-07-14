@@ -205,8 +205,8 @@ export const Contact: React.FC = () => {
     </div>
 
     <p className="text-xs text-gray-700 mt-3">
-      72/1/1 Unit A Temple Rd,<br />
-      Sri Jayawardenepura Kotte 11222
+      Nugegoda Business Center, Unit 37, 2nd Floor,<br />
+      80 Nawala Rd, Nugegoda 10250
     </p>
 
     <p className="text-xs text-gray-400 mt-2">
