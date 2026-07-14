@@ -19,13 +19,21 @@ export const ScrambleText: React.FC<ScrambleTextProps & { renderStaticText?: boo
   scrambleChars = '!<>-_\\/[]{}—=+*^?#________',
   startDelay = 0,
 }) => {
-  // If prerender or renderStaticText=true, show full text immediately
-  const [displayText, setDisplayText] = useState(renderStaticText ? text : '');
+  // Show full text immediately (no scramble animation) when:
+  //   - the caller opts in via renderStaticText, or
+  //   - we are inside the Puppeteer prerender. prerender.js sets
+  //     window.__IS_PRERENDER__ = true before any app JS runs, so crawlers
+  //     always capture clean, readable headings instead of scramble glyphs.
+  const isStatic =
+    renderStaticText ||
+    (typeof window !== 'undefined' && (window as any).__IS_PRERENDER__ === true);
+
+  const [displayText, setDisplayText] = useState(isStatic ? text : '');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const frameRef = useRef<number>(0);
 
   useEffect(() => {
-    if (renderStaticText) return;
+    if (isStatic) return;
 
     setDisplayText('');
     let currentIndex = 0;
@@ -60,7 +68,7 @@ export const ScrambleText: React.FC<ScrambleTextProps & { renderStaticText?: boo
       if (intervalRef.current) clearInterval(intervalRef.current);
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [text, scrambleSpeed, revealSpeed, scrambleChars, startDelay, renderStaticText]);
+  }, [text, scrambleSpeed, revealSpeed, scrambleChars, startDelay, isStatic]);
 
   return <span className={className}>{displayText}</span>;
 };
