@@ -201,6 +201,18 @@ async function renderRoute(browser, route) {
       console.warn(`  ⚠ Content wait timed out for ${route}`);
     }
 
+    // Let React effects flush so react-helmet's <title>/meta updates are
+    // committed to <head> before we serialize. Without this, the capture can
+    // race ahead of Helmet and bake the stale default <head> into every page.
+    await page.evaluate(
+      () =>
+        new Promise((resolve) =>
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => setTimeout(resolve, 100))
+          )
+        )
+    );
+
     const html = await page.content();
 
     // Never ship a broken blog page. If a blog route didn't reach its loaded
