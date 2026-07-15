@@ -28,3 +28,6 @@ Thumbs.db
 *.ntvs*
 *.njsproj
 *.sln
+
+# Supabase CLI local state (contains linked-project + pooler connection string with DB password)
+supabase/.temp/

@@ -53,12 +53,14 @@ All routes use `/#/` prefix:
 
 ## Deployment
 
-- **Origin server**: Hostinger at `82.25.87.204`
-- **Document root**: `~/domains/taskforceai.tech/public_html/`
-- **DNS**: GoDaddy (registrar) → Cloudflare (DNS) → Hostinger (origin)
-- **WordPress**: Installed at `wp.taskforceai.tech` subdomain
-- Build `dist/` contents are uploaded via SCP or Hostinger File Manager
-- `.htaccess` in `public/` provides SPA fallback routing, compression, and cache headers
+- **Hosting**: Hostinger (LiteSpeed). Deploys run via GitHub Actions
+  (`.github/workflows/deploy.yml`) on push to `main`: build `dist/`, then SCP to
+  the web docroot. Server host/path and SSH credentials live in the repo's GitHub
+  Actions secrets and the private ops notes — **not** in this public repo.
+- **DNS**: registrar → Cloudflare (DNS/proxy) → Hostinger (origin).
+- **WordPress**: headless CMS at the `wp.taskforceai.tech` subdomain (see the
+  headless posture section above).
+- `.htaccess` in `public/` provides SPA fallback routing, compression, and cache headers.
 
 ## WordPress headless posture (Option A — private backend)
 
