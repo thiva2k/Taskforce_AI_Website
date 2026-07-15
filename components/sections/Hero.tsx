@@ -40,7 +40,7 @@ export const Hero: React.FC = () => {
       primaryButtonText: t('hero.cta.book'),
       primaryButtonLink: '/book-demo',
       secondaryButtonText: t('hero.cta.contact'),
-      secondaryButtonLink: 'mailto:digitalagencylanka@gmail.com',
+      secondaryButtonLink: '/contact',
     }),
     [t]
   );

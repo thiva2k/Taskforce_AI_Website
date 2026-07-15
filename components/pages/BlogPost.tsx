@@ -15,6 +15,27 @@ import { SEO } from '../seo/SEO';
 import { Footer } from '../layout/Footer';
 import { fetchBlogPostBySlug, fetchBlogPosts, BlogListItem } from '../../lib/wordpress';
 
+// Every blog page title must end in the single canonical "- TaskForce AI".
+// WordPress/Yoast titles have been inconsistent: some ended in
+// "- wp.taskforceai.tech" (backend subdomain leak), some had no brand suffix at
+// all, and the old fallback used the reversed "AI TaskForce". Normalize by
+// stripping any existing brand/backend suffix (repeatedly, to catch doubles)
+// then appending the canonical one.
+const BRAND = 'TaskForce AI';
+const BRAND_SUFFIX_RE =
+  /\s*[-–|]\s*(TaskForce AI|AI TaskForce|Taskforce AI|Taskforce Ai|wp\.taskforceai\.tech)\s*$/i;
+
+const buildBlogTitle = (post: BlogListItem): string => {
+  let base = (post.seoTitle || post.title || '').trim();
+  let previous: string;
+  do {
+    previous = base;
+    base = base.replace(BRAND_SUFFIX_RE, '').trim();
+  } while (base !== previous);
+
+  return `${base || BRAND} - ${BRAND}`;
+};
+
 export const BlogPost: React.FC = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -135,7 +156,7 @@ export const BlogPost: React.FC = () => {
   return (
     <div className="min-h-screen selection:bg-primary-DEFAULT selection:text-white relative">
       <SEO
-        title={post.seoTitle || `${post.title} - AI TaskForce`}
+        title={buildBlogTitle(post)}
         description={post.seoDescription || post.excerpt}
         url={`/blog/${post.slug}`}
         image={post.seoImage || post.image}

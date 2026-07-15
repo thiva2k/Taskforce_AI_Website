@@ -441,13 +441,27 @@ function getFeaturedImage(post: WpPost): string {
   );
 }
 
+// Guard against ever surfacing an email address as a public byline. A WordPress
+// author display name once leaked an email address into public post bylines;
+// this keeps that PII off the site even if a WP field regresses to an email
+// again.
+function looksLikeEmail(value: string): boolean {
+  return /\S+@\S+\.\S+/.test(value);
+}
+
 function getAuthorName(post: WpPost): string {
-  return (
-    post.acf?.blog_author_name ||
-    post.acf?.author_name ||
-    post._embedded?.author?.[0]?.name ||
-    'TaskForce Team'
-  );
+  const candidates = [
+    post.acf?.blog_author_name,
+    post.acf?.author_name,
+    post._embedded?.author?.[0]?.name,
+  ];
+
+  for (const candidate of candidates) {
+    const name = (candidate || '').trim();
+    if (name && !looksLikeEmail(name)) return name;
+  }
+
+  return 'TaskForce AI';
 }
 
 function getPublishDate(post: WpPost, long = false): string {

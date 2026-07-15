@@ -60,6 +60,36 @@ All routes use `/#/` prefix:
 - Build `dist/` contents are uploaded via SCP or Hostinger File Manager
 - `.htaccess` in `public/` provides SPA fallback routing, compression, and cache headers
 
+## WordPress headless posture (Option A — private backend)
+
+`wp.taskforceai.tech` is a **private headless CMS**, never a public site — the
+React front end is the only public face. Enforcement lives in a
+`taskforce-headless-hardening.php` mu-plugin on the WordPress install, whose
+source of truth is tracked here at
+`scripts/wp-mu-plugins/taskforce-headless-hardening.php`. **The deploy pipeline
+only publishes the static site — it does NOT install mu-plugins**, so after
+editing that file it must be copied into the WordPress `mu-plugins` directory on
+the server and the caches flushed. (Server host and credentials live in the
+private ops notes, not this repo.)
+
+The plugin forces `robots.txt` to `Disallow: /`, sends a site-wide
+`X-Robots-Tag: noindex`, blocks author archives + `?author=` enumeration, and
+redirects XML sitemap URLs. Complementary WordPress settings that must stay put:
+`blog_public = 0`, Yoast `enable_xml_sitemap = false`, and the admin user's
+`display_name`/author slug must **never** be an email address (a leaked
+admin-email byline was the original bug). `/wp-json` post reads and
+`/wp-content/uploads` media are intentionally left public so the SPA and images
+keep working. `getAuthorName()` in `lib/wordpress.ts` also refuses to render any
+email as a byline, as defence-in-depth.
+
+**HTTP Basic Auth** additionally hides all wp HTML from humans, via a
+`# BEGIN TaskForce Basic Auth` block in the wp `.htaccess` that exempts
+`/wp-json`, `/wp-content/uploads/`, `/wp-admin`, `/wp-login.php`, and
+`/wp-cron.php` so the SPA, images, admin, and cron still work. Use a **bcrypt**
+htpasswd hash — LiteSpeed rejects `$apr1$` (MD5) — and ensure the `AuthUserFile`
+is readable by the web-server process, or auth silently fails. Credentials
+themselves live only on the server / in the private ops notes.
+
 ## Key Conventions
 
 - The `@` import alias resolves to the project root (configured in `vite.config.ts`)
