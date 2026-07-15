@@ -109,7 +109,7 @@ export const BlogPost: React.FC = () => {
   // DOM (and captured by the prerenderer) instead of the site-wide default.
   useEffect(() => {
     if (post) {
-      document.title = post.seoTitle || `${post.title} - AI TaskForce`;
+      document.title = buildBlogTitle(post);
     }
   }, [post]);
 
