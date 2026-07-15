@@ -66,6 +66,16 @@ export const BlogPost: React.FC = () => {
     };
   }, [slug, navigate]);
 
+  // Set the document <title> explicitly once the post loads. react-helmet
+  // (via <SEO>) also sets it, but the blog post title arrives asynchronously
+  // from WordPress, so this guarantees the correct per-article title is in the
+  // DOM (and captured by the prerenderer) instead of the site-wide default.
+  useEffect(() => {
+    if (post) {
+      document.title = post.seoTitle || `${post.title} - AI TaskForce`;
+    }
+  }, [post]);
+
   const handleShare = (platform: 'twitter' | 'linkedin' | 'facebook' | 'copy') => {
     const url = window.location.href;
     const text = post?.title || 'Check out this article';
@@ -152,6 +162,7 @@ export const BlogPost: React.FC = () => {
             </motion.div>
 
             <motion.h1
+              data-prerender="blog-post"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
