@@ -494,6 +494,15 @@ function rewriteInternalWpLinks(html: string): string {
   );
 }
 
+// Yoast builds titles as "{Post Title} - {Site Title}". If the WordPress Site
+// Title is ever set to the backend subdomain (wp.taskforceai.tech), that string
+// leaks into the public <title>. Normalise it to the brand name so the visible
+// title never advertises the backend, regardless of the WordPress setting.
+function cleanSeoTitle(title?: string): string | undefined {
+  if (!title) return title;
+  return title.replace(/wp\.taskforceai\.tech/gi, 'TaskForce AI');
+}
+
 export async function fetchBlogPosts(): Promise<BlogListItem[]> {
   const posts = await fetchBlogPostsRaw();
 
@@ -512,7 +521,7 @@ export async function fetchBlogPosts(): Promise<BlogListItem[]> {
       image: getFeaturedImage(post),
       status: 'published',
       tags: getPostTagNames(post),
-      seoTitle: post.yoast_head_json?.title,
+      seoTitle: cleanSeoTitle(post.yoast_head_json?.title),
       seoDescription: post.yoast_head_json?.description,
       seoImage: post.yoast_head_json?.og_image?.[0]?.url,
     }))
@@ -548,7 +557,7 @@ export async function fetchBlogPostBySlug(
     image: getFeaturedImage(post),
     status: 'published',
     tags: getPostTagNames(post),
-    seoTitle: post.yoast_head_json?.title,
+    seoTitle: cleanSeoTitle(post.yoast_head_json?.title),
     seoDescription: post.yoast_head_json?.description,
     seoImage: post.yoast_head_json?.og_image?.[0]?.url,
   };
