@@ -38,7 +38,8 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         from: "TaskForce AI <no-reply@taskforceai.tech>",
-        to: ["shehanichanya@gmail.com"],
+        to: ["chrys@taskforceai.tech"],
+        reply_to: email,
         subject: "New Contact Submission",
         html: `
           <h3>New Contact Message</h3>
