@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { SEO } from '../seo/SEO';
 import { Footer } from '../layout/Footer';
+import { BlogComments } from '../blog/BlogComments';
 import { fetchBlogPostBySlug, fetchBlogPosts, BlogListItem } from '../../lib/wordpress';
 
 export const BlogPost: React.FC = () => {
@@ -287,6 +288,8 @@ export const BlogPost: React.FC = () => {
               </div>
             </div>
           )}
+
+          <BlogComments postId={post.id} />
         </div>
       </article>
 

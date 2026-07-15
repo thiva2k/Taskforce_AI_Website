@@ -239,6 +239,24 @@ export interface BlogListItem {
   seoImage?: string;
 }
 
+// Raw comment shape from the WordPress REST API (wp/v2/comments).
+export interface WpComment {
+  id: number;
+  author_name: string;
+  date: string;
+  content: WpRenderedContent;
+  parent: number;
+}
+
+// Cleaned comment used by the UI.
+export interface BlogComment {
+  id: number;
+  authorName: string;
+  date: string;
+  content: string;
+  parent: number;
+}
+
 const INTERNAL_CATEGORY_SLUGS = new Set([
   'how-it-works',
   'use-cases',
@@ -561,6 +579,59 @@ export async function fetchBlogPostBySlug(
     seoDescription: post.yoast_head_json?.description,
     seoImage: post.yoast_head_json?.og_image?.[0]?.url,
   };
+}
+
+// ── Blog comments ──────────────────────────────────────────────────────────
+// These run CLIENT-SIDE only (never during prerender), so comments are never
+// baked into the SEO HTML and a slow/failed WordPress never blocks the page.
+
+// Fetch the approved comments for a post. Uses a light direct fetch (no heavy
+// retry) because comments are a non-critical enhancement — on any failure the
+// caller simply hides the list. author_email is intentionally NOT requested.
+export async function fetchComments(postId: number): Promise<BlogComment[]> {
+  const res = await fetch(
+    `${WP_API_BASE}/comments?post=${postId}&per_page=100&order=asc&_fields=id,author_name,date,content,parent`
+  );
+  if (!res.ok) {
+    throw new Error(`Failed to load comments (${res.status})`);
+  }
+  const raw: WpComment[] = await res.json();
+  return raw.map((c) => ({
+    id: c.id,
+    authorName: (c.author_name || 'Anonymous').trim(),
+    date: c.date,
+    content: c.content?.rendered || '',
+    parent: c.parent || 0,
+  }));
+}
+
+// Submit a new comment to WordPress. WordPress holds it for moderation (it will
+// not appear until approved), and returns status 'approved' or 'hold'. Requires
+// the WordPress side to allow anonymous REST comments (see setup notes).
+export async function submitComment(params: {
+  postId: number;
+  authorName: string;
+  authorEmail: string;
+  content: string;
+}): Promise<'approved' | 'hold'> {
+  const res = await fetch(`${WP_API_BASE}/comments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      post: params.postId,
+      author_name: params.authorName,
+      author_email: params.authorEmail,
+      content: params.content,
+    }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(
+      (data && (data.message as string)) || `Failed to submit comment (${res.status})`
+    );
+  }
+  return data?.status === 'approved' ? 'approved' : 'hold';
 }
 
 export function parseCommaList(value?: string): string[] {
