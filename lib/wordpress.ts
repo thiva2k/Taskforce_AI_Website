@@ -478,6 +478,22 @@ function getSortableTimestamp(post: WpPost): number {
   return 0;
 }
 
+// Rewrite internal links in article HTML that point at the WordPress
+// subdomain (wp.taskforceai.tech) so they point at the canonical frontend
+// blog URL instead. This stops link equity leaking to the secondary domain.
+//
+// SAFETY: the [^"'/#?]+ slug group matches a SINGLE path segment only, so
+// multi-segment media paths like /wp-content/uploads/photo.jpg can never
+// match — images are never touched. The lookahead also skips WordPress
+// system/archive paths. Only <a href="..."> targets are affected.
+function rewriteInternalWpLinks(html: string): string {
+  if (!html) return html;
+  return html.replace(
+    /href=(["'])https?:\/\/wp\.taskforceai\.tech\/(?!wp-content|wp-admin|wp-includes|wp-json|feed|xmlrpc|category\/|tag\/|author\/)([^"'/#?]+)\/?\1/gi,
+    (_match, quote, slug) => `href=${quote}/blog/${slug}${quote}`
+  );
+}
+
 export async function fetchBlogPosts(): Promise<BlogListItem[]> {
   const posts = await fetchBlogPostsRaw();
 
@@ -488,7 +504,7 @@ export async function fetchBlogPosts(): Promise<BlogListItem[]> {
       slug: post.slug,
       title: decodeHtmlEntities(post.title?.rendered || ''),
       excerpt: stripHtml(post.excerpt?.rendered || post.content?.rendered || ''),
-      content: post.content?.rendered || '',
+      content: rewriteInternalWpLinks(post.content?.rendered || ''),
       category: getPostCategoryName(post),
       author: getAuthorName(post),
       date: getPublishDate(post, false),
@@ -524,7 +540,7 @@ export async function fetchBlogPostBySlug(
     slug: post.slug,
     title: decodeHtmlEntities(post.title?.rendered || ''),
     excerpt: stripHtml(post.excerpt?.rendered || post.content?.rendered || ''),
-    content: post.content?.rendered || '',
+    content: rewriteInternalWpLinks(post.content?.rendered || ''),
     category: getPostCategoryName(post),
     author: getAuthorName(post),
     date: getPublishDate(post, true),
