@@ -168,6 +168,18 @@ async function renderRoute(browser, route) {
           () => document.querySelector('[data-prerender="blog-post"]') !== null,
           { timeout: 45000 }
         );
+      } else if (route.startsWith("/blog/")) {
+        // Individual blog post — the article title arrives asynchronously from
+        // WordPress. Wait for the post's <h1> (data-prerender="blog-post") to
+        // render real text so the correct <title>/meta are captured, instead of
+        // falling through to the homepage check below and timing out.
+        await page.waitForFunction(
+          () => {
+            const el = document.querySelector('[data-prerender="blog-post"]');
+            return el && (el.textContent || "").trim().length > 3;
+          },
+          { timeout: 25000 }
+        );
       } else if (route.startsWith("/service/")) {
         // Service pages — wait for h1 to contain real content
         await page.waitForFunction(
