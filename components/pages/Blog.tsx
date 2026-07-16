@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, User, ArrowRight, BookOpen, Clock } from 'lucide-react';
 import { Footer } from '../layout/Footer';
 import { SEO } from '../seo/SEO';
+import { collectionPageSchema } from '../../lib/schema';
 import { TechPanel } from '../ui/TechPanel';
 import { ScrambleText } from '../ui/ScrambleText';
 import { GlitchButton } from '../ui/GlitchButton';
@@ -98,6 +99,15 @@ export const Blog: React.FC = () => {
         title={t('blog.title')}
         description={t('blog.desc')}
         url="/blog"
+        schema={collectionPageSchema(
+          'Blog',
+          '/blog',
+          t('blog.desc'),
+          allPosts.slice(0, 20).map((post) => ({
+            url: `https://www.taskforceai.tech/blog/${post.slug}`,
+            name: post.title,
+          }))
+        )}
       />
 
       <div className="fixed inset-0 z-0 pointer-events-none">

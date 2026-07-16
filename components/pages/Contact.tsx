@@ -10,6 +10,7 @@ import { ScrambleText } from '../ui/ScrambleText';
 import { Footer } from '../layout/Footer';
 import { useServicesData } from '../../hooks/useServicesData';
 import { SEO } from '../seo/SEO';
+import { contactPageSchema } from '../../lib/schema';
 
 export const Contact: React.FC = () => {
   const { t } = useTranslation();
@@ -116,6 +117,11 @@ export const Contact: React.FC = () => {
         title="Contact HQ - TaskForce AI"
         description="Connect with our AI Architects to discuss enterprise deployment and custom integration."
         url="/contact"
+        schema={contactPageSchema(
+          'Contact',
+          '/contact',
+          'Connect with our AI Architects to discuss enterprise deployment and custom integration.'
+        )}
       />
 
       <div className="relative z-10 min-h-screen flex flex-col">

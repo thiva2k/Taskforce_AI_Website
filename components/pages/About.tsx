@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Shield, Users, Zap, Target, Globe, Cpu, ArrowRight, CheckCircle2, Fingerprint } from 'lucide-react';
 import { Footer } from '../layout/Footer';
 import { SEO } from '../seo/SEO';
+import { aboutPageSchema } from '../../lib/schema';
 import { useNavigate } from 'react-router-dom';
 import { ScrambleText } from '../ui/ScrambleText';
 import { TechPanel } from '../ui/TechPanel';
@@ -227,6 +228,7 @@ export const About: React.FC = () => {
         title={t('about.title')}
         description={t('about.desc')}
         url="/about"
+        schema={aboutPageSchema('About Us', '/about', t('about.desc'))}
       />
 
       <div className="fixed inset-0 z-0 pointer-events-none">

@@ -22,6 +22,7 @@ import { Device } from '@twilio/voice-sdk';
 import { GlitchButton } from '../ui/GlitchButton';
 import { Footer } from '../layout/Footer';
 import { SEO } from '../seo/SEO';
+import { contactPageSchema } from '../../lib/schema';
 
 // Shared public token-minting endpoint (no secrets in the frontend). The backend
 // issues a short-lived Twilio access token scoped to the chosen agent's TwiML app.
@@ -378,6 +379,11 @@ export const BookDemo: React.FC = () => {
         title="Demo Our Voice Agents - TaskForce AI"
         description="Speak live with our AI voice agents — front-office reservations, commercial-kitchen lead-gen, and refrigerator sales. A no-sign-up demo of TaskForce AI voice agents."
         url="/book-demo"
+        schema={contactPageSchema(
+          'Book a Demo',
+          '/book-demo',
+          'Speak live with our AI voice agents — a no-sign-up demo of TaskForce AI voice agents.'
+        )}
       />
 
       {/* Page background */}
