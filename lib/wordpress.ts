@@ -452,11 +452,11 @@ function getPostTagNames(post: WpPost): string[] {
 }
 
 function getFeaturedImage(post: WpPost): string {
-  return (
+  const url =
     post._embedded?.['wp:featuredmedia']?.[0]?.source_url ||
     post.yoast_head_json?.og_image?.[0]?.url ||
-    ''
-  );
+    '';
+  return toPublicMedia(url) || '';
 }
 
 // Guard against ever surfacing an email address as a public byline. A WordPress
@@ -510,6 +510,19 @@ function getSortableTimestamp(post: WpPost): number {
   return 0;
 }
 
+// Media (images/PDFs) uploaded to WordPress physically live on the backend
+// origin, but the public www docroot serves the exact same files via a
+// filesystem symlink at /wp-content/uploads. Rewriting upload URLs to the public
+// host keeps the backend subdomain out of page source, og:image/twitter:image,
+// and link previews — the bytes still resolve because www serves them too.
+const WP_UPLOADS_HOST_RE =
+  /https?:\/\/wp\.taskforceai\.tech(\/wp-content\/uploads\/)/gi;
+
+function toPublicMedia(url: string | undefined): string | undefined {
+  if (!url) return url;
+  return url.replace(WP_UPLOADS_HOST_RE, 'https://www.taskforceai.tech$1');
+}
+
 // Rewrite internal links in article HTML that point at the WordPress
 // subdomain (wp.taskforceai.tech) so they point at the canonical frontend
 // blog URL instead. This stops link equity leaking to the secondary domain.
@@ -545,7 +558,7 @@ export async function fetchBlogPosts(): Promise<BlogListItem[]> {
       slug: post.slug,
       title: decodeHtmlEntities(post.title?.rendered || ''),
       excerpt: stripHtml(post.excerpt?.rendered || post.content?.rendered || ''),
-      content: rewriteInternalWpLinks(post.content?.rendered || ''),
+      content: toPublicMedia(rewriteInternalWpLinks(post.content?.rendered || '')) || '',
       category: getPostCategoryName(post),
       author: getAuthorName(post),
       date: getPublishDate(post, false),
@@ -555,7 +568,7 @@ export async function fetchBlogPosts(): Promise<BlogListItem[]> {
       tags: getPostTagNames(post),
       seoTitle: cleanSeoTitle(post.yoast_head_json?.title),
       seoDescription: post.yoast_head_json?.description,
-      seoImage: post.yoast_head_json?.og_image?.[0]?.url,
+      seoImage: toPublicMedia(post.yoast_head_json?.og_image?.[0]?.url),
     }))
     .sort((a, b) => {
       const postA = posts.find((p) => p.id === a.id);
@@ -581,7 +594,7 @@ export async function fetchBlogPostBySlug(
     slug: post.slug,
     title: decodeHtmlEntities(post.title?.rendered || ''),
     excerpt: stripHtml(post.excerpt?.rendered || post.content?.rendered || ''),
-    content: rewriteInternalWpLinks(post.content?.rendered || ''),
+    content: toPublicMedia(rewriteInternalWpLinks(post.content?.rendered || '')) || '',
     category: getPostCategoryName(post),
     author: getAuthorName(post),
     date: getPublishDate(post, true),
@@ -591,7 +604,7 @@ export async function fetchBlogPostBySlug(
     tags: getPostTagNames(post),
     seoTitle: cleanSeoTitle(post.yoast_head_json?.title),
     seoDescription: post.yoast_head_json?.description,
-    seoImage: post.yoast_head_json?.og_image?.[0]?.url,
+    seoImage: toPublicMedia(post.yoast_head_json?.og_image?.[0]?.url),
   };
 }
 
