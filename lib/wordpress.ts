@@ -545,10 +545,31 @@ export function toRelativeInternalLinks(html: string): string {
 // system/archive paths. Only <a href="..."> targets are affected.
 function rewriteInternalWpLinks(html: string): string {
   if (!html) return html;
-  return html.replace(
+  // Primary: <a href> targets -> canonical public blog path.
+  let out = html.replace(
     /href=(["'])https?:\/\/wp\.taskforceai\.tech\/(?!wp-content|wp-admin|wp-includes|wp-json|feed|xmlrpc|category\/|tag\/|author\/)([^"'/#?]+)\/?\1/gi,
     (_match, quote, slug) => `href=${quote}/blog/${slug}${quote}`
   );
+  // Catch-all: any remaining backend slug URL in the markup — e.g. the block
+  // editor leaves the original URL in a junk `id="https://wp.../slug/"`
+  // attribute even after the href is rewritten — so the subdomain never appears
+  // in page source. Excludes wp system/media paths (media is handled by
+  // toPublicMedia).
+  out = out.replace(
+    /https?:\/\/wp\.taskforceai\.tech\/(?!wp-content|wp-admin|wp-includes|wp-json|feed|xmlrpc|category\/|tag\/|author\/)([a-z0-9-]+)\/?/gi,
+    (_match, slug) => `/blog/${slug}`
+  );
+  return out;
+}
+
+// Single sanitisation pass for any WordPress-authored HTML we inject into the
+// page (blog article bodies, homepage/service SEO cards): fix the media host,
+// rewrite backend slug links to public /blog/ paths, and collapse absolute
+// internal links to relative. Keeps the backend subdomain and redirect-hop
+// links out of every rendered surface.
+export function sanitizeWpHtml(html: string): string {
+  if (!html) return html;
+  return toRelativeInternalLinks(rewriteInternalWpLinks(toPublicMedia(html) || html));
 }
 
 // Yoast builds titles as "{Post Title} - {Site Title}". If the WordPress Site
@@ -570,7 +591,7 @@ export async function fetchBlogPosts(): Promise<BlogListItem[]> {
       slug: post.slug,
       title: decodeHtmlEntities(post.title?.rendered || ''),
       excerpt: stripHtml(post.excerpt?.rendered || post.content?.rendered || ''),
-      content: toPublicMedia(rewriteInternalWpLinks(post.content?.rendered || '')) || '',
+      content: sanitizeWpHtml(post.content?.rendered || ''),
       category: getPostCategoryName(post),
       author: getAuthorName(post),
       date: getPublishDate(post, false),
@@ -606,7 +627,7 @@ export async function fetchBlogPostBySlug(
     slug: post.slug,
     title: decodeHtmlEntities(post.title?.rendered || ''),
     excerpt: stripHtml(post.excerpt?.rendered || post.content?.rendered || ''),
-    content: toPublicMedia(rewriteInternalWpLinks(post.content?.rendered || '')) || '',
+    content: sanitizeWpHtml(post.content?.rendered || ''),
     category: getPostCategoryName(post),
     author: getAuthorName(post),
     date: getPublishDate(post, true),

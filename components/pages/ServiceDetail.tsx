@@ -18,6 +18,7 @@ import {
   cleanServiceItemTitle,
   decodeHtmlEntities,
   stripHtml,
+  sanitizeWpHtml,
 } from '../../lib/wordpress';
 
 const serviceIdAliasMap: Record<string, string> = {
@@ -81,7 +82,11 @@ export const ServiceDetail: React.FC = () => {
           serviceAcf?.seo_card_4_content,
           serviceAcf?.seo_card_5_content,
           serviceAcf?.seo_card_6_content,
-        ].filter((card) => card && card.trim() !== '');
+        ]
+          .filter((card) => card && card.trim() !== '')
+          // Sanitise WP-authored HTML: fix media host, rewrite backend links,
+          // and relativise internal links (no subdomain leak, no redirect hops).
+          .map((card) => sanitizeWpHtml(card));
 
         setSeoCards(cards);
 
@@ -170,7 +175,7 @@ export const ServiceDetail: React.FC = () => {
   if (!service) {
     return (
       <div className="min-h-screen flex items-center justify-center text-center p-6 text-white">
-        <SEO title="Service Not Found - AI TaskForce" />
+        <SEO title="Service Not Found - TaskForce AI" />
         <div>
           <h1 className="text-4xl font-bold mb-4">Service Not Found</h1>
           <GlitchButton onClick={() => navigate('/')} variant="ghost">

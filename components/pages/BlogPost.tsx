@@ -37,6 +37,30 @@ const buildBlogTitle = (post: BlogListItem): string => {
   return `${base || BRAND} - ${BRAND}`;
 };
 
+// BlogPosting structured data so search engines can render the article as rich
+// content (headline, image, publisher). Rendered as JSON-LD via <SEO schema>.
+const buildBlogSchema = (post: BlogListItem) => {
+  const url = `https://www.taskforceai.tech/blog/${post.slug}`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.seoDescription || post.excerpt || undefined,
+    image: post.seoImage || post.image || undefined,
+    author: { '@type': 'Organization', name: post.author || BRAND },
+    publisher: {
+      '@type': 'Organization',
+      name: BRAND,
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.taskforceai.tech/logo-icon.png',
+      },
+    },
+    mainEntityOfPage: url,
+    url,
+  };
+};
+
 export const BlogPost: React.FC = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -162,6 +186,7 @@ export const BlogPost: React.FC = () => {
         url={`/blog/${post.slug}`}
         image={post.seoImage || post.image}
         keywords={post.tags?.join(', ')}
+        schema={buildBlogSchema(post)}
       />
 
       <div className="fixed inset-0 z-0 pointer-events-none">

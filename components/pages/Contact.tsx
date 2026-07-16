@@ -113,7 +113,7 @@ export const Contact: React.FC = () => {
   return (
     <div className="min-h-screen text-white relative overflow-x-hidden selection:bg-primary-DEFAULT selection:text-white">
       <SEO
-        title="Contact HQ - AI TaskForce"
+        title="Contact HQ - TaskForce AI"
         description="Connect with our AI Architects to discuss enterprise deployment and custom integration."
         url="/contact"
       />

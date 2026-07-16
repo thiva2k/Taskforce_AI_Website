@@ -7,7 +7,7 @@ import { Stats } from '../sections/Stats';
 import { CTA } from '../sections/CTA';
 import { Footer } from '../layout/Footer';
 import { SEO } from '../seo/SEO';
-import { toPublicMedia, toRelativeInternalLinks } from '../../lib/wordpress';
+import { toPublicMedia, sanitizeWpHtml } from '../../lib/wordpress';
 
 // Organization + WebSite structured data so search engines can resolve the brand
 // entity (name, logo, social profiles, contact) and site identity. Rendered as
@@ -76,9 +76,9 @@ export const Home: React.FC = () => {
           acf.seo_card_6_content,
         ]
           .filter((card) => card && card.trim() !== '')
-          // Fix media host and collapse absolute internal links to relative so
-          // the cards never leak the backend subdomain or trigger redirect hops.
-          .map((card) => toRelativeInternalLinks(toPublicMedia(card) || ''));
+          // Sanitise WP-authored HTML: fix media host, rewrite backend links,
+          // and relativise internal links (no subdomain leak, no redirect hops).
+          .map((card) => sanitizeWpHtml(card));
 
         setSeoCards(cards);
       } catch (error) {

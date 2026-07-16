@@ -375,7 +375,7 @@ export const BookDemo: React.FC = () => {
   return (
     <div className="min-h-screen text-white relative overflow-x-hidden selection:bg-primary-DEFAULT selection:text-white">
       <SEO
-        title="Demo Our Voice Agents - AI TaskForce"
+        title="Demo Our Voice Agents - TaskForce AI"
         description="Speak live with our AI voice agents — front-office reservations, commercial-kitchen lead-gen, and refrigerator sales. A no-sign-up demo of TaskForce AI voice agents."
         url="/book-demo"
       />

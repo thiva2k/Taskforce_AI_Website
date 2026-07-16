@@ -885,7 +885,7 @@
     }
   },
   "about": {
-    "title": "About Us - AI TaskForce",
+    "title": "About Us - TaskForce AI",
     "desc": "We are architects of the autonomous enterprise. Based in Colombo, Sri Lanka, we engineer intelligent automation for the globe.",
     "architects": "THE ARCHITECTS",
     "hero_title_prefix": "We Build the",
@@ -899,7 +899,7 @@
     "who_we_are": "Who We Are"
   },
   "blog": {
-    "title": "Blog - AI TaskForce",
+    "title": "Blog - TaskForce AI",
     "desc": "Insights, updates, and research from the frontier of autonomous enterprise automation.",
     "transmission_log": "TRANSMISSION LOG",
     "hero_title": "Intelligence",
