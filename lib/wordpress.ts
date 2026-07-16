@@ -613,6 +613,7 @@ export async function submitComment(params: {
   authorName: string;
   authorEmail: string;
   content: string;
+  parent?: number;
 }): Promise<'approved' | 'hold'> {
   const res = await fetch(`${WP_API_BASE}/comments`, {
     method: 'POST',
@@ -622,6 +623,7 @@ export async function submitComment(params: {
       author_name: params.authorName,
       author_email: params.authorEmail,
       content: params.content,
+      parent: params.parent || 0,
     }),
   });
 
