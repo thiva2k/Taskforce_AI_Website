@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { TechPanel } from '../ui/TechPanel';
 import { MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { fetchOffices, WpOffice } from '../../lib/wordpress';
+import { fetchOffices, WpOffice, toPublicMedia } from '../../lib/wordpress';
 
 interface OfficeItem {
   id: string;
@@ -50,7 +50,9 @@ export const Offices: React.FC = () => {
             city: office.title.rendered || office.acf?.city || '',
             region: office.acf?.country || '',
             image:
-              office._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+              toPublicMedia(
+                office._embedded?.['wp:featuredmedia']?.[0]?.source_url
+              ) || '',
           }))
         );
       } catch (error) {

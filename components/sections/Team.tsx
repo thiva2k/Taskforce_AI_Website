@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { TechPanel } from '../ui/TechPanel';
 import { User, Cpu, Activity, Zap, Eye, Share2, Workflow } from 'lucide-react';
+import { toPublicMedia } from '../../lib/wordpress';
 
 interface TeamMember {
   name: string;
@@ -80,8 +81,9 @@ export const Team: React.FC = () => {
           ),
           icon: teamIcons[index % teamIcons.length],
           image:
-            member._embedded?.['wp:featuredmedia']?.[0]?.source_url ||
-            '/images/team/default-member.png',
+            toPublicMedia(
+              member._embedded?.['wp:featuredmedia']?.[0]?.source_url
+            ) || '/images/team/default-member.png',
           delay: index * 0.1,
           order: member.menu_order ?? 0,
         }));

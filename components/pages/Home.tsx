@@ -7,6 +7,7 @@ import { Stats } from '../sections/Stats';
 import { CTA } from '../sections/CTA';
 import { Footer } from '../layout/Footer';
 import { SEO } from '../seo/SEO';
+import { toPublicMedia } from '../../lib/wordpress';
 
 export const Home: React.FC = () => {
   const [seoCards, setSeoCards] = useState<string[]>([]);
@@ -67,7 +68,7 @@ const formattedBlogs = blogs.map((blog: any) => ({
       ?.replace(/<[^>]+>/g, '')
       ?.substring(0, 110) + '...',
   featured_image_url:
-    blog._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+    toPublicMedia(blog._embedded?.['wp:featuredmedia']?.[0]?.source_url) || '',
 }));
 
         setLatestBlogs(formattedBlogs);

@@ -518,7 +518,7 @@ function getSortableTimestamp(post: WpPost): number {
 const WP_UPLOADS_HOST_RE =
   /https?:\/\/wp\.taskforceai\.tech(\/wp-content\/uploads\/)/gi;
 
-function toPublicMedia(url: string | undefined): string | undefined {
+export function toPublicMedia(url: string | undefined): string | undefined {
   if (!url) return url;
   return url.replace(WP_UPLOADS_HOST_RE, 'https://www.taskforceai.tech$1');
 }
