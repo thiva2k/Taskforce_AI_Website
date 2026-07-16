@@ -84,6 +84,18 @@ admin-email byline was the original bug). `/wp-json` post reads and
 keep working. `getAuthorName()` in `lib/wordpress.ts` also refuses to render any
 email as a byline, as defence-in-depth.
 
+**Media must serve from the public host, never the wp subdomain.** Uploaded
+images physically live on the WordPress origin, but the public www docroot serves
+the identical files via a filesystem symlink at `wp-content/uploads` (additive;
+the SCP deploy uses `rm: false` so it survives deploys). Every upload URL is
+rewritten from the `wp.` subdomain to the public host by `toPublicMedia()` in
+`lib/wordpress.ts` — applied to featured images, `og:image`/`twitter:image`, and
+inline post media, plus the homepage team/office/blog thumbnails that read
+`source_url` directly (`Team.tsx`, `Offices.tsx`, `Home.tsx`). This keeps the
+backend subdomain out of page source and link previews. Do not point media URLs
+back at the `wp.` host, and do not remove the docroot symlink — either regresses
+the leak.
+
 **HTTP Basic Auth** additionally hides all wp HTML from humans, via a
 `# BEGIN TaskForce Basic Auth` block in the wp `.htaccess` that exempts
 `/wp-json`, `/wp-content/uploads/`, `/wp-admin`, `/wp-login.php`, and
