@@ -523,6 +523,18 @@ export function toPublicMedia(url: string | undefined): string | undefined {
   return url.replace(WP_UPLOADS_HOST_RE, 'https://www.taskforceai.tech$1');
 }
 
+// Normalise absolute internal links (apex or www host) in WP-authored HTML to
+// root-relative paths, so internal navigation never incurs a host-canonical 301
+// redirect hop and stays correct regardless of the domain the page is served
+// from. Only <a href> targets are touched; media URLs are left to toPublicMedia.
+export function toRelativeInternalLinks(html: string): string {
+  if (!html) return html;
+  return html.replace(
+    /href=(["'])https?:\/\/(?:www\.)?taskforceai\.tech(\/[^"']*|)\1/gi,
+    (_match, quote, path) => `href=${quote}${path || '/'}${quote}`
+  );
+}
+
 // Rewrite internal links in article HTML that point at the WordPress
 // subdomain (wp.taskforceai.tech) so they point at the canonical frontend
 // blog URL instead. This stops link equity leaking to the secondary domain.

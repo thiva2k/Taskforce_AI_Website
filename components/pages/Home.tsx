@@ -7,7 +7,43 @@ import { Stats } from '../sections/Stats';
 import { CTA } from '../sections/CTA';
 import { Footer } from '../layout/Footer';
 import { SEO } from '../seo/SEO';
-import { toPublicMedia } from '../../lib/wordpress';
+import { toPublicMedia, toRelativeInternalLinks } from '../../lib/wordpress';
+
+// Organization + WebSite structured data so search engines can resolve the brand
+// entity (name, logo, social profiles, contact) and site identity. Rendered as
+// JSON-LD via <SEO schema>. Values are the real, public brand details.
+const HOME_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://www.taskforceai.tech/#organization',
+      name: 'TaskForce AI',
+      url: 'https://www.taskforceai.tech/',
+      logo: 'https://www.taskforceai.tech/logo-icon.png',
+      description:
+        "Sri Lanka's Leading AI Automation Company. We build AI voice agents, AI call centre agents, and intelligent workflow automation for businesses in Colombo and across the Middle East.",
+      sameAs: [
+        'https://www.linkedin.com/company/taskforceai-tech/',
+        'https://www.instagram.com/taskforce.ai.tech',
+      ],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        telephone: '+94-77-669-7566',
+        contactType: 'customer service',
+        areaServed: ['LK', 'AE'],
+        availableLanguage: ['en', 'ar', 'fr'],
+      },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://www.taskforceai.tech/#website',
+      url: 'https://www.taskforceai.tech/',
+      name: 'TaskForce AI',
+      publisher: { '@id': 'https://www.taskforceai.tech/#organization' },
+    },
+  ],
+};
 
 export const Home: React.FC = () => {
   const [seoCards, setSeoCards] = useState<string[]>([]);
@@ -38,7 +74,11 @@ export const Home: React.FC = () => {
           acf.seo_card_4_content,
           acf.seo_card_5_content,
           acf.seo_card_6_content,
-        ].filter((card) => card && card.trim() !== '');
+        ]
+          .filter((card) => card && card.trim() !== '')
+          // Fix media host and collapse absolute internal links to relative so
+          // the cards never leak the backend subdomain or trigger redirect hops.
+          .map((card) => toRelativeInternalLinks(toPublicMedia(card) || ''));
 
         setSeoCards(cards);
       } catch (error) {
@@ -83,7 +123,7 @@ const formattedBlogs = blogs.map((blog: any) => ({
 
   return (
     <div className="min-h-screen overflow-x-hidden selection:bg-primary-DEFAULT selection:text-white relative">
-      <SEO />
+      <SEO schema={HOME_SCHEMA} />
 
       <div className="relative z-10">
         {/* 1. Hero */}
