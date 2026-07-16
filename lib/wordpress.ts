@@ -190,6 +190,7 @@ export interface WpPost {
   id: number;
   slug: string;
   date?: string;
+  modified?: string;
   title: WpTitle;
   excerpt?: WpExcerpt;
   content: WpRenderedContent;
@@ -237,6 +238,9 @@ export interface BlogListItem {
   seoTitle?: string;
   seoDescription?: string;
   seoImage?: string;
+  // ISO 8601 timestamps for structured data (Article datePublished/dateModified).
+  datePublished?: string;
+  dateModified?: string;
 }
 
 // Raw comment shape from the WordPress REST API (wp/v2/comments).
@@ -602,6 +606,8 @@ export async function fetchBlogPosts(): Promise<BlogListItem[]> {
       seoTitle: cleanSeoTitle(post.yoast_head_json?.title),
       seoDescription: post.yoast_head_json?.description,
       seoImage: toPublicMedia(post.yoast_head_json?.og_image?.[0]?.url),
+      datePublished: post.date,
+      dateModified: post.modified || post.date,
     }))
     .sort((a, b) => {
       const postA = posts.find((p) => p.id === a.id);
@@ -638,6 +644,8 @@ export async function fetchBlogPostBySlug(
     seoTitle: cleanSeoTitle(post.yoast_head_json?.title),
     seoDescription: post.yoast_head_json?.description,
     seoImage: toPublicMedia(post.yoast_head_json?.og_image?.[0]?.url),
+    datePublished: post.date,
+    dateModified: post.modified || post.date,
   };
 }
 

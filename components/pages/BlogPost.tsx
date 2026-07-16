@@ -47,6 +47,8 @@ const buildBlogSchema = (post: BlogListItem) => {
     headline: post.title,
     description: post.seoDescription || post.excerpt || undefined,
     image: post.seoImage || post.image || undefined,
+    datePublished: post.datePublished || undefined,
+    dateModified: post.dateModified || post.datePublished || undefined,
     author: { '@type': 'Organization', name: post.author || BRAND },
     publisher: {
       '@type': 'Organization',
