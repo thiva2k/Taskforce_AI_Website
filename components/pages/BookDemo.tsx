@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Check,
+  AlertTriangle,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 // Twilio Voice JS SDK v2 — Device/Call browser API.
@@ -243,6 +244,7 @@ export const BookDemo: React.FC = () => {
   const navigate = useNavigate();
 
   const [callState, setCallState] = useState<CallState>('idle');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [seconds, setSeconds] = useState(0);
   const [imgIdx, setImgIdx] = useState(0);
 
@@ -262,12 +264,14 @@ export const BookDemo: React.FC = () => {
   // Move to another agent in the carousel. Disabled mid-call.
   const goToAgent = (d: number) => {
     if (callState !== 'idle') return;
+    setErrorMsg(null);
     setLangOpen(false);
     setImgIdx(0);
     setAgentNav(([i]) => [(i + d + AGENTS.length) % AGENTS.length, d]);
   };
   const selectAgent = (target: number) => {
     if (callState !== 'idle' || target === agentIdx) return;
+    setErrorMsg(null);
     setLangOpen(false);
     setImgIdx(0);
     setAgentNav(([i]) => [target, target > i ? 1 : -1]);
@@ -319,20 +323,53 @@ export const BookDemo: React.FC = () => {
   };
 
   const startDemo = async () => {
+    setErrorMsg(null);
+
+    // Pre-flight: the WhatsApp/Facebook in-app browser (and insecure contexts)
+    // can't reach the microphone at all — fail early with a clear instruction
+    // instead of a silent dead-end.
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
+      setErrorMsg(
+        "Your browser can't access the microphone here — this usually happens inside the WhatsApp or Facebook in-app browser. Please open this page in Chrome or Safari and try again."
+      );
+      return;
+    }
+
     setSeconds(0);
     setCallState('connecting');
 
+    // 1) Microphone permission — required before placing a WebRTC call.
     try {
-      // 1) Mic permission — required before placing a WebRTC call.
       await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (micErr: any) {
+      const name = micErr?.name || '';
+      if (name === 'NotFoundError' || name === 'DevicesNotFoundError') {
+        setErrorMsg('No microphone was found. Please connect or enable a microphone, then try again.');
+      } else {
+        setErrorMsg(
+          'Microphone access was blocked. Please allow the microphone for this site (check the icon in the address bar, or your browser settings) and try again.'
+        );
+      }
+      endDemo();
+      return;
+    }
 
-      // 2) Mint a short-lived Twilio access token scoped to THIS agent.
+    // 2) Mint a short-lived Twilio access token scoped to THIS agent.
+    let token: string | undefined;
+    try {
       const res = await fetch(`${TOKEN_URL}?agent=${encodeURIComponent(agent.id)}`);
       if (!res.ok) throw new Error(`token request failed: ${res.status}`);
-      const { token } = await res.json();
+      token = (await res.json())?.token;
       if (!token) throw new Error('no token in response');
+    } catch (tokenErr) {
+      console.error('[twilio] token error', tokenErr);
+      setErrorMsg('The demo service is temporarily unavailable. Please try again in a moment.');
+      endDemo();
+      return;
+    }
 
-      // 3) Spin up the Device and place the outbound call into the TwiML app.
+    // 3) Spin up the Device and place the outbound call into the TwiML app.
+    try {
       const device = new Device(token);
       deviceRef.current = device;
 
@@ -346,10 +383,14 @@ export const BookDemo: React.FC = () => {
       call.on('cancel', () => endDemo());
       call.on('error', (e: unknown) => {
         console.error('[twilio] call error', e);
+        setErrorMsg('The call ran into a problem. Please try again — Chrome or Safari on mobile data works best.');
         endDemo();
       });
     } catch (err) {
       console.error('[twilio] could not start demo call', err);
+      setErrorMsg(
+        "We couldn't start the call. Please try a different browser (Chrome or Safari) or switch to mobile data, then try again."
+      );
       endDemo();
     }
   };
@@ -693,6 +734,16 @@ export const BookDemo: React.FC = () => {
                           </span>
                         </span>
                       </motion.button>
+
+                      {errorMsg && (
+                        <div
+                          role="alert"
+                          className="flex items-start gap-2 text-left text-sm text-red-300 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 mb-3"
+                        >
+                          <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+                          <span>{errorMsg}</span>
+                        </div>
+                      )}
 
                       <p className="text-center text-xs text-gray-500 mb-8 font-mono">
                         No sign-up required · Live agent · ~5 min demo
